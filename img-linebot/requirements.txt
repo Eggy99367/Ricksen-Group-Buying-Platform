@@ -1,0 +1,15 @@
+line-bot-sdk
+bs4
+flask
+gunicorn
+pytz
+pymongo
+datetime
+pandas
+SnowNLP
+emoji
+pyshorteners
+scipy
+google-auth-oauthlib
+google-api-python-client
+google-auth

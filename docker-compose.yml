@@ -1,0 +1,61 @@
+services:
+  db:
+    image: mariadb
+    container_name: crm-db
+    environment:
+      MYSQL_DATABASE: saas
+      MYSQL_ROOT_PASSWORD: 123456
+      TZ: Asia/Taipei
+    expose:
+      - "3306"
+    command:
+      --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - crm-network
+
+  linebot:
+    image: img-linebot
+    container_name: crm-linebot
+    ports:
+      - "8081:80"
+    networks:
+      - crm-network
+
+  api:
+    image: img-api
+    container_name: crm-api
+    ports:
+      - "8080:80"
+    networks:
+      - crm-network
+    command: >
+      /bin/sh -c "
+      python wait_for_mysql.py &&
+      python init_db.py &&
+      gunicorn -b 0.0.0.0:80 app:app
+      "
+
+  web:
+    build: ./img-web
+    container_name: crm-web
+    networks:
+      - crm-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"  # 将主机的80端口映射到Nginx容器的80端口
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - crm-network
+
+networks:
+  crm-network:
+    driver: bridge
+
+volumes:
+  db-data:

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後檯管理頁面</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .button-row {
+            display: flex;
+            gap: 20px;
+        }
+        button {
+            padding: 20px 40px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button>商品管理</button>
+        <button>團購管理</button>
+        <div class="button-row">
+            <button onclick="location.href='suppliers'">供應商管理</button>
+            <button>客戶管理</button>
+        </div>
+        <div class="button-row">
+            <button>訂單管理</button>
+            <button>數據分析</button>
+        </div>
+    </div>
+</body>
+</html>
