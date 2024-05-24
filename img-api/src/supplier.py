@@ -41,7 +41,9 @@ def update_supplier(id):
         data = request.json
         supplier = Supplier.query.get_or_404(id)
         for content in contents:
-            if content not in data or data[content] == "":
+            if content not in data:
+                continue
+            if data[content] == "":
                 data[content] = None
             setattr(supplier, content, data[content])
         db.session.commit()

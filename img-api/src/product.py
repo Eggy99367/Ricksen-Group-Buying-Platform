@@ -19,7 +19,7 @@ def get_product(id):
 def add_product():
     try:
         data = request.json
-        contents = ["id", "name", "cost", "supplier_id", "description", "img"]
+        contents = ["name", "cost", "supplier_id", "description", "img"]
         new_product = Product()
 
         max_id = db.session.query(db.func.max(Product.id)).scalar()
@@ -41,7 +41,9 @@ def update_product(id):
         data = request.json
         product = Product.query.get_or_404(id)
         for content in contents:
-            if content not in data or data[content] == "":
+            if content not in data:
+                continue
+            if data[content] == "":
                 data[content] = None
             setattr(product, content, data[content])
         db.session.commit()

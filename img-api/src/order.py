@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from .models import db, Order_Record
+from .basics import *
 
 def get_orders():
     try:
@@ -26,12 +27,13 @@ def get_order_by_group(grp_id):
 def add_order():
     try:
         data = request.json
-        contents = ["id","timestamp","customer_line_id","group_id","qty","status"]
+        contents = ["customer_line_id","group_id","qty","status"]
         new_order = Order_Record()
 
         max_id = db.session.query(db.func.max(Order_Record.id)).scalar()
         new_id = f"D{int(max_id[1:]) + 1:04}" if max_id else "D0001"
         setattr(new_order, "id", new_id)
+        setattr(new_order, "timestamp", get_cur_time())
 
         for content in contents:
             if content in data:
@@ -44,11 +46,13 @@ def add_order():
     
 def update_order(id):
     try:
-        contents = ["timestamp","customer_line_id","group_id","qty","status"]
+        contents = ["customer_line_id","group_id","qty","status"]
         data = request.json
         order = Order_Record.query.get_or_404(id)
         for content in contents:
-            if content not in data or data[content] == "":
+            if content not in data:
+                continue
+            if data[content] == "":
                 data[content] = None
             setattr(order, content, data[content])
         db.session.commit()

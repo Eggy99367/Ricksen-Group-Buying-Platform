@@ -38,7 +38,9 @@ def update_customer(line_id):
         data = request.json
         customer = Customer.query.get_or_404(line_id)
         for content in contents:
-            if content not in data or data[content] == "":
+            if content not in data:
+                continue
+            if data[content] == "":
                 data[content] = None
             setattr(customer, content, data[content])
         db.session.commit()

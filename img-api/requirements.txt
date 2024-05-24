@@ -2,4 +2,5 @@ flask
 pymysql
 sqlalchemy
 flask_sqlalchemy
+pytz
 gunicorn

@@ -75,8 +75,8 @@ class Group_Record(db.Model):
     end_time = db.Column(db.Integer)
     min_qty = db.Column(db.Integer)
     max_qty = db.Column(db.Integer)
-    min_qty_per_customer = db.Column(db.Integer)
-    max_qty_per_customer = db.Column(db.Integer)
+    min_qty_pp = db.Column(db.Integer)
+    max_qty_pp = db.Column(db.Integer)
     
     def get_info(self):
         return {
@@ -88,8 +88,8 @@ class Group_Record(db.Model):
             "end_time": self.end_time,
             "min_qty": self.min_qty,
             "max_qty": self.max_qty,
-            "min_qty_per_customer": self.min_qty_per_customer,
-            "max_qty_per_customer": self.max_qty_per_customer
+            "min_qty_pp": self.min_qty_pp,
+            "max_qty_pp": self.max_qty_pp
         }
 
     def __repr__(self):

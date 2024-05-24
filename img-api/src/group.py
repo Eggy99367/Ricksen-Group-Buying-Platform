@@ -19,7 +19,7 @@ def get_group(id):
 def add_group():
     try:
         data = request.json
-        contents = ["id","product_id","selling_price","status","start_time","end_time","min_qty","max_qty","min_qty_pp","max_qty_pp"]
+        contents = ["product_id","selling_price","status","start_time","end_time","min_qty","max_qty","min_qty_pp","max_qty_pp"]
         new_group = Group_Record()
 
         max_id = db.session.query(db.func.max(Group_Record.id)).scalar()
@@ -41,7 +41,9 @@ def update_group(id):
         data = request.json
         group = Group_Record.query.get_or_404(id)
         for content in contents:
-            if content not in data or data[content] == "":
+            if content not in data:
+                continue
+            if data[content] == "":
                 data[content] = None
             setattr(group, content, data[content])
         db.session.commit()
