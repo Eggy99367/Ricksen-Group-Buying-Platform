@@ -23,29 +23,19 @@ CMD_DICT = {
 
 @app.route('/linebot/', methods=['POST'])
 def handle_post_request():
-    # Get JSON data from the request body
     data = request.json
-    
-    # Check if the JSON data is valid
     if data is None:
         return jsonify({'error': 'No JSON data received'}), 400
-    
-    # Process the JSON data (for example, echo back the received data)
     response_data = {'received_data': data}
-    
-    # Send the response as JSON
     return jsonify(response_data)
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/linebot/callback", methods=['POST'])
 def callback():
     print("get callback")
-    # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
-    # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
-    # handle webhook body
     try:
         WEBHOOK_HANDLER.handle(body, signature)
         src.global_vars.user_states = get_user_states()
