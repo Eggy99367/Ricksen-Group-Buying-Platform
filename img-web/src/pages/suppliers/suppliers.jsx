@@ -23,6 +23,7 @@ export const Suppliers = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   var last_updated = null;
   
   const checkUpdate = async () => {
@@ -142,6 +143,17 @@ export const Suppliers = () => {
     }
   }
 
+  const handleSearchInputChange = (event) => {
+    setSelectedRow(null);
+    setSearchTerm(event.target.value);
+  }
+
+  const filteredSuppliers = suppliers.filter((supplier) =>
+    Object.values(supplier).some(value =>
+      value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
   return (
     <div className='page_main_box'>
       <Header />
@@ -151,7 +163,11 @@ export const Suppliers = () => {
             {/* <button >新增</button> */}
           </div>
           <div className='search_bar_container'>
-            <input placeholder="Search Content" />
+            <input
+              placeholder="Search Content"
+              value={searchTerm}
+              onChange={handleSearchInputChange}
+            />
           </div>
           <div className='button_container'>
             <button disabled={selectedRow === null} onClick={() => {handleEditClick()}}>編輯</button>
@@ -169,7 +185,7 @@ export const Suppliers = () => {
               </tr>
               </thead>
                 <tbody>
-                  {suppliers.map((data, index) => (
+                  {filteredSuppliers.map((data, index) => (
                     <tr 
                       key={index}
                       onClick={() => handleRowClick(index)}
