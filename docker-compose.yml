@@ -38,8 +38,11 @@ services:
       "
 
   web:
-    build: ./img-web
+    build:
+      context: ./img-web
     container_name: crm-web
+    ports:
+      - "3000:80"
     networks:
       - crm-network
 

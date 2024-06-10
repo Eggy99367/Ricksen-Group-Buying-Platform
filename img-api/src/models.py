@@ -1,18 +1,22 @@
 # models.py
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.declarative import declarative_base
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
+Base = declarative_base()
 
 class Customer(db.Model):
     __tablename__ = 'customer'
-    line_id = db.Column(db.String(40), primary_key=True, nullable=False, unique=True)
+    id = db.Column(db.String(40), primary_key=True, nullable=False, unique=True)
     name = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.String(10), nullable=False)
     email = db.Column(db.String(80), nullable=False)
+    state = db.Column(db.Text, nullable=False)
 
     def get_info(self):
         return {
-            "line_id": self.line_id,
+            "id": self.id,
             "name": self.name,
             "phone": self.phone,
             "email": self.email
@@ -28,7 +32,7 @@ class Supplier(db.Model):
     tax_id = db.Column(db.String(8))
     contact_person = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.String(10), nullable=False)
-    email = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(80))
 
     def get_info(self):
         return {
@@ -71,8 +75,8 @@ class Group_Record(db.Model):
     product_id = db.Column(db.String(10), db.ForeignKey('product.id'), nullable=False)
     selling_price = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(10), nullable=False)
-    start_time = db.Column(db.Integer, nullable=False)
-    end_time = db.Column(db.Integer)
+    start_time = db.Column(db.String(20), nullable=False)
+    end_time = db.Column(db.String(20))
     min_qty = db.Column(db.Integer)
     max_qty = db.Column(db.Integer)
     min_qty_pp = db.Column(db.Integer)
@@ -98,8 +102,8 @@ class Group_Record(db.Model):
 class Order_Record(db.Model):
     __tablename__ = 'order_record'
     id = db.Column(db.String(10), primary_key=True, nullable=False, unique=True)
-    timestamp = db.Column(db.Integer, nullable=False)
-    customer_line_id = db.Column(db.String(10), db.ForeignKey('customer.line_id'), nullable=False)
+    timestamp = db.Column(db.String(20), nullable=False)
+    customer_id = db.Column(db.String(10), db.ForeignKey('customer.id'), nullable=False)
     group_id = db.Column(db.String(10), db.ForeignKey('group_record.id'), nullable=False)
     qty = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(10), nullable=False)
@@ -108,7 +112,7 @@ class Order_Record(db.Model):
         return {
             "id": self.id,
             "timestamp": self.timestamp,
-            "customer_line_id": self.customer_line_id,
+            "customer_id": self.customer_id,
             "group_id": self.group_id,
             "qty": self.qty,
             "status": self.status
@@ -120,8 +124,8 @@ class Order_Record(db.Model):
 class View_History(db.Model):
     __tablename__ = 'view_history'
     id = db.Column(db.String(10), primary_key=True, nullable=False, unique=True)
-    timestamp = db.Column(db.Integer, nullable=False)
-    customer_line_id = db.Column(db.String(10), db.ForeignKey('customer.line_id'), nullable=False)
+    timestamp = db.Column(db.String(20), nullable=False)
+    customer_id = db.Column(db.String(10), db.ForeignKey('customer.id'), nullable=False)
     group_id = db.Column(db.String(10), db.ForeignKey('group_record.id'), nullable=False)
     view_type = db.Column(db.String(10), nullable=False)
 
@@ -129,10 +133,43 @@ class View_History(db.Model):
         return {
             "id": self.id,
             "timestamp": self.timestamp,
-            "customer_line_id": self.customer_line_id,
+            "customer_id": self.customer_id,
             "group_id": self.group_id,
             "view_type": self.view_type
         }
 
     def __repr__(self):
         return f'<View_History {self.id}>'
+    
+class LastUpdated(db.Model):
+    __tablename__ = "last_updated"
+    table_name = db.Column(db.String(40), primary_key=True)
+    time = db.Column(db.String(20), nullable=False)
+
+    def get_info(self):
+        return {
+            "table_name": self.table_name,
+            "time": self.time
+        }
+
+    def __repr__(self):
+        return f'<LastUpdated {self.table_name}>'
+
+class User(db.Model):
+    __tablename__ = "user"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.Text, nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
+    def get_info(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "password_hash": self.password_hash
+        }

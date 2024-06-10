@@ -1,0 +1,171 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* general_elements */
+button {
+  height: 100%;
+  padding: 0 20px;
+  border-radius: 30px;
+  border: 0;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+button:hover {
+  background-color:rgb(179, 179, 179);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+button:active {
+  background-color: rgb(140, 140, 140);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+input {
+  height: 100%;
+  border-radius: 30px;
+  padding: 0 30px;
+  border: 0;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+input:hover {
+  background-color: #f0f0f0;
+}
+
+/*  */
+.page_main_box {
+  margin: 0 auto;
+  padding: 20px 0;
+  width: 80vw;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.page_content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+}
+
+/* function_bar_container */
+.function_bar_container {
+  height: 40px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  /* gap: 10px; */
+}
+
+  .empty_bar_container {
+    flex: 1;
+  }
+
+  .search_bar_container {
+    flex: 2;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .search_bar_container input {
+    width: 100%;
+  }
+
+  /* button_container */
+  .button_container {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+  }
+
+/* list_container */
+.list_container {
+  flex: 1;
+  width: 100%;
+  padding: 30px;
+  border: 1px solid;
+  border-radius: 30px;
+  overflow: auto;
+}
+
+.list_container table {
+  /* height: 100%; */
+  width: 100%;
+}
+
+.list_container th {
+  text-align: center;
+  height:30px;
+}
+
+.list_container td {
+  text-align: center;
+  height:30px;
+}
+
+.list_container thead {
+  background-color: rgb(179, 179, 179);
+}
+
+.list_container tbody tr:nth-child(odd) {
+  background-color: rgb(240, 240, 240);
+}
+
+.list_container tbody tr:nth-child(even) {
+  background-color: rgb(226, 226, 226);
+}
+
+.list_container tbody tr:hover {
+  background-color: rgb(212, 228, 251);
+}
+
+.list_container tbody tr:active {
+  background-color: rgb(166, 200, 248);
+}
+
+.list_container tbody tr.selected {
+  background-color: rgb(165, 197, 243);
+}

@@ -9,9 +9,9 @@ def get_customers():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-def get_customer(line_id):
+def get_customer(id):
     try:
-        customer = Customer.query.get_or_404(line_id)
+        customer = Customer.query.get_or_404(id)
         return jsonify(customer.get_info())
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -19,24 +19,25 @@ def get_customer(line_id):
 def add_customer():
     try:
         data = request.json
-        contents = ["line_id", "name", "phone", "email"]
+        contents = ["id", "name", "phone", "email"]
         new_customer = Customer()
 
         for content in contents:
             if content in data:
                 setattr(new_customer, content, data[content])
+        setattr(new_customer, "state", {})
         db.session.add(new_customer)
         db.session.commit()
         return jsonify(new_customer.get_info()), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-def update_customer(line_id):
+def update_customer(id):
     try:
         print(1)
-        contents = ["name", "phone", "email"]
+        contents = ["name", "phone", "email", "state"]
         data = request.json
-        customer = Customer.query.get_or_404(line_id)
+        customer = Customer.query.get_or_404(id)
         for content in contents:
             if content not in data:
                 continue
@@ -48,9 +49,9 @@ def update_customer(line_id):
     except Exception as e:
             return jsonify({'error': str(e)}), 400
 
-def delete_customer(line_id):
+def delete_customer(id):
     try:
-        customer = Customer.query.get_or_404(line_id)
+        customer = Customer.query.get_or_404(id)
         db.session.delete(customer)
         db.session.commit()
         return '', 204

@@ -7,13 +7,14 @@ import src.msg_responses as msg_responses
 from src.services_ids import *
 from src.sheet import get_user_states
 import src.global_vars
+import requests
 
 app = Flask(__name__)
 
 CMD_DICT = {
     "團購資訊": msg_responses.groupBuyingInfo,
     "我要下單": msg_responses.prodSelectConfirm,
-    "是的，我想購買": msg_responses.orderRequestConfirmed,
+    "是的，我想購買此商品!": msg_responses.orderRequestConfirmed,
     "是，繼續購物": msg_responses.askQuantity,
     "否，重新輸入用戶資訊": msg_responses.askName,
     "確認資訊無誤，確認訂單": msg_responses.orderConfirmed,
@@ -21,13 +22,13 @@ CMD_DICT = {
     "查看訂單": msg_responses.checkOrder
 }
 
-@app.route('/linebot/', methods=['POST'])
-def handle_post_request():
-    data = request.json
-    if data is None:
-        return jsonify({'error': 'No JSON data received'}), 400
-    response_data = {'received_data': data}
-    return jsonify(response_data)
+# @app.route('/linebot/', methods=['POST'])
+# def handle_post_request():
+#     data = request.json
+#     if data is None:
+#         return jsonify({'error': 'No JSON data received'}), 400
+#     response_data = {'received_data': data}
+#     return jsonify(response_data)
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/linebot/callback", methods=['POST'])
@@ -38,7 +39,6 @@ def callback():
     app.logger.info("Request body: " + body)
     try:
         WEBHOOK_HANDLER.handle(body, signature)
-        src.global_vars.user_states = get_user_states()
     except InvalidSignatureError:
         abort(400)
     return 'OK'
@@ -50,21 +50,18 @@ def handle_message(event):
 
     # print(event)
     print(f"{user_id}: {message}")
-    src.global_vars.user_states = get_user_states()
-    print("update:", src.global_vars.user_states)
-    if user_id not in src.global_vars.user_states:
-        src.global_vars.user_states[user_id] = {
-                "state": "message",
-                "prod": None,
-                "name": None,
-                "email": None,
-                "phone": None,
-                "quantity": None
-            }
+    if requests.get(f'http://crm-api/db/customers/{user_id}').status_code == 400:
+        requests.post('http://crm-api/db/customers', json={"id":user_id})
+        print("add new user")
+    else:
+        print("user exist")
+
+    user_state = get_user_states(user_id)
+    
     cmd = message.split()[0]
     if cmd in CMD_DICT:
         CMD_DICT[cmd](event)
-    elif src.global_vars.user_states[user_id]["state"] != "message":
+    elif "state" in user_state and user_state["state"] != "message":
         msg_responses.handleSpecialRequest(event)
     else:
         msg_responses.reply_msg(event, message)

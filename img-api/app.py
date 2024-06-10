@@ -1,12 +1,138 @@
 from flask import Flask, request, jsonify
-from src.models import db, Customer, Supplier, Product, Group_Record, Order_Record
+from src.models import db, Customer, Supplier, Product, Group_Record, Order_Record, LastUpdated, User
 from src import customer, supplier, product, group, order, view
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_cors import CORS
+from sqlalchemy import event
+from src.basics import *
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456@crm-db/saas'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = 'sofdktivmwliynsiovcmtyislgo'
 
 db.init_app(app)
+
+jwt = JWTManager(app)
+
+# @app.after_request
+# def add_cors_headers(response):
+#     print("do after request")
+#     response.headers.add('Access-Control-Allow-Origin', '*')
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+#     response.headers.add('Access-Control-Allow-Credentials', 'true')
+#     return response
+
+# ----------------------------------------------------------------------------------------
+
+def update_last_updated(table_name, connection):
+    try:
+        stmt = LastUpdated.__table__.insert().values(
+            table_name=table_name,
+            time=str(get_cur_time())
+        )
+        connection.execute(stmt)
+    except:
+        stmt = LastUpdated.__table__.update().where(
+            LastUpdated.table_name == table_name
+        ).values(
+            time=get_cur_time()
+        )
+        connection.execute(stmt)
+
+tables = [Customer, Supplier, Product, Group_Record, Order_Record, User]
+for table in tables:
+    table_name = table.__tablename__
+
+    def create_after_insert_listener(table_name):
+        def after_insert(mapper, connection, target):
+            update_last_updated(table_name, connection)
+            print(f"{table_name} {target.id} has been inserted.")
+        return after_insert
+
+    def create_after_update_listener(table_name):
+        def after_update(mapper, connection, target):
+            update_last_updated(table_name, connection)
+            print(f"{table_name} {target.id} has been updated.")
+        return after_update
+
+    def create_after_delete_listener(table_name):
+        def after_delete(mapper, connection, target):
+            update_last_updated(table_name, connection)
+            print(f"{table_name} {target.id} has been deleted.")
+        return after_delete
+
+    event.listen(table, 'after_insert', create_after_insert_listener(table_name))
+    event.listen(table, 'after_update', create_after_update_listener(table_name))
+    event.listen(table, 'after_delete', create_after_delete_listener(table_name))
+
+@app.route('/db/last_updated', methods=['GET'])
+def get_last_updateds():
+    try:
+        last_updateds = LastUpdated.query.all()
+        return jsonify([last_updated.get_info() for last_updated in last_updateds])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
+@app.route('/db/last_updated/<string:table_name>', methods=['GET'])
+def get_last_updated(table_name):
+    try:
+        last_updated = LastUpdated.query.get_or_404(table_name)
+        return jsonify(last_updated.get_info())
+    except Exception as e:
+        return jsonify("0")
+
+# ----------------------------------------------------------------------------------------
+
+@app.route('/db/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({"msg": "Email already registered"}), 400
+
+    new_user = User(email=email)
+    new_user.set_password(password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    print("register:", email)
+    return jsonify({"msg": "User registered successfully"}), 201
+
+@app.route('/db/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user or not user.check_password(password):
+        return jsonify({"msg": "Invalid email or password"}), 401
+
+    access_token = create_access_token(identity=user.id)
+    print("login:", email)
+    return jsonify(access_token=access_token), 200
+
+@app.route('/db/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    return jsonify(logged_in_as=user.email), 200
+
+@app.route('/db/users', methods=['GET'])
+def get_users():
+    try:
+        customers = User.query.all()
+        # print(customers)
+        return jsonify([customer.get_info() for customer in customers])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 # ----------------------------------------------------------------------------------------
 
@@ -14,21 +140,21 @@ db.init_app(app)
 def get_customers():
     return customer.get_customers()
 
-@app.route('/db/customers/<string:line_id>', methods=['GET'])
-def get_customer(line_id):
-    return customer.get_customer(line_id)
+@app.route('/db/customers/<string:id>', methods=['GET'])
+def get_customer(id):
+    return customer.get_customer(id)
 
 @app.route('/db/customers', methods=['POST'])
 def add_customer():
     return customer.add_customer()
 
-@app.route('/db/customers/<string:line_id>', methods=['PUT'])
-def update_customer(line_id):
-    return customer.update_customer(line_id)
+@app.route('/db/customers/<string:id>', methods=['PUT'])
+def update_customer(id):
+    return customer.update_customer(id)
 
-@app.route('/db/customers/<string:line_id>', methods=['DELETE'])
-def delete_customer(line_id):
-    return customer.delete_customer(line_id)
+@app.route('/db/customers/<string:id>', methods=['DELETE'])
+def delete_customer(id):
+    return customer.delete_customer(id)
 
 # ----------------------------------------------------------------------------------------
 

@@ -17,9 +17,12 @@ def isInteger(number):
         return False
     
 def isInRange(quantity, mn, mx):
-    if int(quantity) <= int(mx) and int(quantity) >= int(mn):
-        return True
-    return False
+    quantity = int(quantity)
+    if quantity < 1 or (mn and quantity < mn):
+        return False
+    if mx and quantity > mx:
+        return False
+    return True
 
 if __name__ == "__main__":
     print(isEmail("yinhsuac@uci.edu"))

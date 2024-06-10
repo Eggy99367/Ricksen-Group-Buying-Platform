@@ -1,51 +1,29 @@
-# syntax=docker/dockerfile:1
+# 使用官方的 Node.js image 作為基礎
+FROM node:14
 
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
-
-# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
-
-ARG PYTHON_VERSION=3.12.3
-FROM python:${PYTHON_VERSION}-slim as base
-
-# Prevents Python from writing pyc files.
-ENV PYTHONDONTWRITEBYTECODE=1
-
-# Keeps Python from buffering stdout and stderr to avoid situations where
-# the application crashes without emitting any logs due to buffering.
-ENV PYTHONUNBUFFERED=1
-
+# 設定工作目錄
 WORKDIR /app
 
-# Create a non-privileged user that the app will run under.
-# See https://docs.docker.com/go/dockerfile-user-best-practices/
-ARG UID=10001
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    appuser
+# 複製 package.json 和 package-lock.json 到工作目錄
+COPY package*.json ./
 
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
-# Leverage a bind mount to requirements.txt to avoid having to copy them into
-# into this layer.
-RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    python -m pip install -r requirements.txt
+# 安裝依賴套件
+RUN npm install
 
-# Switch to the non-privileged user to run the application.
-USER appuser
-
-# Copy the source code into the container.
+# 複製所有檔案到工作目錄
 COPY . .
 
-# Expose the port that the application listens on.
+# 建立應用程式
+RUN npm run build
+
+# 使用官方的 Nginx image 作為基礎
+FROM nginx:alpine
+
+# 複製建立好的檔案到 Nginx 的預設靜態檔案目錄
+COPY --from=0 /app/build /usr/share/nginx/html
+
+# 暴露端口
 EXPOSE 80
 
-# Run the application.
-CMD gunicorn -b 0.0.0.0:80 app:app
+# 啟動 Nginx
+CMD ["nginx", "-g", "daemon off;"]

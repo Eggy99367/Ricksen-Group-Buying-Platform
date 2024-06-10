@@ -27,7 +27,7 @@ def get_order_by_group(grp_id):
 def add_order():
     try:
         data = request.json
-        contents = ["customer_line_id","group_id","qty","status"]
+        contents = ["customer_id","group_id","qty","status"]
         new_order = Order_Record()
 
         max_id = db.session.query(db.func.max(Order_Record.id)).scalar()
@@ -46,7 +46,7 @@ def add_order():
     
 def update_order(id):
     try:
-        contents = ["customer_line_id","group_id","qty","status"]
+        contents = ["customer_id","group_id","qty","status"]
         data = request.json
         order = Order_Record.query.get_or_404(id)
         for content in contents:

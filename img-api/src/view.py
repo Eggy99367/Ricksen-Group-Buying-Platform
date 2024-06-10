@@ -13,7 +13,7 @@ def get_views():
 def add_view():
     try:
         data = request.json
-        contents = ["customer_line_id","group_id","view_type"]
+        contents = ["customer_id","group_id","view_type"]
         new_view = View_History()
 
         max_id = db.session.query(db.func.max(View_History.id)).scalar()

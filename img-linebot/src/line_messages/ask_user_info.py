@@ -7,10 +7,9 @@ from linebot.models import *
 
 def userdataExist(event):
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "userdata_exist"
-    update_user_states()
+    update_user_states(user_id, state="userdata_exist")
 
-    user_state = src.global_vars.user_states[user_id]
+    user_state = get_user_states(user_id)
     msg = TemplateSendMessage(
         alt_text="用戶資料確認",
         template=ButtonsTemplate(
@@ -35,48 +34,37 @@ def userdataExist(event):
 
 def askName(event):
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "ask_name"
-    update_user_states()
+    update_user_states(user_id, state="ask_name")
     reply_msg(event, f"請問您的姓名是？")
 
 def updateName(event):
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "get_name"
-    src.global_vars.user_states[user_id]["name"] = event.message.text
-    update_user_states()
+    update_user_states(user_id, state="get_name", name=event.message.text)
     askEmail(event)
 
 def askEmail(event):
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "ask_email"
-    update_user_states()
+    update_user_states(user_id, state="ask_email")
     reply_msg(event, f"請問您的電子郵件信箱是？\n(範例格式:sample@gmail.com)")
 
 def updateEmail(event):
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "get_email"
     if isEmail(event.message.text):
-        src.global_vars.user_states[user_id]["email"] = event.message.text
-        update_user_states()
+        update_user_states(user_id, state="get_email", email=event.message.text)
         askPhone(event)
     else:
-        src.global_vars.user_states[user_id]["state"] = "ask_email"
         reply_msg(event, f"錯誤Email格式，請重新輸入!\n請問您的電子郵件信箱是？\n(範例格式:sample@gmail.com)")
 
 
 def askPhone(event):
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "ask_phone"
-    update_user_states()
+    update_user_states(user_id, state="ask_phone")
     reply_msg(event, f"請問您的手機電話是？\n(範例格式:09XXXXXXXX)")
 
 def updatePhone(event):
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "get_phone"
     if isPhoneNum(event.message.text):
-        src.global_vars.user_states[user_id]["phone"] = event.message.text
-        update_user_states()
+        update_user_states(user_id, state="get_phone", phone=event.message.text)
         askQuantity(event)
     else:
-        src.global_vars.user_states[user_id]["state"] = "ask_phone"
         reply_msg(event, f"錯誤手機號碼格式，請重新輸入!\n請問您的手機電話是？\n(範例格式:09XXXXXXXX)")

@@ -9,8 +9,12 @@ import requests
 from datetime import datetime, timedelta
 import re
 import pytz
+import json
 
 tz_utc_9 = pytz.timezone('Asia/Tokyo')
+
+
+    
 
 def getFollower(date):
     headers = {
@@ -39,40 +43,27 @@ def checkUserIdExist(sheet_id, user_id):
 def groupBuyingInfo(event): #團購資訊
     print("here's ok")
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "get_prods_info"
-    update_user_states()
+    update_user_states(user_id, state="get_prods_info")
+
+    response = requests.get('http://crm-api/db/groups/available')
+    groups = response.json()
+    if len(groups) == 0:
+        reply_msg(event, f"抱歉，目前沒有正在進行的開團項目！")
+        return
 
     ssData = getSheetData()
     prod_carousel = []
-    for prod_row in ssData:
-
-        if(prod_row[src.global_vars.master_cols[MASTER_AVAILABIITY_STATE_COL_NAME]] != AVAILABILITY_AVAILABLE_STATE):
-            continue
-
-        productSheetId = prod_row[src.global_vars.master_cols[MASTER_PROD_SHEET_ID_COL_NAME]]
-        currFollower = getFollower((datetime.now(tz_utc_9) - timedelta(days=1)).strftime('%Y%m%d'))
-        edit_cell(productSheetId, PRODUCT_DATA_ANALYSIS_SHEET_NAME, (0, 1), currFollower)
-
-        row_num = len(get_range(productSheetId, PRODUCT_EXPOSURE_SHEET_NAME, (0, 0), (9000000, 0)))
-        src.global_vars.user_states[user_id]["state"] = checkUserIdExist(productSheetId, user_id)
-        update_user_states()
-        if not checkUserIdExist(productSheetId, user_id):
-            edit_cell(productSheetId, PRODUCT_EXPOSURE_SHEET_NAME, (row_num, 0), user_id)
-
-        prod_name = prod_row[src.global_vars.master_cols[MASTER_PROD_NAME_COL_NAME]]
-        prod_text = prod_row[src.global_vars.master_cols[MASTER_PROD_DISCRIPTION_COL_NAME]]
-        prod_price = prod_row[src.global_vars.master_cols[MASTER_PROD_PRICE_COL_NAME]]
-        prod_image_url = prod_row[src.global_vars.master_cols[MASTER_PROD_PIC_COL_NAME]]
-
+    for group in groups:
+        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
         current_prod = CarouselColumn(
-            thumbnail_image_url = prod_image_url,
-            title = prod_name, 
-            text = f"{prod_text}\n"
-                    + f"售價:{prod_price}",
+            thumbnail_image_url = prod["img"],
+            title = prod["name"], 
+            text = f"{prod["description"]}\n"
+                    + f"售價:{group["selling_price"]}",
             actions = [
                 MessageAction(
                     label = "立刻下單",
-                    text = f"我要下單 [{prod_name}]!"
+                    text = f"我要下單 [{group["id"]}]!"
                 )
             ]
         )
@@ -85,37 +76,31 @@ def groupBuyingInfo(event): #團購資訊
     )
     reply_msg(event, carousel_template_message)
 
-def prodSelectConfirm(event): # 我要下單 [商品名稱]!
+def prodSelectConfirm(event): # 我要下單 [group_id]!
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "prod_select_confirm"
-    update_user_states()
 
 
     match = re.search(r"\[(.*?)\]", event.message.text)
     if match:
-        product_name = match.group(1)
-        ssData = getSheetData()
-        if not productExist(ssData, product_name):
-            reply_msg(event, f"抱歉，商品[{product_name}]不存在！")
+        try:
+            group_id = match.group(1)
+            group = requests.get(f'http://crm-api/db/groups/{group_id}').json()
+            prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+            update_user_states(user_id, state="prod_select_confirm", grp=group['id'])
+        except Exception as e:
+            reply_msg(event, f"抱歉，商品[{group_id}]不存在或不開放下單！")
             return
-        elif not productAvailable(ssData, product_name):
-            reply_msg(event, f"抱歉，商品[{product_name}]目前並不開放下單！")
-            return
-        product_info = getProductRow(ssData, product_name)
-
-        src.global_vars.user_states[user_id]["prod"] = product_name
-        update_user_states()
 
         msg = TemplateSendMessage(
             alt_text="商品確認",
             template=ButtonsTemplate(
-                thumbnail_image_url=product_info[src.global_vars.master_cols[MASTER_PROD_PIC_COL_NAME]],
-                title = product_name, 
-                text = f"售價:{product_info[src.global_vars.master_cols[MASTER_PROD_PRICE_COL_NAME]]}\n這是您想下單的產品嗎?",
+                thumbnail_image_url=prod['img'],
+                title = prod['name'], 
+                text = f"售價:{group["selling_price"]}\n這是您想下單的產品嗎?",
                 actions = [
                     MessageAction(
                         label = '是',
-                        text = f"是的，我想購買 [{product_name}]!"
+                        text = f"是的，我想購買此商品!"
                     ),
                     MessageAction(
                         label = '不是',
@@ -124,18 +109,15 @@ def prodSelectConfirm(event): # 我要下單 [商品名稱]!
                 ]
             )
         )
-        # print(event.source.userId)
         reply_msg(event, msg)
     else:
         reply_msg(event, "抱歉，商品不存在！")
         return
 
-def orderRequestConfirmed(event): # 是的，我想購買 [商品名稱]!
+def orderRequestConfirmed(event): # 是的，我想購買此商品!
     user_id = event.source.user_id
-    src.global_vars.user_states[user_id]["state"] = "order_request_confirmed"
-    update_user_states()
-
-    user_states = src.global_vars.user_states[user_id]
+    update_user_states(user_id, state="order_request_confirmed")
+    user_states = get_user_states(user_id)
 
     if not user_states["name"] or not user_states["email"] or not user_states["phone"]:
         askName(event)
@@ -144,7 +126,8 @@ def orderRequestConfirmed(event): # 是的，我想購買 [商品名稱]!
 
 def handleSpecialRequest(event):
     user_id = event.source.user_id
-    state = src.global_vars.user_states[user_id]["state"]
+    state = get_user_states(user_id)["state"]["state"]
+    print("state:", state)
     if state == "ask_name":
         updateName(event)
     elif state == "ask_email":
