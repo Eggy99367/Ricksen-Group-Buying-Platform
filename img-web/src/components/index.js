@@ -1,2 +1,2 @@
-export { EditPopOut } from './editPopOut/editPopOut';
+export { PopOut } from './popOut/popOut';
 export { Header } from './header/header';

@@ -42,11 +42,7 @@
 #logout_button {
     background-color: #85586F;
     color: white;
-    border: none;
     height: 40px;
-    border: 1px solid #ccc;
-    border-radius: 30px;
-    box-sizing: border-box;
 }
 
 button#logout_button:hover {
