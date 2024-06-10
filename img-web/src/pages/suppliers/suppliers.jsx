@@ -33,9 +33,10 @@ export const Suppliers = () => {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      if(!last_updated || response.data.time > last_updated){
+      if(last_updated === null || response.data.time > last_updated){
         last_updated = response.data.time;
         fetchSuppliers();
+        setError(null);
       }
       setLoading(false);
     }).catch(error => {
@@ -55,7 +56,8 @@ export const Suppliers = () => {
         console.log("Data fetched successfully:", response);
         setSuppliers(Object.values(response.data));
         setLoading(false);
-    }).catch(error => {
+        setError(null);
+      }).catch(error => {
         console.error("There was an error fetching the data!", error);
         setError(error);
         setLoading(false);

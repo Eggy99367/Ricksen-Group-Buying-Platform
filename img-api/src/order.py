@@ -65,7 +65,7 @@ def delete_order(id):
         order = Order_Record.query.get_or_404(id)
         db.session.delete(order)
         db.session.commit()
-        return '', 204
+        return jsonify({'message': "success"}), 204
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     

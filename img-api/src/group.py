@@ -56,6 +56,6 @@ def delete_group(id):
         group = Group_Record.query.get_or_404(id)
         db.session.delete(group)
         db.session.commit()
-        return '', 204
+        return jsonify({'message': "success"}), 204
     except Exception as e:
         return jsonify({'error': str(e)}), 400

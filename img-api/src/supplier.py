@@ -56,6 +56,6 @@ def delete_supplier(id):
         supplier = Supplier.query.get_or_404(id)
         db.session.delete(supplier)
         db.session.commit()
-        return '', 204
+        return jsonify({'message': "success"}), 204
     except Exception as e:
         return jsonify({'error': str(e)}), 400

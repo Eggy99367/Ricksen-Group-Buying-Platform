@@ -54,6 +54,6 @@ def delete_customer(id):
         customer = Customer.query.get_or_404(id)
         db.session.delete(customer)
         db.session.commit()
-        return '', 204
+        return jsonify({'message': "success"}), 204
     except Exception as e:
         return jsonify({'error': str(e)}), 400
