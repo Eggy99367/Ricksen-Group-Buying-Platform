@@ -1,12 +1,12 @@
 import React from 'react';
 import './listContainer.css'
 
-export const ListContainer = ({ contents, filteredContents, handleRowClick, selectedRow, page, setPage, result_limit, error, loading }) => {
+export const ListContainer = ({ contents, filteredContents, handleRowClick, selectedRow, page, setPage, result_limit, error, loading, listContainerRef }) => {
   return (
-    <div className='list_container'>
+    <div className='list_container' ref={listContainerRef}>
       <div className='page_control_container'>
         {(page > 0) && <span className="material-symbols-outlined no_select" onClick={() => { setPage(page - 1) }}>arrow_back_ios</span>}
-        <p className='no_select'>{`${page * result_limit}-${Math.min((page + 1) * result_limit, filteredContents.length)} / ${filteredContents.length}筆資料`}</p>
+        <p className='no_select'>{`${page * result_limit + 1}-${Math.min((page + 1) * result_limit, filteredContents.length)} / ${filteredContents.length}筆資料`}</p>
         {(page >= 0 && page < (filteredContents.length / result_limit) - 1) && <span className="material-symbols-outlined no_select" onClick={() => { setPage(page + 1) }}>arrow_forward_ios</span>}
       </div>
       {error ? (<p>Network Error...</p>) : (

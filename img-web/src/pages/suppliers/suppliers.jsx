@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // import { useNavigate } from 'react-router-dom';
 import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
 import axios from 'axios';
@@ -124,7 +124,9 @@ export const Suppliers = () => {
   const [searchCategory, setSearchCategory] = useState("");
   var last_updated = null;
   
-  const result_limit = 25;
+  // const result_limit = 25;
+  const [resultLimit, setResultLimit] = useState(25);
+  const listContainerRef = useRef(null);
 
   const checkUpdate = async () => {
     console.log("checking for update...");
@@ -172,6 +174,18 @@ export const Suppliers = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    console.log(listContainerRef);
+    if (listContainerRef.current) {
+      const containerHeight = listContainerRef.current.clientHeight - 90;
+      const rowHeight = listContainerRef.current.querySelector('tr').clientHeight + 2;
+      const rowsPerPage = Math.floor(containerHeight / rowHeight);
+      console.log(containerHeight, rowHeight, rowsPerPage);
+      setResultLimit(rowsPerPage);
+    }
+  }, [listContainerRef, suppliers]);
+
 
   const handleRowClick = (index) => {
     setSelectedRow(index);
@@ -277,41 +291,6 @@ export const Suppliers = () => {
           selectedRow={selectedRow}
           contents={contents}
         />
-        {/* <div className='list_container'>
-          <div className='page_control_container'>
-          {(page > 0) && <span class="material-symbols-outlined" onClick={() => {setPage(page-1)}}>arrow_back_ios</span>}
-          <p>{`${page*result_limit}-${Math.min((page + 1)*result_limit, filteredContents.length)} / ${filteredContents.length}筆資料`}</p>
-          {(page >=0 && page < (filteredContents.length/result_limit)-1) && <span class="material-symbols-outlined" onClick={() => {setPage(page+1)}}>arrow_forward_ios</span>}
-          </div>
-          {error ? (<p>Network Error...</p>) : (
-            <table>
-              <thead>
-              <tr>
-                {contents.map((data, index) => (
-                  data.display && <th key={index}>{data.showed_attr}</th>
-                ))}
-              </tr>
-              </thead>
-                <tbody>
-                  {filteredContents.map((data, index) => (
-                    (page * result_limit <= index && index < (page + 1) * result_limit) && (
-                      <tr 
-                        key={index}
-                        onClick={() => handleRowClick(index)}
-                        className={selectedRow === index ? 'selected' : ''}
-                      >
-                        {contents.map((content, index) => (
-                          content.display && <td>{data[content.attr]}</td>
-                        ))}
-                      </tr>
-                    )
-                  ))}
-                </tbody>
-              
-            </table>
-          )}
-          {loading && <p>資料載入中...</p>}
-        </div> */}
         <ListContainer
           contents={contents}
           filteredContents={filteredContents}
@@ -319,9 +298,10 @@ export const Suppliers = () => {
           selectedRow={selectedRow}
           page={page}
           setPage={setPage}
-          result_limit={result_limit}
+          result_limit={resultLimit}
           error={error}
           loading={loading}
+          listContainerRef={listContainerRef}
         />
         {showEdit && <PopOut popOutType="edit" dataType="供應商" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
         {showCreate && <PopOut popOutType="create" dataType="供應商" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
