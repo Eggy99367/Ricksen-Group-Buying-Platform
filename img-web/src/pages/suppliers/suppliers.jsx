@@ -9,12 +9,108 @@ export const Suppliers = () => {
   // const navigate = useNavigate();
 
   const initialContents = [
-    {"showed_attr_name": "編號", "attr_name": "id", "required": true, "data": null, "edit": {"visible": false, "disable": true, "entry_type": "entry"}, "create": {"visible": true, "disable": false, "entry_type": "entry"}},
-    {"showed_attr_name": "供應商名稱", "attr_name": "name", "required": true, "data": null, "edit": {"visible": true, "disable": false, "entry_type": "entry"}, "create": {"visible": true, "disable": false, "entry_type": "entry"}},
-    {"showed_attr_name": "統一編號", "attr_name": "tax_id", "required": false, "data": null, "edit": {"visible": true, "disable": false, "entry_type": "entry"}, "create": {"visible": true, "disable": false, "entry_type": "entry"}},
-    {"showed_attr_name": "聯絡人", "attr_name": "contact_person", "required": true, "data": null, "edit": {"visible": true, "disable": false, "entry_type": "entry"}, "create": {"visible": true, "disable": false, "entry_type": "entry"}},
-    {"showed_attr_name": "電話", "attr_name": "phone", "required": true, "data": null, "edit": {"visible": true, "disable": false, "entry_type": "entry"}, "create": {"visible": true, "disable": false, "entry_type": "entry"}},
-    {"showed_attr_name": "Email", "attr_name": "email", "required": false, "data": null, "edit": {"visible": true, "disable": false, "entry_type": "entry"}, "create": {"visible": true, "disable": false, "entry_type": "entry"}}
+    {
+      "showed_attr": "編號",
+      "attr": "id",
+      "required": true,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": true,
+        "disable": true,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": false,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    },
+    {
+      "showed_attr": "供應商名稱",
+      "attr": "name",
+      "required": true,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    },
+    {
+      "showed_attr": "統一編號",
+      "attr": "tax_id",
+      "required": false,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    },
+    {
+      "showed_attr": "聯絡人",
+      "attr": "contact_person",
+      "required": true,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    },
+    {
+      "showed_attr": "電話",
+      "attr": "phone",
+      "required": true,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    },
+    {
+      "showed_attr": "Email",
+      "attr": "email",
+      "required": false,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    }
   ]
   const [contents, setContents] = useState(initialContents);
   const [suppliers, setSuppliers] = useState([]);
@@ -24,8 +120,12 @@ export const Suppliers = () => {
   const [showEdit, setShowEdit] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(0);
+  const [searchCategory, setSearchCategory] = useState("");
   var last_updated = null;
   
+  const result_limit = 25;
+
   const checkUpdate = async () => {
     console.log("checking for update...");
     axios.get(`${API_BASE_URL}/db/last_updated/supplier`, {
@@ -38,6 +138,7 @@ export const Suppliers = () => {
         fetchSuppliers();
         setError(null);
       }
+      setError(false);
       setLoading(false);
     }).catch(error => {
       console.error("There was an error fetching the data!", error);
@@ -83,7 +184,7 @@ export const Suppliers = () => {
   const handleEditClick = () => {
     const updatedContents = contents.map((content, idx) => ({
       ...content,
-      data: suppliers[selectedRow][content.attr_name]
+      data: filteredContents[selectedRow][content.attr]
     }));
     setContents(updatedContents);
     setShowEdit(true);
@@ -93,9 +194,9 @@ export const Suppliers = () => {
     var update_json = {};
     for(const content of inputData){
       if(content.data === ""){
-        update_json[content.attr_name] = null;
+        update_json[content.attr] = null;
         }else{
-        update_json[content.attr_name] = content.data;          
+        update_json[content.attr] = content.data;          
       }
     }
     console.log("handle edit:", update_json);
@@ -124,9 +225,9 @@ export const Suppliers = () => {
     var create_json = {};
     for(const content of inputData){
       if(content.data === ""){
-        create_json[content.attr_name] = null;
+        create_json[content.attr] = null;
         }else{
-          create_json[content.attr_name] = content.data;          
+          create_json[content.attr] = content.data;          
       }
     }
     console.log("handle create:", create_json);
@@ -145,14 +246,22 @@ export const Suppliers = () => {
 
   const handleSearchInputChange = (event) => {
     setSelectedRow(null);
+    setPage(0);
     setSearchTerm(event.target.value);
   }
 
-  const filteredSuppliers = suppliers.filter((supplier) =>
-    Object.values(supplier).some(value =>
-      value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredContents = suppliers.filter((supplier) => (
+    searchTerm === "" ? (true) : (
+      searchCategory === "" ? (
+        Object.entries(supplier).some(([key, value]) =>
+          contents.some(content => content.attr === key && content.display) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      ) : (
+        supplier[searchCategory] && supplier[searchCategory].toString().toLowerCase().includes(searchTerm)
+      ))
     )
   );
+
 
   return (
     <div className='page_main_box'>
@@ -164,10 +273,20 @@ export const Suppliers = () => {
           </div>
           <div className='search_bar_container'>
             <input
+              className='search_bar'
               placeholder="Search Content"
               value={searchTerm}
               onChange={handleSearchInputChange}
             />
+            {searchTerm && <span class="material-symbols-outlined search_cancel_btn" onClick={() => {setSearchTerm("")}}>cancel</span>}
+          </div>
+          <div className='content_drop_down_container'>
+            <select onChange={(e) => {setSearchCategory(e.target.value)}}>
+              <option value="">---篩選器---</option>
+              {contents.map((data, index) => (
+                  data.display && <option value={data.attr}>{data.showed_attr}</option>
+              ))}
+            </select>
           </div>
           <div className='button_container'>
             <button disabled={selectedRow === null} onClick={() => {handleEditClick()}}>編輯</button>
@@ -175,39 +294,43 @@ export const Suppliers = () => {
           </div>
         </div>
         <div className='list_container'>
+          <div className='page_control_container'>
+          {(page > 0) && <span class="material-symbols-outlined" onClick={() => {setPage(page-1)}}>arrow_back_ios</span>}
+          <p>{`${page*result_limit}-${Math.min((page + 1)*result_limit, filteredContents.length)} / ${filteredContents.length}筆資料`}</p>
+          {(page >=0 && page < (filteredContents.length/result_limit)-1) && <span class="material-symbols-outlined" onClick={() => {setPage(page+1)}}>arrow_forward_ios</span>}
+          </div>
           {error ? (<p>Network Error...</p>) : (
             <table>
               <thead>
               <tr>
                 {contents.map((data, index) => (
-                  <th key={index}>{data.showed_attr_name}</th>
+                  data.display && <th key={index}>{data.showed_attr}</th>
                 ))}
               </tr>
               </thead>
                 <tbody>
-                  {filteredSuppliers.map((data, index) => (
-                    <tr 
-                      key={index}
-                      onClick={() => handleRowClick(index)}
-                      className={selectedRow === index ? 'selected' : ''}
-                    >
-                      <td>{data.id}</td>
-                      <td>{data.name}</td>
-                      <td>{data.tax_id}</td>
-                      <td>{data.contact_person}</td>
-                      <td>{data.phone}</td>
-                      <td>{data.email}</td>
-                    </tr>
+                  {filteredContents.map((data, index) => (
+                    (page * result_limit <= index && index < (page + 1) * result_limit) && (
+                      <tr 
+                        key={index}
+                        onClick={() => handleRowClick(index)}
+                        className={selectedRow === index ? 'selected' : ''}
+                      >
+                        {contents.map((content, index) => (
+                          content.display && <td>{data[content.attr]}</td>
+                        ))}
+                      </tr>
+                    )
                   ))}
                 </tbody>
               
             </table>
           )}
           {loading && <p>資料載入中...</p>}
+          {showEdit && <PopOut popOutType="edit" dataType="供應商" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
+          {showCreate && <PopOut popOutType="create" dataType="供應商" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
         </div>
       </div>
-      {showEdit && <PopOut popOutType="edit" dataType="供應商" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
-      {showCreate && <PopOut popOutType="create" dataType="供應商" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
     </div>
   );
 }

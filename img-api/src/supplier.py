@@ -22,8 +22,9 @@ def add_supplier():
         contents = ["name", "tax_id", "contact_person", "phone", "email"]
         new_supplier = Supplier()
 
-        max_id = db.session.query(db.func.max(Supplier.id)).scalar()
-        new_id = f"S{int(max_id[1:]) + 1:04}" if max_id else "S0001"
+        all_ids = db.session.query(Supplier.id).all()
+        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('S')]
+        new_id = f"S{max(numeric_ids) + 1:04}" if len(numeric_ids) else "S0001"
         setattr(new_supplier, "id", new_id)
 
         for content in contents:

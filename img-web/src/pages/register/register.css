@@ -5,7 +5,6 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-
 }
 
 .register_form_container {
@@ -22,27 +21,20 @@
 }
 
 .register_button {
-    margin-top: 10px;
     background-color: #85586F;
     color: white;
-    border: none;
 }
 
 .return_2_login_button {
-    margin-top: 10px;
     background-color: #C3ACD0;
     color: white;
-    border: none;
 }
 
 input.register, button.register {
+    height: 40px;
     width: 70%;
     max-width: 300px;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+    padding: 0 30px;
 }
 
 .register_form {
@@ -50,6 +42,7 @@ input.register, button.register {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 20px;
 }
 
 .form_group {

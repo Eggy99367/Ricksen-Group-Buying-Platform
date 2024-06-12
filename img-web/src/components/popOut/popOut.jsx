@@ -13,7 +13,7 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
   }
 
   useEffect(() => {
-    if(popOutType != "edit"){
+    if(popOutType !== "edit"){
       const updatedData = inputData.map((data, i) => ({
         ...data,
         data: ""
@@ -31,7 +31,7 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
           data[popOutType].visible && (
             <div className='input_row_container' key={index}>
               <div className='input_title_container'>
-                <h3>{data.showed_attr_name}</h3>
+                <h3>{data.showed_attr}</h3>
               </div>
               <div className='input_entry_container'>
                 <input key={index} value={data.data} disabled={data[popOutType].disable} onChange={(e) => handleInputChange(index, e.target.value)}/>

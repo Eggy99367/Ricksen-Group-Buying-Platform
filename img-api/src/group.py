@@ -22,8 +22,9 @@ def add_group():
         contents = ["product_id","selling_price","status","start_time","end_time","min_qty","max_qty","min_qty_pp","max_qty_pp"]
         new_group = Group_Record()
 
-        max_id = db.session.query(db.func.max(Group_Record.id)).scalar()
-        new_id = f"G{int(max_id[1:]) + 1:04}" if max_id else "G0001"
+        all_ids = db.session.query(Group_Record.id).all()
+        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('S')]
+        new_id = f"S{max(numeric_ids) + 1:04}" if len(numeric_ids) else "S0001"
         setattr(new_group, "id", new_id)
 
         for content in contents:

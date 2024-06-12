@@ -22,8 +22,9 @@ def add_product():
         contents = ["name", "cost", "supplier_id", "description", "img"]
         new_product = Product()
 
-        max_id = db.session.query(db.func.max(Product.id)).scalar()
-        new_id = f"P{int(max_id[1:]) + 1:04}" if max_id else "P0001"
+        all_ids = db.session.query(Product.id).all()
+        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('S')]
+        new_id = f"S{max(numeric_ids) + 1:04}" if len(numeric_ids) else "S0001"
         setattr(new_product, "id", new_id)
 
         for content in contents:
