@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
-import { Header, PopOut } from "../../components"
+import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
 import './suppliers.css';
@@ -267,33 +267,17 @@ export const Suppliers = () => {
     <div className='page_main_box'>
       <Header />
       <div className='page_content'>
-        <div className='function_bar_container'>
-          <div className='empty_bar_container'>
-            {/* <button >新增</button> */}
-          </div>
-          <div className='search_bar_container'>
-            <input
-              className='search_bar'
-              placeholder="Search Content"
-              value={searchTerm}
-              onChange={handleSearchInputChange}
-            />
-            {searchTerm && <span class="material-symbols-outlined search_cancel_btn" onClick={() => {setSearchTerm("")}}>cancel</span>}
-          </div>
-          <div className='content_drop_down_container'>
-            <select onChange={(e) => {setSearchCategory(e.target.value)}}>
-              <option value="">---篩選器---</option>
-              {contents.map((data, index) => (
-                  data.display && <option value={data.attr}>{data.showed_attr}</option>
-              ))}
-            </select>
-          </div>
-          <div className='button_container'>
-            <button disabled={selectedRow === null} onClick={() => {handleEditClick()}}>編輯</button>
-            <button onClick={() => {handleCreateClick()}}>新增</button>
-          </div>
-        </div>
-        <div className='list_container'>
+        <FunctionBar
+          searchTerm={searchTerm}
+          handleSearchInputChange={handleSearchInputChange}
+          setSearchTerm={setSearchTerm}
+          setSearchCategory={setSearchCategory}
+          handleEditClick={handleEditClick}
+          handleCreateClick={handleCreateClick}
+          selectedRow={selectedRow}
+          contents={contents}
+        />
+        {/* <div className='list_container'>
           <div className='page_control_container'>
           {(page > 0) && <span class="material-symbols-outlined" onClick={() => {setPage(page-1)}}>arrow_back_ios</span>}
           <p>{`${page*result_limit}-${Math.min((page + 1)*result_limit, filteredContents.length)} / ${filteredContents.length}筆資料`}</p>
@@ -327,9 +311,20 @@ export const Suppliers = () => {
             </table>
           )}
           {loading && <p>資料載入中...</p>}
-          {showEdit && <PopOut popOutType="edit" dataType="供應商" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
-          {showCreate && <PopOut popOutType="create" dataType="供應商" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
-        </div>
+        </div> */}
+        <ListContainer
+          contents={contents}
+          filteredContents={filteredContents}
+          handleRowClick={handleRowClick}
+          selectedRow={selectedRow}
+          page={page}
+          setPage={setPage}
+          result_limit={result_limit}
+          error={error}
+          loading={loading}
+        />
+        {showEdit && <PopOut popOutType="edit" dataType="供應商" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
+        {showCreate && <PopOut popOutType="create" dataType="供應商" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
       </div>
     </div>
   );
