@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from .models import db, Customer
-
+import json
 def get_customers():
     try:
         customers = Customer.query.all()
@@ -25,7 +25,14 @@ def add_customer():
         for content in contents:
             if content in data:
                 setattr(new_customer, content, data[content])
-        setattr(new_customer, "state", {})
+            else:
+                setattr(new_customer, content, "")
+
+        if "state" in data:
+            setattr(new_customer, "state", json.dumps(data["state"]))
+        else:
+            setattr(new_customer, "state", json.dumps({"state": "message"}))  # Default to empty dict if not provided
+
         db.session.add(new_customer)
         db.session.commit()
         return jsonify(new_customer.get_info()), 201

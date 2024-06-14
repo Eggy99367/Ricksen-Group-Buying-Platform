@@ -16,6 +16,13 @@ def get_group(id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
+def get_available_groups():
+    try:
+        groups = Group_Record.query.filter_by(status="開團中").all()
+        return jsonify([group.get_info() for group in groups])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
 def add_group():
     try:
         data = request.json

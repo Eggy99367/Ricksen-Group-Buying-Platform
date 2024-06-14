@@ -51,3 +51,22 @@ def get_views_by_group(grp_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
+def check_viewer_exist(cust_id, grp_id):
+    try:
+        view_records = View_History.query.filter_by(group_id=grp_id, customer_id=cust_id, view_type="view").all()
+        exists = bool(view_records)
+        return jsonify({"exists": exists}), 200
+    except Exception as e:
+        print(f"Error checking viewer existence: {e}")
+        return jsonify({"error": str(e)}), 500
+    
+def check_clicker_exist(cust_id, grp_id):
+    try:
+        view_records = View_History.query.filter_by(group_id=grp_id, customer_id=cust_id, view_type="click").all()
+        exists = bool(view_records)
+        return jsonify({"exists": exists}), 200
+    except Exception as e:
+        print(f"Error checking viewer existence: {e}")
+        return jsonify({"error": str(e)}), 500
+    
+

@@ -48,4 +48,5 @@ COPY . .
 EXPOSE 8081
 
 # Run the application.
-CMD gunicorn -b 0.0.0.0:80 app:app
+CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "4", "--timeout", "180", "app:app"]
+

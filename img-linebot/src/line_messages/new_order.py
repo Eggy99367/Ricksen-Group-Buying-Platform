@@ -14,8 +14,8 @@ def askQuantity(event):
 
     group_id = get_user_states(user_id)["state"]["grp"]
     try:
-        group = requests.get(f'http://crm-api/db/groups/{group_id}').json()
-        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+        group = requests.get(f'http://3.27.144.225:8080/db/groups/{group_id}').json()
+        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
@@ -27,13 +27,22 @@ def askQuantity(event):
     quick_reply_btns = [QuickReplyButton(action=MessageAction(label="取消訂單", text="取消訂單"))]
     for i in range(prod_min_order_per_person, prod_max_order_per_person + 1):
             quick_reply_btns.append(QuickReplyButton(action=MessageAction(label=str(i), text=str(i))))
-    msg = TextSendMessage(
-        text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
-                + f"每人最少訂購數: {group["min_qty_pp"]}\n"
-                + f"每人最多訂購數: {group["max_qty_pp"]}\n"
-                + f"\n(請輸入數字)",
-        quick_reply = QuickReply(items=quick_reply_btns)
-    )
+
+    if prod_max_order_per_person - prod_min_order_per_person <= 19:
+        msg = TextSendMessage(
+            text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
+                    + f"每人最少訂購數: {group["min_qty_pp"]}\n"
+                    + f"每人最多訂購數: {group["max_qty_pp"]}\n"
+                    + f"\n(請輸入數字)",
+            quick_reply = QuickReply(items=quick_reply_btns)
+        )
+    else:
+        msg = TextSendMessage(
+            text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
+                    + f"每人最少訂購數: {group["min_qty_pp"]}\n"
+                    + f"每人最多訂購數: {group["max_qty_pp"]}\n"
+                    + f"\n(請輸入數字)"
+        )
     reply_msg(event, msg)
 
 def updateQuantity(event):
@@ -41,8 +50,8 @@ def updateQuantity(event):
     
     group_id = get_user_states(user_id)["state"]["grp"]
     try:
-        group = requests.get(f'http://crm-api/db/groups/{group_id}').json()
-        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+        group = requests.get(f'http://3.27.144.225:8080/db/groups/{group_id}').json()
+        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
@@ -73,8 +82,8 @@ def orderConfirm(event):
 
     user_state = get_user_states(user_id)
     try:
-        group = requests.get(f'http://crm-api/db/groups/{user_state["state"]["grp"]}').json()
-        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+        group = requests.get(f'http://3.27.144.225:8080/db/groups/{user_state["state"]["grp"]}').json()
+        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
@@ -108,14 +117,14 @@ def placeOrder(event):
 
     user_state = get_user_states(user_id)
     try:
-        group = requests.get(f'http://crm-api/db/groups/{user_state["state"]["grp"]}').json()
-        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+        group = requests.get(f'http://3.27.144.225:8080/db/groups/{user_state["state"]["grp"]}').json()
+        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
 
-    order_info = {"customer_id": user_id, "group_id": user_state["state"]["grp"], "qty": user_state["state"]["qty"]}
-    response = requests.post("http://crm-api/db/orders", json=order_info)
+    order_info = {"customer_id": user_id, "group_id": user_state["state"]["grp"], "qty": user_state["state"]["qty"], "status": "pending"}
+    response = requests.post("http://3.27.144.225:8080/db/orders", json=order_info)
     return response.status_code == 201
 
 def orderConfirmed(event):
@@ -131,3 +140,4 @@ def orderCanceled(event):
     user_id = event.source.user_id
     update_user_states(user_id, state="order_canceled")
     reply_msg(event, "訂單已取消")
+

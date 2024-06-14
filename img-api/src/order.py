@@ -23,7 +23,14 @@ def get_order_by_group(grp_id):
         return jsonify([order.get_info() for order in orders])
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-    
+
+def get_order_by_customer(cust_id):
+    try:
+        orders = Order_Record.query.filter_by(customer_id=cust_id).all()
+        return jsonify([order.get_info() for order in orders])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
 def add_order():
     try:
         data = request.json

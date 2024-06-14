@@ -2,6 +2,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
 from werkzeug.security import generate_password_hash, check_password_hash
+import json 
 
 db = SQLAlchemy()
 Base = declarative_base()
@@ -19,7 +20,8 @@ class Customer(db.Model):
             "id": self.id,
             "name": self.name,
             "phone": self.phone,
-            "email": self.email
+            "email": self.email,
+            "state": self.state
         }
 
     def __repr__(self):
@@ -103,7 +105,7 @@ class Order_Record(db.Model):
     __tablename__ = 'order_record'
     id = db.Column(db.String(10), primary_key=True, nullable=False, unique=True)
     timestamp = db.Column(db.String(20), nullable=False)
-    customer_id = db.Column(db.String(10), db.ForeignKey('customer.id'), nullable=False)
+    customer_id = db.Column(db.String(40), db.ForeignKey('customer.id'), nullable=False)
     group_id = db.Column(db.String(10), db.ForeignKey('group_record.id'), nullable=False)
     qty = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(10), nullable=False)
@@ -125,7 +127,7 @@ class View_History(db.Model):
     __tablename__ = 'view_history'
     id = db.Column(db.String(10), primary_key=True, nullable=False, unique=True)
     timestamp = db.Column(db.String(20), nullable=False)
-    customer_id = db.Column(db.String(10), db.ForeignKey('customer.id'), nullable=False)
+    customer_id = db.Column(db.String(40), db.ForeignKey('customer.id'), nullable=False)
     group_id = db.Column(db.String(10), db.ForeignKey('group_record.id'), nullable=False)
     view_type = db.Column(db.String(10), nullable=False)
 
