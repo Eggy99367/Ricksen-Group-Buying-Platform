@@ -1,18 +1,22 @@
 from flask import request, jsonify
-from .models import db, Product
+from .models import db, Product, Supplier
 
 def get_products():
     try:
         products = Product.query.all()
+        products = [product.get_info() for product in products]
+        for index, product in enumerate(products):
+            products[index]["supplier_name"] = Supplier.query.get_or_404(product["supplier_id"]).get_info()["name"]
         # print(products)
-        return jsonify([product.get_info() for product in products])
+        return jsonify(products)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
 def get_product(id):
     try:
-        product = Product.query.get_or_404(id)
-        return jsonify(product.get_info())
+        product = Product.query.get_or_404(id).get_info()
+        product["supplier_name"] = Supplier.query.get_or_404(product["supplier_id"]).get_info()["name"]
+        return jsonify(product)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     

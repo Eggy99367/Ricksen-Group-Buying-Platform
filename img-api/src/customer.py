@@ -25,7 +25,7 @@ def add_customer():
         for content in contents:
             if content in data:
                 setattr(new_customer, content, data[content])
-        setattr(new_customer, "state", {})
+        setattr(new_customer, "state", "{}")
         db.session.add(new_customer)
         db.session.commit()
         return jsonify(new_customer.get_info()), 201

@@ -3,10 +3,11 @@
   flex: 1;
   width: 100%;
   padding: 30px;
-  border: 1px solid;
   border-radius: 30px;
   overflow: auto;
   position: relative;
+
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .page_control_container {
@@ -19,11 +20,6 @@
   flex-direction: row;
   font-size: 20px;
   color: #d0d0d0;
-
-  /* user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none; */
 }
 
 .page_control_container span {

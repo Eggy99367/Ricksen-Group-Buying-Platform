@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
-import './suppliers.css';
+import './customers.css';
 
-export const Suppliers = () => {
+export const Customers = () => {
   // const navigate = useNavigate();
 
   const initialContents = [
@@ -21,48 +21,14 @@ export const Suppliers = () => {
         "entry_type": "entry"
       },
       "create": {
-        "visible": false,
+        "visible": true,
         "disable": false,
         "entry_type": "entry"
       }
     },
     {
-      "showed_attr": "供應商名稱",
+      "showed_attr": "姓名",
       "attr": "name",
-      "required": true,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
-      "showed_attr": "統一編號",
-      "attr": "tax_id",
-      "required": false,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
-      "showed_attr": "聯絡人",
-      "attr": "contact_person",
       "required": true,
       "display": true,
       "data": null,
@@ -97,7 +63,7 @@ export const Suppliers = () => {
     {
       "showed_attr": "Email",
       "attr": "email",
-      "required": false,
+      "required": true,
       "display": true,
       "data": null,
       "edit": {
@@ -113,7 +79,7 @@ export const Suppliers = () => {
     }
   ]
   const [contents, setContents] = useState(initialContents);
-  const [suppliers, setSuppliers] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -129,14 +95,14 @@ export const Suppliers = () => {
 
   const checkUpdate = async () => {
     console.log("checking for update...");
-    axios.get(`${API_BASE_URL}/db/last_updated/supplier`, {
+    axios.get(`${API_BASE_URL}/db/last_updated/customer`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
       if(last_updated === null || response.data.time > last_updated){
         last_updated = response.data.time;
-        fetchSuppliers();
+        fetchCustomers();
         setError(null);
       }
       setError(false);
@@ -147,15 +113,15 @@ export const Suppliers = () => {
     });
   }
 
-  const fetchSuppliers = async () => {
+  const fetchCustomers = async () => {
     console.log("Fetching data from API...");
-    axios.get(`${API_BASE_URL}/db/suppliers`, {
+    axios.get(`${API_BASE_URL}/db/customers`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
         console.log("Data fetched successfully:", response);
-        setSuppliers(Object.values(response.data));
+        setCustomers(Object.values(response.data));
         setLoading(false);
         setError(null);
       }).catch(error => {
@@ -172,7 +138,7 @@ export const Suppliers = () => {
       const rowsPerPage = Math.floor(containerHeight / rowHeight);
       setResultLimit(rowsPerPage);
     }
-  }, [listContainerRef, suppliers, searchTerm]);
+  }, [listContainerRef, customers, searchTerm]);
 
   const handleEditSubmit = async (inputData) => {
     var update_json = {};
@@ -185,7 +151,7 @@ export const Suppliers = () => {
     }
     console.log("handle edit:", update_json);
     try {
-      await axios.put(`${API_BASE_URL}/db/suppliers/${update_json.id}`, update_json, {
+      await axios.put(`${API_BASE_URL}/db/customers/${update_json.id}`, update_json, {
         headers: {
           'Content-Type': 'application/json',
           "ngrok-skip-browser-warning": 1
@@ -208,7 +174,7 @@ export const Suppliers = () => {
     }
     console.log("handle create:", create_json);
     try {
-      await axios.post(`${API_BASE_URL}/db/suppliers`, create_json, {
+      await axios.post(`${API_BASE_URL}/db/customers`, create_json, {
         headers: {
           'Content-Type': 'application/json',
           "ngrok-skip-browser-warning": 1
@@ -220,14 +186,14 @@ export const Suppliers = () => {
     }
   }
 
-  const filteredContents = suppliers.filter((supplier) => (
+  const filteredContents = customers.filter((customer) => (
     searchTerm === "" ? (true) : (
       searchCategory === "" ? (
-        Object.entries(supplier).some(([key, value]) =>
+        Object.entries(customer).some(([key, value]) =>
           contents.some(content => content.attr === key && content.display) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        supplier[searchCategory] && supplier[searchCategory].toString().toLowerCase().includes(searchTerm)
+        customer[searchCategory] && customer[searchCategory].toString().toLowerCase().includes(searchTerm)
       ))
     )
   );
@@ -301,11 +267,11 @@ export const Suppliers = () => {
           loading={loading}
           listContainerRef={listContainerRef}
         />
-        {showEdit && <PopOut popOutType="edit" dataType="供應商" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
-        {showCreate && <PopOut popOutType="create" dataType="供應商" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
+        {showEdit && <PopOut popOutType="edit" dataType="客戶" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
+        {showCreate && <PopOut popOutType="create" dataType="客戶" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
       </div>
     </div>
   );
 }
 
-export default Suppliers;
+export default Customers;

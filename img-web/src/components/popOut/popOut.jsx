@@ -26,7 +26,7 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
     <div className='pop_out_bg'>
       <div className='pop_out_container'>
         <h2>{popOutType === "edit" ? `編輯` : `新增`}{dataType}</h2>
-        <span className="material-symbols-outlined pop_out_close_btn" onClick={() => {close()}}>close</span>
+        <span className="material-symbols-outlined pop_out_close_btn no_select" onClick={() => {close()}}>close</span>
         {inputData.map((data, index) => (
           data[popOutType].visible && (
             <div className='input_row_container' key={index}>

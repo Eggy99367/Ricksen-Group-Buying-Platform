@@ -9,7 +9,7 @@ export const FunctionBar = ({ searchTerm, handleSearchInputChange, setSearchTerm
       <div className='search_bar_container'>
         <input
           className='search_bar'
-          placeholder="Search Content"
+          placeholder="搜尋"
           onChange={handleSearchInputChange}
         />
         {searchTerm && <span className="material-symbols-outlined search_cancel_btn" onClick={() => setSearchTerm('')}>cancel</span>}

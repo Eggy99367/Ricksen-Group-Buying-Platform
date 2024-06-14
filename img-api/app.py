@@ -73,7 +73,10 @@ def get_last_updated(table_name):
         last_updated = LastUpdated.query.get_or_404(table_name)
         return jsonify(last_updated.get_info())
     except Exception as e:
-        return jsonify("0")
+        return jsonify({
+            "table_name": table_name,
+            "time": "0"
+        })
 
 # ----------------------------------------------------------------------------------------
 
@@ -156,6 +159,10 @@ def get_suppliers():
 @app.route('/db/suppliers/<string:id>', methods=['GET'])
 def get_supplier(id):
     return supplier.get_supplier(id)
+
+@app.route('/db/suppliers/names', methods=['GET'])
+def get_supplier_names():
+    return supplier.get_supplier_names()
 
 @app.route('/db/suppliers', methods=['POST'])
 def add_supplier():

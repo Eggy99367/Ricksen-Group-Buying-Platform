@@ -16,6 +16,14 @@ def get_supplier(id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
+def get_supplier_names():
+    try:
+        suppliers = db.session.query(Supplier.id, Supplier.name).all()
+        names = {data.id: data.name for data in suppliers}
+        return jsonify(names)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
 def add_supplier():
     try:
         data = request.json
