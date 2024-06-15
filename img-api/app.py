@@ -186,6 +186,10 @@ def get_products():
 def get_product(id):
     return product.get_product(id)
 
+@app.route('/db/products/names', methods=['GET'])
+def get_product_names():
+    return product.get_product_names()
+
 @app.route('/db/products', methods=['POST'])
 def add_product():
     return product.add_product()

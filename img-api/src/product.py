@@ -6,7 +6,7 @@ def get_products():
         products = Product.query.all()
         products = [product.get_info() for product in products]
         for index, product in enumerate(products):
-            products[index]["supplier_name"] = Supplier.query.get_or_404(product["supplier_id"]).get_info()["name"]
+            products[index]["supplier_name"] = f"{product["supplier_id"]}:{Supplier.query.get_or_404(product["supplier_id"]).get_info()["name"]}"
         # print(products)
         return jsonify(products)
     except Exception as e:
@@ -16,7 +16,16 @@ def get_product(id):
     try:
         product = Product.query.get_or_404(id).get_info()
         product["supplier_name"] = Supplier.query.get_or_404(product["supplier_id"]).get_info()["name"]
+        product["supplier_name"] = f"{product["supplier_id"]}:{Supplier.query.get_or_404(product["supplier_id"]).get_info()["name"]}"
         return jsonify(product)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
+def get_product_names():
+    try:
+        products = db.session.query(Product.id, Product.name).all()
+        names = {data.id: data.name for data in products}
+        return jsonify(names)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
@@ -27,8 +36,8 @@ def add_product():
         new_product = Product()
 
         all_ids = db.session.query(Product.id).all()
-        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('S')]
-        new_id = f"S{max(numeric_ids) + 1:04}" if len(numeric_ids) else "S0001"
+        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('P')]
+        new_id = f"P{max(numeric_ids) + 1:04}" if len(numeric_ids) else "P0001"
         setattr(new_product, "id", new_id)
 
         for content in contents:

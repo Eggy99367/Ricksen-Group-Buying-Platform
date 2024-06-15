@@ -17,8 +17,8 @@ def add_view():
         new_view = View_History()
 
         all_ids = db.session.query(View_History.id).all()
-        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('S')]
-        new_id = f"S{max(numeric_ids) + 1:04}" if len(numeric_ids) else "S0001"
+        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('V')]
+        new_id = f"V{max(numeric_ids) + 1:04}" if len(numeric_ids) else "V0001"
         setattr(new_view, "id", new_id)
         setattr(new_view, "timestamp", get_cur_time())
 

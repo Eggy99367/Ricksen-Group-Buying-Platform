@@ -15,6 +15,7 @@ export const Suppliers = () => {
       "required": true,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": true,
@@ -32,6 +33,7 @@ export const Suppliers = () => {
       "required": true,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -49,6 +51,7 @@ export const Suppliers = () => {
       "required": false,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -66,6 +69,7 @@ export const Suppliers = () => {
       "required": true,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -83,6 +87,7 @@ export const Suppliers = () => {
       "required": true,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -100,6 +105,7 @@ export const Suppliers = () => {
       "required": false,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
