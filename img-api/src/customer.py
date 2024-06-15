@@ -1,6 +1,10 @@
 from flask import request, jsonify
 from .models import db, Customer
 
+def get_customers_count():
+    customers = Customer.query.all()
+    return len(customers)
+
 def get_customers():
     try:
         customers = Customer.query.all()

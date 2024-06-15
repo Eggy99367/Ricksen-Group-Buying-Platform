@@ -10,6 +10,10 @@ def get_orders():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
+def get_orders_count():
+    orders = Order_Record.query.all()
+    return len(orders)
+    
 def get_order(id):
     try:
         order = Order_Record.query.get_or_404(id)

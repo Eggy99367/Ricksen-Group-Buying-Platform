@@ -51,4 +51,31 @@ def get_views_by_group(grp_id):
         return jsonify([view.get_info() for view in views])
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
+def get_customers_views():
+    try:
+        # Select distinct customer_id where view_type is "view"
+        unique_customer_views = View_History.query.filter_by(view_type="view").distinct(View_History.customer_id).all()
+        # Generate a list of information for each unique customer view
+        customer_views_info = [view.get_info() for view in unique_customer_views]
+        return jsonify(customer_views_info)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
     
+def get_all_views_count():
+    views = View_History.query.filter_by(view_type="view").all()
+    return len(views)
+
+def get_customers_clicks():
+    try:
+        # Select distinct customer_id where view_type is "view"
+        unique_customer_views = View_History.query.filter_by(view_type="click").distinct(View_History.customer_id).all()
+        # Generate a list of information for each unique customer view
+        customer_views_info = [view.get_info() for view in unique_customer_views]
+        return jsonify(customer_views_info)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
+def get_all_clicks_count():
+    clicks = views = View_History.query.filter_by(view_type="click").all()
+    return len(clicks)
