@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
-import './customers.css';
+import './groups.css';
 
-export const Customers = () => {
+export const Groups = () => {
   // const navigate = useNavigate();
 
   const initialContents = [
@@ -22,14 +22,33 @@ export const Customers = () => {
         "entry_type": "entry"
       },
       "create": {
-        "visible": true,
+        "visible": false,
         "disable": false,
         "entry_type": "entry"
       }
     },
     {
-      "showed_attr": "姓名",
-      "attr": "name",
+      "showed_attr": "商品",
+      "attr": "product_id",
+      "required": true,
+      "display": true,
+      "data": null,
+      "special": "product_name",
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "options": null
+    },
+    {
+      "showed_attr": "售價",
+      "attr": "selling_price",
       "required": true,
       "display": true,
       "data": null,
@@ -46,9 +65,64 @@ export const Customers = () => {
       }
     },
     {
-      "showed_attr": "電話",
-      "attr": "phone",
+      "showed_attr": "狀態",
+      "attr": "status",
       "required": true,
+      "display": true,
+      "data": null,
+      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "options": [["尚未開團", ""], ["開團", ""], ["成團", ""], ["棄團", ""]]
+    },
+    {
+      "showed_attr": "開團時間",
+      "attr": "start_time",
+      "required": true,
+      "display": true,
+      "data": null,
+      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      }
+    },
+    {
+      "showed_attr": "收團時間",
+      "attr": "end_time",
+      "required": false,
+      "display": true,
+      "data": null,
+      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      }
+    },
+    {
+      "showed_attr": "最少購買數",
+      "attr": "min_qty",
+      "required": false,
       "display": true,
       "data": null,
       "special": null,
@@ -64,9 +138,45 @@ export const Customers = () => {
       }
     },
     {
-      "showed_attr": "Email",
-      "attr": "email",
-      "required": true,
+      "showed_attr": "最多購買數",
+      "attr": "max_qty",
+      "required": false,
+      "display": true,
+      "data": null,
+      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    },
+    {
+      "showed_attr": "最少單人購買數",
+      "attr": "min_qty_pp",
+      "required": false,
+      "display": true,
+      "data": null,
+      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    },
+    {
+      "showed_attr": "最多單人購買數",
+      "attr": "max_qty_pp",
+      "required": false,
       "display": true,
       "data": null,
       "special": null,
@@ -83,7 +193,8 @@ export const Customers = () => {
     }
   ]
   const [contents, setContents] = useState(initialContents);
-  const [customers, setCustomers] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [product_names, setProductNames] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -93,20 +204,37 @@ export const Customers = () => {
   const [page, setPage] = useState(0);
   const [searchCategory, setSearchCategory] = useState("");
   var last_updated = null;
+  var sup_last_updated = null;
   
   const [resultLimit, setResultLimit] = useState(25);
   const listContainerRef = useRef(null);
 
   const checkUpdate = async () => {
     console.log("checking for update...");
-    axios.get(`${API_BASE_URL}/db/last_updated/customer`, {
+    axios.get(`${API_BASE_URL}/db/last_updated/group`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
       if(last_updated === null || response.data.time > last_updated){
         last_updated = response.data.time;
-        fetchCustomers();
+        fetchGroups();
+        setError(null);
+      }
+      setError(false);
+      setLoading(false);
+    }).catch(error => {
+      console.error("There was an error fetching the data!", error);
+      setError(error);
+    });
+    axios.get(`${API_BASE_URL}/db/last_updated/product`, {
+      headers: {
+        "ngrok-skip-browser-warning": 1
+      }
+    }).then(response => {
+      if(sup_last_updated === null || response.data.time > sup_last_updated){
+        sup_last_updated = response.data.time;
+        fetchProductNames();
         setError(null);
       }
       setError(false);
@@ -117,15 +245,33 @@ export const Customers = () => {
     });
   }
 
-  const fetchCustomers = async () => {
+  const fetchGroups = async () => {
     console.log("Fetching data from API...");
-    axios.get(`${API_BASE_URL}/db/customers`, {
+    axios.get(`${API_BASE_URL}/db/groups`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
         console.log("Data fetched successfully:", response);
-        setCustomers(Object.values(response.data));
+        setGroups(Object.values(response.data));
+        setLoading(false);
+        setError(null);
+      }).catch(error => {
+        console.error("There was an error fetching the data!", error);
+        setError(error);
+        setLoading(false);
+    });
+  }
+
+  const fetchProductNames = async () => {
+    console.log("Fetching data from API...");
+    axios.get(`${API_BASE_URL}/db/products/names`, {
+      headers: {
+        "ngrok-skip-browser-warning": 1
+      }
+    }).then(response => {
+        console.log("Data fetched successfully:", response);
+        setProductNames(Object.entries(response.data));
         setLoading(false);
         setError(null);
       }).catch(error => {
@@ -142,7 +288,7 @@ export const Customers = () => {
       const rowsPerPage = Math.floor(containerHeight / rowHeight);
       setResultLimit(rowsPerPage);
     }
-  }, [listContainerRef, customers, searchTerm]);
+  }, [listContainerRef, groups, searchTerm]);
 
   const handleEditSubmit = async (inputData) => {
     var update_json = {};
@@ -155,7 +301,7 @@ export const Customers = () => {
     }
     console.log("handle edit:", update_json);
     try {
-      await axios.put(`${API_BASE_URL}/db/customers/${update_json.id}`, update_json, {
+      await axios.put(`${API_BASE_URL}/db/groups/${update_json.id}`, update_json, {
         headers: {
           'Content-Type': 'application/json',
           "ngrok-skip-browser-warning": 1
@@ -178,7 +324,7 @@ export const Customers = () => {
     }
     console.log("handle create:", create_json);
     try {
-      await axios.post(`${API_BASE_URL}/db/customers`, create_json, {
+      await axios.post(`${API_BASE_URL}/db/groups`, create_json, {
         headers: {
           'Content-Type': 'application/json',
           "ngrok-skip-browser-warning": 1
@@ -190,14 +336,15 @@ export const Customers = () => {
     }
   }
 
-  const filteredContents = customers.filter((customer) => (
+  
+  const filteredContents = groups.filter((group) => (
     searchTerm === "" ? (true) : (
       searchCategory === "" ? (
-        Object.entries(customer).some(([key, value]) =>
-          contents.some(content => content.attr === key && content.display) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        Object.entries(group).some(([key, value]) =>
+          contents.some(content => content.display && content.attr === key) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        customer[searchCategory] && customer[searchCategory].toString().toLowerCase().includes(searchTerm)
+        group[searchCategory] && group[searchCategory].toString().toLowerCase().includes(searchTerm)
       ))
     )
   );
@@ -222,10 +369,11 @@ export const Customers = () => {
   }
 
   const handleEditClick = () => {
-    const updatedContents = contents.map((content, idx) => ({
+    var updatedContents = contents.map((content, idx) => ({
       ...content,
-      data: filteredContents[selectedRow][content.attr]
+      data: filteredContents[selectedRow][content.attr],
     }));
+    updatedContents[1].options = product_names;
     setContents(updatedContents);
     setShowEdit(true);
   }
@@ -235,6 +383,9 @@ export const Customers = () => {
   }
 
   const handleCreateClick = () => {
+    var updatedContents = contents;
+    updatedContents[1].options = product_names;
+    setContents(updatedContents);
     setShowCreate(true);
   }
 
@@ -271,11 +422,11 @@ export const Customers = () => {
           loading={loading}
           listContainerRef={listContainerRef}
         />
-        {showEdit && <PopOut popOutType="edit" dataType="客戶" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
-        {showCreate && <PopOut popOutType="create" dataType="客戶" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
+        {showEdit && <PopOut popOutType="edit" dataType="團購項目" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
+        {showCreate && <PopOut popOutType="create" dataType="團購項目" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
       </div>
     </div>
   );
 }
 
-export default Customers;
+export default Groups;

@@ -15,6 +15,7 @@ export const Products = () => {
       "required": true,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": true,
@@ -32,6 +33,7 @@ export const Products = () => {
       "required": true,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -49,6 +51,7 @@ export const Products = () => {
       "required": true,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -66,6 +69,7 @@ export const Products = () => {
       "required": true,
       "display": true,
       "data": null,
+      "special": "supplier_name",
       "edit": {
         "visible": true,
         "disable": false,
@@ -76,9 +80,7 @@ export const Products = () => {
         "disable": false,
         "entry_type": "dropdown"
       },
-      "options": {
-        "S0001":"\u5c0f\u7c73","S0002":"s1","S0003":"s1","S0004":"s1","S0005":"5","S0006":"s1","S0007":"s1","S0008":"s1","S0009":"s1","S0010":"s1"
-      }
+      "options": null
     },
     {
       "showed_attr": "商品敘述",
@@ -86,6 +88,7 @@ export const Products = () => {
       "required": false,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -103,6 +106,7 @@ export const Products = () => {
       "required": false,
       "display": true,
       "data": null,
+      "special": null,
       "edit": {
         "visible": true,
         "disable": false,

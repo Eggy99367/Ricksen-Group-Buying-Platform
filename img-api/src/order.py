@@ -35,8 +35,8 @@ def add_order():
         new_order = Order_Record()
 
         all_ids = db.session.query(Order_Record.id).all()
-        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('S')]
-        new_id = f"S{max(numeric_ids) + 1:04}" if len(numeric_ids) else "S0001"
+        numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('X')]
+        new_id = f"X{max(numeric_ids) + 1:04}" if len(numeric_ids) else "X0001"
         setattr(new_order, "id", new_id)
         setattr(new_order, "timestamp", get_cur_time())
 
