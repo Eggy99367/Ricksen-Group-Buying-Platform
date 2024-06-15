@@ -69,12 +69,15 @@ export const Products = () => {
       "edit": {
         "visible": true,
         "disable": false,
-        "entry_type": "entry"
+        "entry_type": "dropdown"
       },
       "create": {
         "visible": true,
         "disable": false,
-        "entry_type": "entry"
+        "entry_type": "dropdown"
+      },
+      "options": {
+        "S0001":"\u5c0f\u7c73","S0002":"s1","S0003":"s1","S0004":"s1","S0005":"5","S0006":"s1","S0007":"s1","S0008":"s1","S0009":"s1","S0010":"s1"
       }
     },
     {
@@ -114,7 +117,7 @@ export const Products = () => {
   ]
   const [contents, setContents] = useState(initialContents);
   const [products, setProducts] = useState([]);
-  const [suppliers, setSuppliers] = useState({});
+  const [supplier_names, setSupplierNames] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -191,7 +194,7 @@ export const Products = () => {
       }
     }).then(response => {
         console.log("Data fetched successfully:", response);
-        setSuppliers(Object.values(response.data));
+        setSupplierNames(Object.entries(response.data));
         setLoading(false);
         setError(null);
       }).catch(error => {
@@ -288,10 +291,11 @@ export const Products = () => {
   }
 
   const handleEditClick = () => {
-    const updatedContents = contents.map((content, idx) => ({
+    var updatedContents = contents.map((content, idx) => ({
       ...content,
-      data: filteredContents[selectedRow][content.attr]
+      data: filteredContents[selectedRow][content.attr],
     }));
+    updatedContents[3].options = supplier_names;
     setContents(updatedContents);
     setShowEdit(true);
   }
@@ -301,6 +305,9 @@ export const Products = () => {
   }
 
   const handleCreateClick = () => {
+    var updatedContents = contents;
+    updatedContents[3].options = supplier_names;
+    setContents(updatedContents);
     setShowCreate(true);
   }
 

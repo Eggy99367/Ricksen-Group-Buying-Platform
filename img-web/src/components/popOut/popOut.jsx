@@ -22,6 +22,8 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
     }
   }, []);
 
+  console.log(contents[3].options);
+
   return (
     <div className='pop_out_bg'>
       <div className='pop_out_container'>
@@ -34,7 +36,18 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
                 <h3>{data.showed_attr}</h3>
               </div>
               <div className='input_entry_container'>
-                <input key={index} value={data.data} disabled={data[popOutType].disable} onChange={(e) => handleInputChange(index, e.target.value)}/>
+                {data[popOutType].entry_type === "entry" ? (
+                  <input key={index} value={data.data} disabled={data[popOutType].disable} onChange={(e) => handleInputChange(index, e.target.value)}/>             
+                ) : (
+                  <div className='input_entry_container'>
+                    <input autoComplete="on" list="suggestions" value={data.data} onChange={(e) => handleInputChange(index, e.target.value)}/> 
+                    <datalist id="suggestions">
+                      {Object.values(data.options).map((opt, index) => (
+                        <option value={opt[0]}>{opt[1]}</option>
+                      ))}
+                    </datalist>
+                  </div>
+                )}
               </div>
             </div>
           )
