@@ -201,13 +201,13 @@ def get_groups():
 def get_group(id):
     return group.get_group(id)
 
-@app.route('/db/groups', methods=['POST'])
-def add_group():
-    return group.add_group()
-
 @app.route('/db/groups/available', methods=['GET'])
 def get_available_groups():
     return group.get_available_groups()
+
+@app.route('/db/groups', methods=['POST'])
+def add_group():
+    return group.add_group()
 
 @app.route('/db/groups/<string:id>', methods=['PUT'])
 def update_group(id):
@@ -234,6 +234,14 @@ def get_order_by_group(grp_id):
 @app.route('/db/orders/by_custid/<string:cust_id>', methods=['GET'])
 def get_order_by_customer(cust_id):
     return order.get_order_by_customer(cust_id)
+
+@app.route('/db/orders/<string:grp_id>/total', methods=['GET'])
+def get_group_total_qty(grp_id):
+    return order.get_group_total_qty(grp_id)
+
+@app.route('/db/orders/<string:grp_id>/total/<string:cust_id>', methods=['GET'])
+def get_group_total_customer_qty(grp_id, cust_id):
+    return order.get_group_total_customer_qty(grp_id, cust_id)
 
 @app.route('/db/orders', methods=['POST'])
 def add_order():

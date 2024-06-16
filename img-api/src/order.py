@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from .models import db, Order_Record
 from .basics import *
+from sqlalchemy import func
 
 def get_orders():
     try:
@@ -28,6 +29,22 @@ def get_order_by_customer(cust_id):
     try:
         orders = Order_Record.query.filter_by(customer_id=cust_id).all()
         return jsonify([order.get_info() for order in orders])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+def get_group_total_qty(grp_id):
+    try:
+        total_qty = db.session.query(func.sum(Order_Record.qty)).filter(Order_Record.group_id == grp_id).scalar()
+        total_qty = total_qty if total_qty is not None else 0
+        return jsonify({'total_qty': total_qty}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
+def get_group_total_customer_qty(grp_id, cust_id):
+    try:
+        total_qty = db.session.query(func.sum(Order_Record.qty)).filter(Order_Record.group_id == grp_id, Order_Record.customer_id == cust_id).scalar()
+        total_qty = total_qty if total_qty is not None else 0
+        return jsonify({'total_qty': total_qty}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
