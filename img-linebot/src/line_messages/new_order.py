@@ -14,8 +14,8 @@ def askQuantity(event):
 
     group_id = get_user_states(user_id)["state"]["grp"]
     try:
-        group = requests.get(f'http://3.27.144.225:8080/db/groups/{group_id}').json()
-        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
+        group = requests.get(f'{API_URL}/db/groups/{group_id}').json()
+        prod = requests.get(f"{API_URL}/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
@@ -24,8 +24,8 @@ def askQuantity(event):
     prod_max_order_per_person = group["max_qty_pp"] if group["max_qty_pp"] else 20
 
     prod_max_order = group["max_qty"]
-    total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group_id}/total').json()["total_qty"])
-    user_total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group_id}/total/{user_id}').json()["total_qty"])
+    total_order = int(requests.get(f'{API_URL}/db/orders/{group_id}/total').json()["total_qty"])
+    user_total_order = int(requests.get(f'{API_URL}/db/orders/{group_id}/total/{user_id}').json()["total_qty"])
 
     user_remain = prod_max_order_per_person - user_total_order
 
@@ -67,7 +67,7 @@ def updateQuantity(event):
     
     group_id = get_user_states(user_id)["state"]["grp"]
     try:
-        group = requests.get(f'http://3.27.144.225:8080/db/groups/{group_id}').json()
+        group = requests.get(f'{API_URL}/db/groups/{group_id}').json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
@@ -76,8 +76,8 @@ def updateQuantity(event):
     prod_max_order_per_person = group["max_qty_pp"] if group["max_qty_pp"] else 20
 
     prod_max_order = group["max_qty"]
-    total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group_id}/total').json()["total_qty"])
-    user_total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group_id}/total/{user_id}').json()["total_qty"])
+    total_order = int(requests.get(f'{API_URL}/db/orders/{group_id}/total').json()["total_qty"])
+    user_total_order = int(requests.get(f'{API_URL}/db/orders/{group_id}/total/{user_id}').json()["total_qty"])
 
     user_remain = prod_max_order_per_person - user_total_order
 
@@ -117,8 +117,8 @@ def orderConfirm(event):
 
     user_state = get_user_states(user_id)
     try:
-        group = requests.get(f'http://3.27.144.225:8080/db/groups/{user_state["state"]["grp"]}').json()
-        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
+        group = requests.get(f'{API_URL}/db/groups/{user_state["state"]["grp"]}').json()
+        prod = requests.get(f"{API_URL}/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
@@ -152,17 +152,17 @@ def placeOrder(event):
 
     user_state = get_user_states(user_id)
     try:
-        group = requests.get(f'http://3.27.144.225:8080/db/groups/{user_state["state"]["grp"]}').json()
-        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
+        group = requests.get(f'{API_URL}/db/groups/{user_state["state"]["grp"]}').json()
+        prod = requests.get(f"{API_URL}/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
 
     order_info = {"customer_id": user_id, "group_id": user_state["state"]["grp"], "qty": user_state["state"]["qty"], "status": "pending"}
-    response = requests.post("http://3.27.144.225:8080/db/orders", json=order_info)
-    total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group["id"]}/total').json()["total_qty"])
+    response = requests.post(f"{API_URL}/db/orders", json=order_info)
+    total_order = int(requests.get(f'{API_URL}/db/orders/{group["id"]}/total').json()["total_qty"])
     if total_order == group["max_qty"]:
-        requests.put(f"http://3.27.144.225:8080/db/groups/{group["id"]}", json={"status": "收團"})
+        requests.put(f"{API_URL}/db/groups/{group["id"]}", json={"status": "收團"})
     return response.status_code == 201
 
 def orderConfirmed(event):

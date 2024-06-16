@@ -44,7 +44,7 @@ def groupBuyingInfo(event): #團購資訊
     user_id = event.source.user_id
     update_user_states(user_id, state="get_prods_info")
 
-    response = requests.get('http://3.27.144.225:8080/db/groups/available')
+    response = requests.get(f'{API_URL}/db/groups/available')
     groups = response.json()
     if len(groups) == 0:
         reply_msg(event, f"抱歉，目前沒有正在進行的開團項目！")
@@ -52,11 +52,11 @@ def groupBuyingInfo(event): #團購資訊
 
     prod_carousel = []
     for group in groups:
-        exist = requests.get(f"http://3.27.144.225:8080/db/views/check_viewer_exist/{user_id}/{group['id']}").json()
+        exist = requests.get(f"{API_URL}/db/views/check_viewer_exist/{user_id}/{group['id']}").json()
         if not exist["exists"]:
-            requests.post(f"http://3.27.144.225:8080/db/views", json={"customer_id": user_id, "group_id": group["id"], "view_type": "view"})
+            requests.post(f"{API_URL}/db/views", json={"customer_id": user_id, "group_id": group["id"], "view_type": "view"})
 
-        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
+        prod = requests.get(f"{API_URL}/db/products/{group['product_id']}").json()
         current_prod = CarouselColumn(
             thumbnail_image_url = prod["img"],
             title = prod["name"], 
@@ -86,13 +86,13 @@ def prodSelectConfirm(event): # 我要下單 [group_id]!
     if match:
         try:
             group_id = match.group(1)
-            group = requests.get(f'http://3.27.144.225:8080/db/groups/{group_id}').json()
-            prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
+            group = requests.get(f'{API_URL}/db/groups/{group_id}').json()
+            prod = requests.get(f"{API_URL}/db/products/{group['product_id']}").json()
             update_user_states(user_id, state="prod_select_confirm", grp=group['id'])
 
-            exist = requests.get(f"http://3.27.144.225:8080/db/views/check_clicker_exist/{user_id}/{group['id']}").json()
+            exist = requests.get(f"{API_URL}/db/views/check_clicker_exist/{user_id}/{group['id']}").json()
             if not exist["exists"]:
-                requests.post(f"http://3.27.144.225:8080/db/views", json={"customer_id": user_id, "group_id": group["id"], "view_type": "click"})
+                requests.post(f"{API_URL}/db/views", json={"customer_id": user_id, "group_id": group["id"], "view_type": "click"})
 
         except Exception as e:
             reply_msg(event, f"抱歉，商品[{group_id}]不存在或不開放下單！")
