@@ -52,33 +52,43 @@ def get_views_by_group(grp_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-def get_customers_views():
+## Get the total views from all customers(each customer count as one no matter how many times they view)
+def get_customers_views_count():
     try:
         # Select distinct customer_id where view_type is "view"
-        unique_customer_views = View_History.query.filter_by(view_type="view").distinct(View_History.customer_id).all()
-        # Generate a list of information for each unique customer view
-        customer_views_info = [view.get_info() for view in unique_customer_views]
-        return jsonify(customer_views_info)
+        unique_customer_views = View_History.query.filter_by(view_type="view").group_by(View_History.customer_id).count()
+    
+        return jsonify({'Total Customers Views Counts': unique_customer_views}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-    
-def get_all_views_count():
-    views = View_History.query.filter_by(view_type="view").all()
-    return len(views)
 
-def get_customers_clicks():
+## Get the total views(count even the same customer views multiple time)
+def get_all_views_count():
     try:
-        # Select distinct customer_id where view_type is "view"
-        unique_customer_views = View_History.query.filter_by(view_type="click").distinct(View_History.customer_id).all()
-        # Generate a list of information for each unique customer view
-        customer_views_info = [view.get_info() for view in unique_customer_views]
-        return jsonify(customer_views_info)
+        total_views = View_History.query.filter_by(view_type="view").count()
+        return jsonify({'Total Views Counts': total_views}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-    
+
+## Get the total clics from all customers(each customer count as one no matter how many times they click)
+def get_customers_clicks_count():
+    try:
+        # Select distinct customer_id where view_type is "view"
+        unique_customer_views = View_History.query.filter_by(view_type="click").group_by(View_History.customer_id).count()
+        # Generate a list of information for each unique customer view
+        return jsonify({'Total Customers Clicks Counts': unique_customer_views}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+## Get the total clicks(count even the same customer clicks multiple time)
 def get_all_clicks_count():
-    clicks = views = View_History.query.filter_by(view_type="click").all()
-    return len(clicks)
+    try:
+        total_views = View_History.query.filter_by(view_type="click").count()
+        return jsonify({'Total Clciks Counts': total_views}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
 def check_viewer_exist(cust_id, grp_id):
     try:
         view_records = View_History.query.filter_by(group_id=grp_id, customer_id=cust_id, view_type="view").all()

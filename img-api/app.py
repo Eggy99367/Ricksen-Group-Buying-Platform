@@ -321,63 +321,33 @@ def check_clicker_exist(cust_id, grp_id):
 #         return jsonify({"error": "cannot make division by zero"}), 400
 
 @app.route('/db/analysis/customers', methods=['GET'])
-def get_total_customers():
-    totalcustomers = customer.get_customers_count()
-
-    try:
-        return jsonify({'Number of customers': totalcustomers}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
-    
+def count_total_customers():
+    return customer.get_customers_count()
 
 @app.route('/db/analysis/item/totalviews', methods=['GET'])
-def get_all_views():
-    totalviews = view.get_all_views_count()
-
-    try:
-        return jsonify({'Total Counts': totalviews}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+def count_all_views():
+    return view.get_all_views_count()
 
 @app.route('/db/analysis/item/customerviews', methods=['GET'])
-def get_customers_views():
-    totalviews = view.get_customers_views()
+def count_customers_views():
+    return view.get_customers_views_count()
 
-    try:
-        return jsonify({'Total Clicks': totalviews}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+@app.route('/db/analysis/item/totalclicks', methods=['GET'])
+def count_all_clicks():
+    return view.get_all_clicks_count()
 
-@app.route('/db/analysis/item/customerclicks', methods=['GET'])
-def get_all_clicks():
-    totalclicks = view.get_all_clicks_count()
-
-    try:
-        return jsonify({'Total Clicks': totalclicks}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
 
 @app.route('/db/analysis/item/customerclicks', methods=['GET'])
-def get_customers_clicks():
-    totalclicks = view.get_customers_clicks()
+def count_customers_clicks():
+    return view.get_customers_clicks_count()
 
-    try:
-        return jsonify({'Total Clicks': totalclicks}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
 
 @app.route('/db/analysis/item/ordercounts', methods=['GET'])
-def get_all_orders():
-    order_counts = order.get_orders_count()
-
-    try:
-        return jsonify({'Order counts': order_counts}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+def count_all_orders():
+    return order.get_orders_count()
 
 if __name__ == '__main__':
     app.run()
-
 
 
 ## customers clicks

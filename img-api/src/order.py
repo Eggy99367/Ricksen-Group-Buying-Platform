@@ -10,10 +10,13 @@ def get_orders():
         return jsonify([order.get_info() for order in orders])
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-    
+
 def get_orders_count():
-    orders = Order_Record.query.all()
-    return len(orders)
+    try:
+        orders = Order_Record.query.count()
+        return jsonify({'Total Orders Counts': orders}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
     
 def get_order(id):
     try:
