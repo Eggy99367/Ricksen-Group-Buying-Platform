@@ -22,7 +22,7 @@ def get_group(id):
     
 def get_available_groups():
     try:
-        groups = Group_Record.query.filter_by(status="開團中").all()
+        groups = Group_Record.query.filter_by(status="團購進行中").all()
         return jsonify([group.get_info() for group in groups])
     except Exception as e:
         return jsonify({'error': str(e)}), 400

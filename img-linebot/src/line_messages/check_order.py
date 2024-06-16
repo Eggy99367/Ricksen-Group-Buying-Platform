@@ -1,6 +1,5 @@
 from src.sheet import *
 from src.services_ids import *
-import src.global_vars
 from linebot.models import *
 
 def checkOrder(event):

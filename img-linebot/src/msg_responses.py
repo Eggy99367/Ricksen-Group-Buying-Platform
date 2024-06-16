@@ -1,7 +1,6 @@
 from src.sheet import *
 from src.services_ids import *
 from src.line_messages import *
-import src.global_vars
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
@@ -30,14 +29,6 @@ def getFollower(date):
             return "Data calculation is still in progress, try again later."
     else:
         return f"Failed to retrieve data: {response.status_code} - {response.text}"
-    
-def checkUserIdExist(sheet_id, user_id):
-    ids = get_range(sheet_id, PRODUCT_EXPOSURE_SHEET_NAME, (0, 0), (9000000, 0))
-    for id in ids:
-        if id[0] == user_id:
-            return True
-    return False
-    
 
 def groupBuyingInfo(event): #團購資訊
     print("here's ok")

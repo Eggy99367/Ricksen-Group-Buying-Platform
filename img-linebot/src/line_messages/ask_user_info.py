@@ -2,7 +2,6 @@ from src.sheet import *
 from src.services_ids import *
 from src.line_messages.input_validation import *
 from src.line_messages.new_order import askQuantity
-import src.global_vars
 from linebot.models import *
 
 def userdataExist(event):

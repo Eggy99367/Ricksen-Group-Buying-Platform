@@ -81,7 +81,7 @@ export const Groups = () => {
         "disable": false,
         "entry_type": "dropdown"
       },
-      "options": [["尚未開團", ""], ["開團", ""], ["成團", ""], ["棄團", ""]]
+      "options": [["尚未開團", ""], ["團購進行中", ""], ["成團", ""], ["棄團", ""]]
     },
     {
       "showed_attr": "開團時間",

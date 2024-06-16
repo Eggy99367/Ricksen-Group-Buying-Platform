@@ -1,4 +1,3 @@
-from src.api_service import Create_Service
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.models import *
 
@@ -8,13 +7,9 @@ LINE_BOT_API = LineBotApi('AY4Ib+xWajIopdJjkX+GbTV8F2ckANFIb62dAMEvonf1vlI5j+zUr
 WEBHOOK_HANDLER = WebhookHandler('1cbd45d2293324e4bfc8422ba66fd8ae')
 CHANNEL_ACCESS_TOKEN = 'AY4Ib+xWajIopdJjkX+GbTV8F2ckANFIb62dAMEvonf1vlI5j+zUrbSHZsO/EdaK/aW17FwuaFL0LeD15n+pukPgETG+I4Nwq5+oyRRtSx2/n/DfRZDXb6DurL59LyBx7IjpQ+Vv4TSYK+q3Y5opjgdB04t89/1O/w1cDnyilFU='
 
-# ------------------------------------State Name------------------------------------
-
-AVAILABILITY_AVAILABLE_STATE = "開團"
-
 # ------------------------------------API Link------------------------------------
 
-API_URL = "http://3.27.144.225:8080"
+API_URL = "https://71ad-45-144-227-17.ngrok-free.app"
 
 # ------------------------------------General Functions------------------------------------
 

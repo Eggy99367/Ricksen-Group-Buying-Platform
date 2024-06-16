@@ -1,6 +1,5 @@
 from src.sheet import *
 from src.services_ids import *
-import src.global_vars
 from src.line_messages.input_validation import isInteger, isInRange
 from linebot.models import *
 import re
