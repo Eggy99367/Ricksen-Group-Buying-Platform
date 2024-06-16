@@ -11,7 +11,25 @@ export const Home = () => {
     <div className='page_main_box'>
       <Header />
       <div className='page_content'>
-      <div className="row_btn_container">
+        <div className='row_btn_container'>
+          <button 
+            className='home' 
+            onClick={() => {navigate('/pick_up');}}
+          >
+            <span className="fulltext">客戶領貨</span>
+            <span className="shorttext">領貨</span>
+          </button>
+        </div>
+        <div className='row_btn_container'>
+          <button 
+            className='home' 
+            onClick={() => {navigate('/pick_up');}}
+          >
+            <span className="fulltext">商品入庫</span>
+            <span className="shorttext">入庫</span>
+          </button>
+        </div>
+        <div className="row_btn_container">
           <button 
             className='home' 
             onClick={() => {navigate('/products');}}
@@ -19,8 +37,6 @@ export const Home = () => {
             <span className="fulltext">商品管理</span>
             <span className="shorttext">商品</span>
           </button>
-        </div>
-        <div className="row_btn_container">
           <button 
             className='home' 
             onClick={() => {navigate('/groups');}}
