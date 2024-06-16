@@ -1,8 +1,5 @@
 from src.services_ids import *
-import src.global_vars
-from datetime import datetime
 import json
-import pytz
 import requests
 
 def get_user_states(user_id):
