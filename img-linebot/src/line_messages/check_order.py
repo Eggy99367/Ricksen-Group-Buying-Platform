@@ -6,15 +6,15 @@ from linebot.models import *
 def checkOrder(event):
     user_id = event.source.user_id
     update_user_states(user_id, state="check_orders")
-    order_res = requests.get(f'http://3.27.144.225:8080/db/orders/by_custid/{user_id}').json()
-    customer_info = requests.get(f'http://3.27.144.225:8080/db/customers/{user_id}').json()
+    order_res = requests.get(f'{API_URL}/db/orders/by_custid/{user_id}').json()
+    customer_info = requests.get(f'{API_URL}/db/customers/{user_id}').json()
     orders = []
 
     for row in order_res:
         group_id = row['group_id']
-        group_info = requests.get(f'http://3.27.144.225:8080/db/groups/{group_id}').json()
+        group_info = requests.get(f'{API_URL}/db/groups/{group_id}').json()
         product_id = group_info['product_id']
-        product_info = requests.get(f'http://3.27.144.225:8080/db/products/{product_id}').json()
+        product_info = requests.get(f'{API_URL}/db/products/{product_id}').json()
 
         curr_order = {
             "type": "bubble",

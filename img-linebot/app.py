@@ -52,10 +52,10 @@ def handle_message(event):
     # print(event)
     print(f"{user_id}: {message}")
 
-    response = requests.get(f'http://3.27.144.225:8080/db/customers/{user_id}')
+    response = requests.get(f'{API_URL}/db/customers/{user_id}')
 
     if response.status_code == 404:
-        post_response = requests.post('http://3.27.144.225:8080/db/customers', json={"id": user_id})
+        post_response = requests.post(f'{API_URL}/db/customers', json={"id": user_id})
         if post_response.status_code != 201:  # Check if the post was successful
             print(f"Failed to add new user: {post_response.status_code}")
         else:
