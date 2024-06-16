@@ -1,0 +1,88 @@
+.pop_out_bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000b0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pop_out_close_btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #7b7b7b;
+}
+
+.pop_out_close_btn:hover {
+    color: #000000;
+}
+
+.pop_out_container {
+    position: relative;
+    width: 40vw;
+    max-width: 600px;
+    /* height: 80vh; */
+    padding: 20px 60px;
+    background-color: aliceblue;
+    border-radius: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.pop_out_container button {
+    height: 40px;
+    background-color: #80e480;
+    border: 0;
+    border-radius: 30px;
+}
+
+.pop_out_container button:hover {
+    background-color: #49e249;
+}
+
+.pop_out_container button:active {
+    background-color: #1ce01c;
+}
+.input_container {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.input_row_container {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+}
+
+.input_title_container {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input_entry_container {
+    flex: 5;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input_entry_container input {
+    width: 100%;
+}
