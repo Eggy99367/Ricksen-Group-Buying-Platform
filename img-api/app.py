@@ -212,6 +212,10 @@ def get_groups():
 def get_group(id):
     return group.get_group(id)
 
+@app.route('/db/groups/available', methods=['GET'])
+def get_available_groups():
+    return group.get_available_groups()
+
 @app.route('/db/groups', methods=['POST'])
 def add_group():
     return group.add_group()
@@ -237,6 +241,18 @@ def get_order(id):
 @app.route('/db/orders/by_pgrp/<string:grp_id>', methods=['GET'])
 def get_order_by_group(grp_id):
     return order.get_order_by_group(grp_id)
+
+@app.route('/db/orders/by_custid/<string:cust_id>', methods=['GET'])
+def get_order_by_customer(cust_id):
+    return order.get_order_by_customer(cust_id)
+
+@app.route('/db/orders/<string:grp_id>/total', methods=['GET'])
+def get_group_total_qty(grp_id):
+    return order.get_group_total_qty(grp_id)
+
+@app.route('/db/orders/<string:grp_id>/total/<string:cust_id>', methods=['GET'])
+def get_group_total_customer_qty(grp_id, cust_id):
+    return order.get_group_total_customer_qty(grp_id, cust_id)
 
 @app.route('/db/orders', methods=['POST'])
 def add_order():
@@ -268,9 +284,17 @@ def get_all_clicks():
 def add_view():
     return view.add_view()
 
-@app.route('/db/orders/by_pgrp/<string:grp_id>', methods=['GET'])
+@app.route('/db/views/by_pgrp/<string:grp_id>', methods=['GET'])
 def get_views_by_group(grp_id):
-    return order.get_views_by_group(grp_id)
+    return view.get_views_by_group(grp_id)
+
+@app.route('/db/views/check_viewer_exist/<string:cust_id>/<string:grp_id>', methods=['GET'])
+def check_viewer_exist(cust_id, grp_id):
+    return view.check_viewer_exist(cust_id, grp_id)
+
+@app.route('/db/views/check_clicker_exist/<string:cust_id>/<string:grp_id>', methods=['GET'])
+def check_clicker_exist(cust_id, grp_id):
+    return view.check_clicker_exist(cust_id, grp_id)
 
 # ----------------------------------------------------------------------------------------
 
@@ -353,6 +377,8 @@ def get_all_orders():
 
 if __name__ == '__main__':
     app.run()
+
+
 
 ## customers clicks
 ## customers view

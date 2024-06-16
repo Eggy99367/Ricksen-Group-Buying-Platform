@@ -14,8 +14,8 @@ def askQuantity(event):
 
     group_id = get_user_states(user_id)["state"]["grp"]
     try:
-        group = requests.get(f'http://crm-api/db/groups/{group_id}').json()
-        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+        group = requests.get(f'http://3.27.144.225:8080/db/groups/{group_id}').json()
+        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
@@ -23,17 +23,43 @@ def askQuantity(event):
     prod_min_order_per_person = group["min_qty_pp"] if group["min_qty_pp"] else 1
     prod_max_order_per_person = group["max_qty_pp"] if group["max_qty_pp"] else 20
 
+    prod_max_order = group["max_qty"]
+    total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group_id}/total').json()["total_qty"])
+    user_total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group_id}/total/{user_id}').json()["total_qty"])
 
+    user_remain = prod_max_order_per_person - user_total_order
+
+    if user_remain <= 0:
+        update_user_states(user_id, state="order_canceled")
+        reply_msg(event, "無法購買")
+        return
+    if total_order + user_remain > prod_max_order:
+        user_remain = prod_max_order - total_order
+    if user_total_order > 0 or prod_max_order - total_order < prod_min_order_per_person:
+        prod_min_order_per_person = 1
+
+    prod_max_order_per_person = user_remain
     quick_reply_btns = [QuickReplyButton(action=MessageAction(label="取消訂單", text="取消訂單"))]
+
     for i in range(prod_min_order_per_person, prod_max_order_per_person + 1):
             quick_reply_btns.append(QuickReplyButton(action=MessageAction(label=str(i), text=str(i))))
-    msg = TextSendMessage(
-        text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
-                + f"每人最少訂購數: {group["min_qty_pp"]}\n"
-                + f"每人最多訂購數: {group["max_qty_pp"]}\n"
-                + f"\n(請輸入數字)",
-        quick_reply = QuickReply(items=quick_reply_btns)
-    )
+
+    if prod_max_order_per_person - prod_min_order_per_person <= 19:
+        msg = TextSendMessage(
+            text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
+                    + f"每人最少訂購數: {prod_min_order_per_person}\n"
+                    + f"每人最多訂購數: {prod_max_order_per_person}\n"
+                    + f"\n(請輸入數字)",
+            quick_reply = QuickReply(items=quick_reply_btns)
+        )
+    else:
+        msg = TextSendMessage(
+            text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
+                    + f"每人最少訂購數: {prod_min_order_per_person}\n"
+                    + f"每人最多訂購數: {prod_max_order_per_person}\n"
+                    + f"\n(請輸入數字)",
+            quick_reply = QuickReply(QuickReplyButton(action=MessageAction(label="取消訂單", text="取消訂單")))
+        )
     reply_msg(event, msg)
 
 def updateQuantity(event):
@@ -41,31 +67,49 @@ def updateQuantity(event):
     
     group_id = get_user_states(user_id)["state"]["grp"]
     try:
-        group = requests.get(f'http://crm-api/db/groups/{group_id}').json()
-        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+        group = requests.get(f'http://3.27.144.225:8080/db/groups/{group_id}').json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
-
+    
     prod_min_order_per_person = group["min_qty_pp"] if group["min_qty_pp"] else 1
     prod_max_order_per_person = group["max_qty_pp"] if group["max_qty_pp"] else 20
 
-    if isInteger(event.message.text) and isInRange(event.message.text, group["min_qty_pp"], group["max_qty_pp"]):
+    prod_max_order = group["max_qty"]
+    total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group_id}/total').json()["total_qty"])
+    user_total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group_id}/total/{user_id}').json()["total_qty"])
+
+    user_remain = prod_max_order_per_person - user_total_order
+
+    if total_order + user_remain > prod_max_order:
+        user_remain = prod_max_order - total_order
+    if user_total_order > 0 or prod_max_order - total_order < prod_min_order_per_person:
+        prod_min_order_per_person = 1
+
+    prod_max_order_per_person = user_remain
+
+    if isInteger(event.message.text) and isInRange(event.message.text, prod_min_order_per_person, prod_max_order_per_person):
         update_user_states(user_id, state="get_quantity", qty=event.message.text)
         orderConfirm(event)
     else:
-        quick_reply_btns = [QuickReplyButton(action=MessageAction(label="取消訂單", text="取消訂單"))]
-        for i in range(prod_min_order_per_person, prod_max_order_per_person + 1):
-            quick_reply_btns.append(QuickReplyButton(action=MessageAction(label=str(i), text=str(i))))
-        msg = TextSendMessage(
-            text = f"錯誤數量格式，請重新輸入!\n\n"
-                + f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
-                + f"每人最少訂購數: {group["min_qty_pp"]}\n"
-                + f"每人最多訂購數: {group["max_qty_pp"]}\n"
-                + f"\n(請輸入數字)",
-            quick_reply = QuickReply(items=quick_reply_btns)
+        msg = TemplateSendMessage(
+            alt_text="錯誤數量格式",
+            template=ButtonsTemplate(
+                text = f"錯誤數量格式，是否要繼續購物？",
+                actions = [
+                    MessageAction(
+                        label = "是，繼續購物",
+                        text = "是，繼續購物"
+                    ),
+                    MessageAction(
+                        label = "取消訂單",
+                        text = "取消訂單"
+                    )
+                ]
+            )
         )
-        reply_msg(event, msg)
+    update_user_states(user_id, state="wrong_quantity_format")
+    reply_msg(event, msg)
 
 def orderConfirm(event):
     user_id = event.source.user_id
@@ -73,8 +117,8 @@ def orderConfirm(event):
 
     user_state = get_user_states(user_id)
     try:
-        group = requests.get(f'http://crm-api/db/groups/{user_state["state"]["grp"]}').json()
-        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+        group = requests.get(f'http://3.27.144.225:8080/db/groups/{user_state["state"]["grp"]}').json()
+        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
@@ -108,14 +152,17 @@ def placeOrder(event):
 
     user_state = get_user_states(user_id)
     try:
-        group = requests.get(f'http://crm-api/db/groups/{user_state["state"]["grp"]}').json()
-        prod = requests.get(f"http://crm-api/db/products/{group['product_id']}").json()
+        group = requests.get(f'http://3.27.144.225:8080/db/groups/{user_state["state"]["grp"]}').json()
+        prod = requests.get(f"http://3.27.144.225:8080/db/products/{group['product_id']}").json()
     except:
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
 
-    order_info = {"customer_id": user_id, "group_id": user_state["state"]["grp"], "qty": user_state["state"]["qty"]}
-    response = requests.post("http://crm-api/db/orders", json=order_info)
+    order_info = {"customer_id": user_id, "group_id": user_state["state"]["grp"], "qty": user_state["state"]["qty"], "status": "pending"}
+    response = requests.post("http://3.27.144.225:8080/db/orders", json=order_info)
+    total_order = int(requests.get(f'http://3.27.144.225:8080/db/orders/{group["id"]}/total').json()["total_qty"])
+    if total_order == group["max_qty"]:
+        requests.put(f"http://3.27.144.225:8080/db/groups/{group["id"]}", json={"status": "收團"})
     return response.status_code == 201
 
 def orderConfirmed(event):
@@ -131,3 +178,4 @@ def orderCanceled(event):
     user_id = event.source.user_id
     update_user_states(user_id, state="order_canceled")
     reply_msg(event, "訂單已取消")
+

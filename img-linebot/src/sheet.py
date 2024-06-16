@@ -123,12 +123,12 @@ def getSheetData():
 #     edit_cell(MASTER_SHEET_ID, MASTER_USER_STATES_SHEET_NAME, (0, 0), user_states_text)
 
 def get_user_states(user_id):
-    user_state = requests.get(f'http://crm-api/db/customers/{user_id}').json()
+    user_state = requests.get(f'http://3.27.144.225:8080/db/customers/{user_id}').json()
     user_state["state"] = json.loads(user_state["state"])
     return user_state
 
 def update_user_states(user_id, **kw_args):
-    user = requests.get(f'http://crm-api/db/customers/{user_id}').json()
+    user = requests.get(f'http://3.27.144.225:8080/db/customers/{user_id}').json()
     state = json.loads(user["state"])
     for k, v in kw_args.items():
         if k in ["name", "phone", "email"]:
@@ -136,7 +136,15 @@ def update_user_states(user_id, **kw_args):
         else:
             state[k] = v
     user["state"] = json.dumps(state)
-    requests.put(f'http://crm-api/db/customers/{user_id}', json=user)
+    post_response = requests.put(f'http://3.27.144.225:8080/db/customers/{user_id}', json={"state": user["state"]})
+    print("Here's user status update status code:")
+    print(post_response.status_code)
+
+def update_user_info(user_id, **kw_args):
+    for k, v in kw_args.items():
+        requests.put(f'http://3.27.144.225:8080/db/customers/{user_id}', json={k: v})
+    
+
 
 def productExist(ssData, prod_name):
     for row in ssData:
@@ -155,3 +163,4 @@ def getProductRow(ssData, prod_name):
     for row in ssData:
         if row[src.global_vars.master_cols[MASTER_PROD_NAME_COL_NAME]] == prod_name:
             return row
+

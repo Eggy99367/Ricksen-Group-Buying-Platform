@@ -41,6 +41,7 @@ def callback():
         WEBHOOK_HANDLER.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
+
     return 'OK'
 
 @WEBHOOK_HANDLER.add(MessageEvent, message=TextMessage)
@@ -50,9 +51,15 @@ def handle_message(event):
 
     # print(event)
     print(f"{user_id}: {message}")
-    if requests.get(f'http://crm-api/db/customers/{user_id}').status_code == 400:
-        requests.post('http://crm-api/db/customers', json={"id":user_id})
-        print("add new user")
+
+    response = requests.get(f'http://3.27.144.225:8080/db/customers/{user_id}')
+
+    if response.status_code == 404:
+        post_response = requests.post('http://3.27.144.225:8080/db/customers', json={"id": user_id})
+        if post_response.status_code != 201:  # Check if the post was successful
+            print(f"Failed to add new user: {post_response.status_code}")
+        else:
+            print("Added new user")
     else:
         print("user exist")
 
@@ -69,5 +76,5 @@ def handle_message(event):
 #主程式
 import os
 if __name__ == "__main__":
-    # app.run(host='0.0.0.0', port="8081:80")
-    app.run()
+    port = int(os.environ.get('PORT', 80))
+    app.run(host='0.0.0.0', port=port)

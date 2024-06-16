@@ -39,7 +39,8 @@ def askName(event):
 
 def updateName(event):
     user_id = event.source.user_id
-    update_user_states(user_id, state="get_name", name=event.message.text)
+    update_user_states(user_id, state="get_name")
+    update_user_info(user_id, name=event.message.text)
     askEmail(event)
 
 def askEmail(event):
@@ -50,7 +51,8 @@ def askEmail(event):
 def updateEmail(event):
     user_id = event.source.user_id
     if isEmail(event.message.text):
-        update_user_states(user_id, state="get_email", email=event.message.text)
+        update_user_states(user_id, state="get_email")
+        update_user_info(user_id, email=event.message.text)
         askPhone(event)
     else:
         reply_msg(event, f"錯誤Email格式，請重新輸入!\n請問您的電子郵件信箱是？\n(範例格式:sample@gmail.com)")
@@ -64,7 +66,8 @@ def askPhone(event):
 def updatePhone(event):
     user_id = event.source.user_id
     if isPhoneNum(event.message.text):
-        update_user_states(user_id, state="get_phone", phone=event.message.text)
+        update_user_states(user_id, state="get_phone")
+        update_user_info(user_id, phone=event.message.text)
         askQuantity(event)
     else:
         reply_msg(event, f"錯誤手機號碼格式，請重新輸入!\n請問您的手機電話是？\n(範例格式:09XXXXXXXX)")
