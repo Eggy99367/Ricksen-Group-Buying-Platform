@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
-import './groups.css';
 
 export const Groups = () => {
   // const navigate = useNavigate();

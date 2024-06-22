@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
-import './customers.css';
 
 export const Customers = () => {
   // const navigate = useNavigate();

@@ -4,7 +4,7 @@ import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
 
-export const Suppliers = () => {
+export const Orders = () => {
   // const navigate = useNavigate();
 
   const initialContents = [
@@ -27,8 +27,27 @@ export const Suppliers = () => {
       }
     },
     {
-      "showed_attr": "供應商名稱",
-      "attr": "name",
+      "showed_attr": "時間戳記",
+      "attr": "product_id",
+      "required": true,
+      "display": true,
+      "data": null,
+      "special": "product_name",
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "options": null
+    },
+    {
+      "showed_attr": "售價",
+      "attr": "selling_price",
       "required": true,
       "display": true,
       "data": null,
@@ -45,8 +64,63 @@ export const Suppliers = () => {
       }
     },
     {
-      "showed_attr": "統一編號",
-      "attr": "tax_id",
+      "showed_attr": "狀態",
+      "attr": "status",
+      "required": true,
+      "display": true,
+      "data": null,
+      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "options": [["尚未開團", ""], ["團購進行中", ""], ["成團", ""], ["棄團", ""]]
+    },
+    {
+      "showed_attr": "開團時間",
+      "attr": "start_time",
+      "required": true,
+      "display": true,
+      "data": null,
+      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      }
+    },
+    {
+      "showed_attr": "收團時間",
+      "attr": "end_time",
+      "required": false,
+      "display": true,
+      "data": null,
+      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      }
+    },
+    {
+      "showed_attr": "最少購買數",
+      "attr": "min_qty",
       "required": false,
       "display": true,
       "data": null,
@@ -63,9 +137,9 @@ export const Suppliers = () => {
       }
     },
     {
-      "showed_attr": "聯絡人",
-      "attr": "contact_person",
-      "required": true,
+      "showed_attr": "最多購買數",
+      "attr": "max_qty",
+      "required": false,
       "display": true,
       "data": null,
       "special": null,
@@ -81,9 +155,9 @@ export const Suppliers = () => {
       }
     },
     {
-      "showed_attr": "電話",
-      "attr": "phone",
-      "required": true,
+      "showed_attr": "最少單人購買數",
+      "attr": "min_qty_pp",
+      "required": false,
       "display": true,
       "data": null,
       "special": null,
@@ -99,8 +173,8 @@ export const Suppliers = () => {
       }
     },
     {
-      "showed_attr": "Email",
-      "attr": "email",
+      "showed_attr": "最多單人購買數",
+      "attr": "max_qty_pp",
       "required": false,
       "display": true,
       "data": null,
@@ -118,7 +192,8 @@ export const Suppliers = () => {
     }
   ]
   const [contents, setContents] = useState(initialContents);
-  const [suppliers, setSuppliers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [product_names, setProductNames] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -128,20 +203,37 @@ export const Suppliers = () => {
   const [page, setPage] = useState(0);
   const [searchCategory, setSearchCategory] = useState("");
   var last_updated = null;
+  var sup_last_updated = null;
   
   const [resultLimit, setResultLimit] = useState(25);
   const listContainerRef = useRef(null);
 
   const checkUpdate = async () => {
     console.log("checking for update...");
-    axios.get(`${API_BASE_URL}/db/last_updated/supplier`, {
+    axios.get(`${API_BASE_URL}/db/last_updated/order`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
       if(last_updated === null || response.data.time > last_updated){
         last_updated = response.data.time;
-        fetchSuppliers();
+        fetchOrders();
+        setError(null);
+      }
+      setError(false);
+      setLoading(false);
+    }).catch(error => {
+      console.error("There was an error fetching the data!", error);
+      setError(error);
+    });
+    axios.get(`${API_BASE_URL}/db/last_updated/product`, {
+      headers: {
+        "ngrok-skip-browser-warning": 1
+      }
+    }).then(response => {
+      if(sup_last_updated === null || response.data.time > sup_last_updated){
+        sup_last_updated = response.data.time;
+        fetchProductNames();
         setError(null);
       }
       setError(false);
@@ -152,15 +244,33 @@ export const Suppliers = () => {
     });
   }
 
-  const fetchSuppliers = async () => {
+  const fetchOrders = async () => {
     console.log("Fetching data from API...");
-    axios.get(`${API_BASE_URL}/db/suppliers`, {
+    axios.get(`${API_BASE_URL}/db/orders`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
         console.log("Data fetched successfully:", response);
-        setSuppliers(Object.values(response.data));
+        setOrders(Object.values(response.data));
+        setLoading(false);
+        setError(null);
+      }).catch(error => {
+        console.error("There was an error fetching the data!", error);
+        setError(error);
+        setLoading(false);
+    });
+  }
+
+  const fetchProductNames = async () => {
+    console.log("Fetching data from API...");
+    axios.get(`${API_BASE_URL}/db/products/names`, {
+      headers: {
+        "ngrok-skip-browser-warning": 1
+      }
+    }).then(response => {
+        console.log("Data fetched successfully:", response);
+        setProductNames(Object.entries(response.data));
         setLoading(false);
         setError(null);
       }).catch(error => {
@@ -177,7 +287,7 @@ export const Suppliers = () => {
       const rowsPerPage = Math.floor(containerHeight / rowHeight);
       setResultLimit(rowsPerPage);
     }
-  }, [listContainerRef, suppliers, searchTerm]);
+  }, [listContainerRef, orders, searchTerm]);
 
   const handleEditSubmit = async (inputData) => {
     var update_json = {};
@@ -190,7 +300,7 @@ export const Suppliers = () => {
     }
     console.log("handle edit:", update_json);
     try {
-      await axios.put(`${API_BASE_URL}/db/suppliers/${update_json.id}`, update_json, {
+      await axios.put(`${API_BASE_URL}/db/orders/${update_json.id}`, update_json, {
         headers: {
           'Content-Type': 'application/json',
           "ngrok-skip-browser-warning": 1
@@ -213,7 +323,7 @@ export const Suppliers = () => {
     }
     console.log("handle create:", create_json);
     try {
-      await axios.post(`${API_BASE_URL}/db/suppliers`, create_json, {
+      await axios.post(`${API_BASE_URL}/db/orders`, create_json, {
         headers: {
           'Content-Type': 'application/json',
           "ngrok-skip-browser-warning": 1
@@ -225,14 +335,15 @@ export const Suppliers = () => {
     }
   }
 
-  const filteredContents = suppliers.filter((supplier) => (
+  
+  const filteredContents = orders.filter((order) => (
     searchTerm === "" ? (true) : (
       searchCategory === "" ? (
-        Object.entries(supplier).some(([key, value]) =>
-          contents.some(content => content.attr === key && content.display) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        Object.entries(order).some(([key, value]) =>
+          contents.some(content => content.display && content.attr === key) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        supplier[searchCategory] && supplier[searchCategory].toString().toLowerCase().includes(searchTerm)
+        order[searchCategory] && order[searchCategory].toString().toLowerCase().includes(searchTerm)
       ))
     )
   );
@@ -257,10 +368,11 @@ export const Suppliers = () => {
   }
 
   const handleEditClick = () => {
-    const updatedContents = contents.map((content, idx) => ({
+    var updatedContents = contents.map((content, idx) => ({
       ...content,
-      data: filteredContents[selectedRow][content.attr]
+      data: filteredContents[selectedRow][content.attr],
     }));
+    updatedContents[1].options = product_names;
     setContents(updatedContents);
     setShowEdit(true);
   }
@@ -270,6 +382,9 @@ export const Suppliers = () => {
   }
 
   const handleCreateClick = () => {
+    var updatedContents = contents;
+    updatedContents[1].options = product_names;
+    setContents(updatedContents);
     setShowCreate(true);
   }
 
@@ -306,11 +421,11 @@ export const Suppliers = () => {
           loading={loading}
           listContainerRef={listContainerRef}
         />
-        {showEdit && <PopOut popOutType="edit" dataType="供應商" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
-        {showCreate && <PopOut popOutType="create" dataType="供應商" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
+        {showEdit && <PopOut popOutType="edit" dataType="訂單" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
+        {showCreate && <PopOut popOutType="create" dataType="訂單" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
       </div>
     </div>
   );
 }
 
-export default Suppliers;
+export default Orders;
