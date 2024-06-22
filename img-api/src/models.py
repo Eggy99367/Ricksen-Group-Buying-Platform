@@ -10,10 +10,10 @@ Base = declarative_base()
 class Customer(db.Model):
     __tablename__ = 'customer'
     id = db.Column(db.String(40), primary_key=True, nullable=False, unique=True)
-    name = db.Column(db.String(50), nullable=False)
-    phone = db.Column(db.String(10), nullable=False)
-    email = db.Column(db.String(80), nullable=False)
-    state = db.Column(db.Text, nullable=False)
+    name = db.Column(db.String(50))
+    phone = db.Column(db.String(10))
+    email = db.Column(db.String(80))
+    state = db.Column(db.Text)
 
     def get_info(self):
         return {
