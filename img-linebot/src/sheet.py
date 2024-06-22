@@ -1,6 +1,7 @@
 from src.services_ids import *
 import json
 import requests
+import src.global_vars
 
 def get_user_states(user_id):
     user_state = requests.get(f'{API_URL}/db/customers/{user_id}').json()
