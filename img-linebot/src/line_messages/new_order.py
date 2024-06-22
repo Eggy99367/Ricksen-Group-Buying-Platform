@@ -7,6 +7,8 @@ import pytz
 import random
 import string
 
+inf = 10000
+
 def askQuantity(event):
     user_id = event.source.user_id
     update_user_states(user_id, state="ask_quantity")
@@ -20,14 +22,26 @@ def askQuantity(event):
         return
 
     prod_min_order_per_person = group["min_qty_pp"] if group["min_qty_pp"] else 1
-    prod_max_order_per_person = group["max_qty_pp"] if group["max_qty_pp"] else 20
+    prod_max_order_per_person = group["max_qty_pp"] if group["max_qty_pp"] else inf
 
-    prod_max_order = group["max_qty"]
+    prod_max_order = group["max_qty"] if group["max_qty"] else inf
     total_order = int(requests.get(f'{API_URL}/db/orders/{group_id}/total').json()["total_qty"])
     user_total_order = int(requests.get(f'{API_URL}/db/orders/{group_id}/total/{user_id}').json()["total_qty"])
 
     user_remain = prod_max_order_per_person - user_total_order
 
+    quick_reply_btns = [QuickReplyButton(action=MessageAction(label="取消訂單", text="取消訂單"))]
+
+    if prod_max_order == inf and prod_max_order_per_person == inf:
+        msg = TextSendMessage(  
+            text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
+                    + f"每人最少訂購數: {prod_min_order_per_person}\n"
+                    + f"每人最多訂購數: 無限制\n"
+                    + f"\n(請輸入數字)",
+            quick_reply = QuickReply(items=quick_reply_btns)
+        )
+        reply_msg(event, msg)
+        return
     if user_remain <= 0:
         update_user_states(user_id, state="order_canceled")
         reply_msg(event, "無法購買")
@@ -38,27 +52,17 @@ def askQuantity(event):
         prod_min_order_per_person = 1
 
     prod_max_order_per_person = user_remain
-    quick_reply_btns = [QuickReplyButton(action=MessageAction(label="取消訂單", text="取消訂單"))]
 
-    for i in range(prod_min_order_per_person, prod_max_order_per_person + 1):
+    if prod_max_order_per_person - prod_min_order_per_person <= 13:
+        for i in range(prod_min_order_per_person, prod_max_order_per_person + 1):
             quick_reply_btns.append(QuickReplyButton(action=MessageAction(label=str(i), text=str(i))))
-
-    if prod_max_order_per_person - prod_min_order_per_person <= 19:
-        msg = TextSendMessage(
-            text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
-                    + f"每人最少訂購數: {prod_min_order_per_person}\n"
-                    + f"每人最多訂購數: {prod_max_order_per_person}\n"
-                    + f"\n(請輸入數字)",
-            quick_reply = QuickReply(items=quick_reply_btns)
-        )
-    else:
-        msg = TextSendMessage(
-            text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
-                    + f"每人最少訂購數: {prod_min_order_per_person}\n"
-                    + f"每人最多訂購數: {prod_max_order_per_person}\n"
-                    + f"\n(請輸入數字)",
-            quick_reply = QuickReply(QuickReplyButton(action=MessageAction(label="取消訂單", text="取消訂單")))
-        )
+    msg = TextSendMessage(
+        text = f"請問您想要下訂多少數量的\n[{prod["name"]}]?\n\n"
+                + f"每人最少訂購數: {prod_min_order_per_person}\n"
+                + f"每人最多訂購數: {prod_max_order_per_person}\n"
+                + f"\n(請輸入數字)",
+        quick_reply = QuickReply(items=quick_reply_btns)
+    )
     reply_msg(event, msg)
 
 def updateQuantity(event):
