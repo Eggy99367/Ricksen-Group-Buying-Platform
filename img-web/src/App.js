@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom'
-import { Login, Register, Home, Suppliers, Customers, Products, Groups, NotFound, Analysis, Investigate } from './pages';
+import { Login, Register, Home, Suppliers, Customers, Products, Groups, Orders, NotFound, Analysis, Investigate } from './pages';
 import PrivateRoute from './utils/PrivateRoute';
 import BeforeLogIn from './utils/BeforeLogIn';
 import './App.css';
@@ -15,6 +15,7 @@ function App() {
       <Route path="/customers" element={<PrivateRoute><Customers /></PrivateRoute>} />
       <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
       <Route path="/groups" element={<PrivateRoute><Groups /></PrivateRoute>} />
+      <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
       <Route path="/analysis" element={<PrivateRoute><Analysis /></PrivateRoute>} />
       <Route path="/investigate" element={<PrivateRoute><Investigate /></PrivateRoute>} />
       <Route path="*" element={<PrivateRoute><NotFound /></PrivateRoute>} />

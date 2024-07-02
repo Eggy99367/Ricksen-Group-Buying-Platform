@@ -44,6 +44,10 @@ def callback():
 
     return 'OK'
 
+# @app.route("/linebot/*", methods=['POST'])
+# def callback():
+#     print("got the msg!")
+
 @WEBHOOK_HANDLER.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = event.message.text
@@ -54,7 +58,7 @@ def handle_message(event):
 
     response = requests.get(f'{API_URL}/db/customers/{user_id}')
 
-    if response.status_code == 404:
+    if response.status_code == 400:
         post_response = requests.post(f'{API_URL}/db/customers', json={"id": user_id})
         if post_response.status_code != 201:  # Check if the post was successful
             print(f"Failed to add new user: {post_response.status_code}")
