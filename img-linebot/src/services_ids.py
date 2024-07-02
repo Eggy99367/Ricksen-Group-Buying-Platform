@@ -9,7 +9,7 @@ CHANNEL_ACCESS_TOKEN = 'AY4Ib+xWajIopdJjkX+GbTV8F2ckANFIb62dAMEvonf1vlI5j+zUrbSH
 
 # ------------------------------------API Link------------------------------------
 
-API_URL = "https://82a7-45-144-227-69.ngrok-free.app"
+API_URL = "http://192.168.100.27"
 
 # ------------------------------------General Functions------------------------------------
 

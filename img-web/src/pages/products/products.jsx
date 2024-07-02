@@ -14,7 +14,6 @@ export const Products = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": true,
@@ -32,7 +31,6 @@ export const Products = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -50,7 +48,6 @@ export const Products = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -66,9 +63,8 @@ export const Products = () => {
       "showed_attr": "供應商",
       "attr": "supplier_id",
       "required": true,
-      "display": true,
+      "display": false,
       "data": null,
-      "special": "supplier_name",
       "edit": {
         "visible": true,
         "disable": false,
@@ -82,12 +78,29 @@ export const Products = () => {
       "options": null
     },
     {
+      "showed_attr": "供應商",
+      "attr": "supplier_name",
+      "required": false,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": false,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "create": {
+        "visible": false,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "options": null
+    },
+    {
       "showed_attr": "商品敘述",
       "attr": "description",
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -105,7 +118,6 @@ export const Products = () => {
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
