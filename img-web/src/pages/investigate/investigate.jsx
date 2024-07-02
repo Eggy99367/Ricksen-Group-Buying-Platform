@@ -75,22 +75,17 @@ export const Investigate = () => {
     }
 
     const fetchTotalFollowers = async () => {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-      const day = String(now.getDate()).padStart(2, '0');
-      const date = `${year}${month}${day}`;
-      
-      try {
-        const response = axios.get(`${API_BASE_URL}/followers/${date}`, {
+      console.log("Fetching data from API...");
+        axios.get(`${API_BASE_URL}/db/customers`, {
           headers: {
             "ngrok-skip-browser-warning": 1
-          }})
-        
-          console.log(response);
-      } catch (err) {
-        console.log(`Error: ${err.message}`);
-      } 
+          }
+        }).then(response => {
+            console.log("Data fetched successfully:", response.data.length);
+            setFollowers(response.data.length);
+          }).catch(error => {
+            console.error("There was an error fetching the data!", error);
+        });
     };
   
   
