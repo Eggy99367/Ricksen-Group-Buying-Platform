@@ -71,7 +71,7 @@ export const Home = () => {
           </button>
           <button 
             className='home' 
-            onClick={() => {navigate('/analyses');}}
+            onClick={() => {navigate('/analysis');}}
           >
             <span className="fulltext">數據分析</span>
             <span className="shorttext">分析</span>

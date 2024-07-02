@@ -7,3 +7,5 @@ export { Products } from './products/products';
 export { Groups } from './groups/groups';
 export { Orders } from './orders/orders';
 export { NotFound } from './notFound/notFound';
+export { Analysis } from './analysis/analysis';
+export { Investigate } from './investigate/investigate';

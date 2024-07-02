@@ -30,6 +30,7 @@ export const Header = () => {
         <Link to="/suppliers">供應商</Link>
         <Link to="/customers">客戶</Link>
         <Link to="/orders">訂單</Link>
+        <Link to ="/analysis">數據分析</Link>
         <button id="logout_button" onClick={handleLogout}>登出</button>
       </div>
     </div>

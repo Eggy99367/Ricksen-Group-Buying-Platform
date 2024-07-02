@@ -14,7 +14,6 @@ export const Customers = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": true,
@@ -32,7 +31,6 @@ export const Customers = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -50,7 +48,6 @@ export const Customers = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -68,7 +65,6 @@ export const Customers = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
