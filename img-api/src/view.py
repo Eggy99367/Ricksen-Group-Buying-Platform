@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from .models import db, View_History
 from .basics import *
+from sqlalchemy import asc
 
 def get_views():
     try:
@@ -96,5 +97,14 @@ def check_clicker_exist(cust_id, grp_id):
     except Exception as e:
         print(f"Error checking viewer existence: {e}")
         return jsonify({"error": str(e)}), 500
+    
+def get_group_data_by_type(grp_id, type):
+    try:
+        view_records = View_History.query.filter_by(group_id=grp_id, view_type=type).order_by(asc(View_History.timestamp)).with_entities(View_History.timestamp).all()
+        timestamps = [record.timestamp for record in view_records]
+        return jsonify(timestamps)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
     
 
