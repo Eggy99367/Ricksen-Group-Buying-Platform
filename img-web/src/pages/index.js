@@ -6,3 +6,5 @@ export { Customers } from './customers/customers';
 export { Products } from './products/products';
 export { Groups } from './groups/groups';
 export { NotFound } from './notFound/notFound';
+export { Analysis } from './analysis/analysis';
+export { Investigate } from './investigate/investigate';

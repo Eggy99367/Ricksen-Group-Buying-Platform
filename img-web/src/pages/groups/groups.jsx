@@ -254,6 +254,7 @@ export const Groups = () => {
     }).then(response => {
         console.log("Data fetched successfully:", response);
         setGroups(Object.values(response.data));
+        console.log(groups);
         setLoading(false);
         setError(null);
       }).catch(error => {
