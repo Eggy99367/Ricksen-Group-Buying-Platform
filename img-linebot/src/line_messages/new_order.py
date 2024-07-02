@@ -76,9 +76,9 @@ def updateQuantity(event):
         return
     
     prod_min_order_per_person = group["min_qty_pp"] if group["min_qty_pp"] else 1
-    prod_max_order_per_person = group["max_qty_pp"] if group["max_qty_pp"] else 20
+    prod_max_order_per_person = group["max_qty_pp"] if group["max_qty_pp"] else inf
 
-    prod_max_order = group["max_qty"]
+    prod_max_order = group["max_qty"] if group["max_qty"] else inf
     total_order = int(requests.get(f'{API_URL}/db/orders/{group_id}/total').json()["total_qty"])
     user_total_order = int(requests.get(f'{API_URL}/db/orders/{group_id}/total/{user_id}').json()["total_qty"])
 

@@ -299,23 +299,6 @@ def check_clicker_exist(cust_id, grp_id):
 
 # ----------------------------------------------------------------------------------------
 
-@app.route('/followers/<string:date>', methods=['GET'])
-def check_followers(date):
-    headers = {
-        'Authorization': f'Bearer {'AY4Ib+xWajIopdJjkX+GbTV8F2ckANFIb62dAMEvonf1vlI5j+zUrbSHZsO/EdaK/aW17FwuaFL0LeD15n+pukPgETG+I4Nwq5+oyRRtSx2/n/DfRZDXb6DurL59LyBx7IjpQ+Vv4TSYK+q3Y5opjgdB04t89/1O/w1cDnyilFU='}'
-    }
-    url = f'https://api.line.me/v2/bot/insight/followers?date={date}'
-    
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        if data['status'] == 'ready':
-            return data['followers']  
-        else:
-            return "Data calculation is still in progress, try again later."
-    else:
-        return f"Failed to retrieve data: {response.status_code} - {response.text}"
-
 # @app.route('/db/...', methods=['GET'])
 # def get_view_rate():
 #     total_views = view.get_all_views()
