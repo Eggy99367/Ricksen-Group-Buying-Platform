@@ -5,6 +5,10 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from flask_cors import CORS
 from sqlalchemy import event
 from src.basics import *
+import pytz
+from src.config import *
+
+from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 
 app = Flask(__name__)
@@ -41,19 +45,19 @@ for table in tables:
     def create_after_insert_listener(table_name):
         def after_insert(mapper, connection, target):
             update_last_updated(table_name, connection)
-            print(f"{table_name} {target.id} has been inserted.")
+            print(f"{str(get_cur_time())}: {table_name} {target.id} has been inserted.")
         return after_insert
 
     def create_after_update_listener(table_name):
         def after_update(mapper, connection, target):
             update_last_updated(table_name, connection)
-            print(f"{table_name} {target.id} has been updated.")
+            print(f"{str(get_cur_time())}: {table_name} {target.id} has been updated.")
         return after_update
 
     def create_after_delete_listener(table_name):
         def after_delete(mapper, connection, target):
             update_last_updated(table_name, connection)
-            print(f"{table_name} {target.id} has been deleted.")
+            print(f"{str(get_cur_time())}: {table_name} {target.id} has been deleted.")
         return after_delete
 
     event.listen(table, 'after_insert', create_after_insert_listener(table_name))
@@ -81,6 +85,56 @@ def get_last_updated(table_name):
 
 # ----------------------------------------------------------------------------------------
 
+def update_group_status(item_id, new_status):
+    item = Group_Record.query.get(item_id)
+    if item:
+        item.status = new_status
+        db.session.commit()
+
+def get_item_sells(group_id):
+    orders = Order_Record.query.filter(
+        Order_Record.group_id == group_id,
+        Order_Record.status == "訂單確認"
+    ).all()
+    sells = sum([order.qty for order in orders])
+    return sells
+
+def check_and_update_status():
+    with app.app_context():
+        taiwan_tz = pytz.timezone('Asia/Taipei')
+        now = datetime.now(taiwan_tz)
+
+        # 把開團時間到的準備開團項目更新成團購進行中
+        items_to_start = Group_Record.query.filter(
+            Group_Record.status == GroupPreparingToStart
+        ).all()
+        for item in items_to_start:
+            item_start_time = formatted_to_date(item.start_time)
+            if item_start_time <= now:
+                update_group_status(item.id, GroupInProgress)
+
+        # 把收團時間到的進行中項目根據最小購買量更新狀態
+        items_to_start = Group_Record.query.filter(
+            Group_Record.status == GroupInProgress
+        ).all()
+        for item in items_to_start:
+            if item.end_time:
+                item_sells = get_item_sells(item.id)
+                item_end_time = formatted_to_date(item.end_time)
+                if item_end_time <= now:
+                    if item.min_qty and item_sells >= item.min_qty:
+                        print(f"團購項目{item.id}已至收團時間，該項目已販售出{item_sells}個，已達成團最低門檻{item.min_qty}個")
+                        update_group_status(item.id, GroupFormedAwaitingStocking)
+                    else:
+                        print(f"團購項目{item.id}已至收團時間，該項目已販售出{item_sells}個，未設定或未達到成團最低門檻")
+                        update_group_status(item.id, GroupEndedAwaitingDecision)
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(check_and_update_status, 'interval', seconds=5)
+scheduler.start()
+
+# ----------------------------------------------------------------------------------------
+
 @app.route('/db/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -95,7 +149,6 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    print("register:", email)
     return jsonify({"msg": "User registered successfully"}), 201
 
 @app.route('/db/login', methods=['POST'])
@@ -110,7 +163,6 @@ def login():
         return jsonify({"msg": "Invalid email or password"}), 401
 
     access_token = create_access_token(identity=user.id)
-    print("login:", email)
     return jsonify(access_token=access_token), 200
 
 @app.route('/db/protected', methods=['GET'])
@@ -124,7 +176,6 @@ def protected():
 def get_users():
     try:
         customers = User.query.all()
-        # print(customers)
         return jsonify([customer.get_info() for customer in customers])
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -224,6 +275,10 @@ def add_group():
 @app.route('/db/groups/<string:id>', methods=['PUT'])
 def update_group(id):
     return group.update_group(id)
+
+@app.route('/db/stock/<string:id>', methods=['PUT'])
+def stock_group(id):
+    return group.stock_group(id)
 
 @app.route('/db/groups/<string:id>', methods=['DELETE'])
 def delete_group(id):

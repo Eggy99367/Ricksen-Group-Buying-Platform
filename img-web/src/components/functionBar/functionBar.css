@@ -10,6 +10,9 @@
   
 .empty_bar_container {
   flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .search_bar_container {

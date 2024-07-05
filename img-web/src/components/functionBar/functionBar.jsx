@@ -1,11 +1,25 @@
 import React from 'react';
 import './functionBar.css'
 
-export const FunctionBar = ({ searchTerm, handleSearchInputChange, setSearchTerm, setSearchCategory, handleEditClick, handleCreateClick, selectedRow, contents }) => {
+export const FunctionBar = ({ searchTerm,
+                              pageTitle="",
+                              handleSearchInputChange,
+                              setSearchTerm,
+                              setSearchCategory,
+                              handleEditClick=null,
+                              handleCreateClick=null,
+                              handleStockingClick=null,
+                              selectedRow,
+                              contents,
+                              noEdit=false,
+                              noCreate=false,
+                              stocking=false }) => {
 
   return (
     <div className='function_bar_container'>
-      <div className='empty_bar_container'></div>
+      <div className='empty_bar_container'>
+        <h2>{pageTitle}</h2>
+      </div>
       <div className='search_bar_container'>
         <input
           className='search_bar'
@@ -23,8 +37,9 @@ export const FunctionBar = ({ searchTerm, handleSearchInputChange, setSearchTerm
         </select>
       </div>
       <div className='button_container'>
-        <button disabled={selectedRow === null} onClick={handleEditClick}>編輯</button>
-        <button onClick={handleCreateClick}>新增</button>
+        {!noEdit && <button disabled={selectedRow === null} onClick={handleEditClick}>編輯</button>}
+        {!noCreate && <button onClick={handleCreateClick}>新增</button>}
+        {stocking && <button onClick={handleStockingClick}>入庫</button>}
       </div>
     </div>
   );

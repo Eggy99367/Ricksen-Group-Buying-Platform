@@ -161,7 +161,7 @@ def placeOrder(event):
         reply_msg(event, f"抱歉，商品不存在或不開放下單！")
         return
 
-    order_info = {"customer_id": user_id, "group_id": user_state["state"]["grp"], "qty": user_state["state"]["qty"], "status": "pending"}
+    order_info = {"customer_id": user_id, "group_id": user_state["state"]["grp"], "qty": user_state["state"]["qty"], "status": "訂單確認"}
     response = requests.post(f"{API_URL}/db/orders", json=order_info)
     total_order = int(requests.get(f'{API_URL}/db/orders/{group["id"]}/total').json()["total_qty"])
     if total_order == group["max_qty"]:

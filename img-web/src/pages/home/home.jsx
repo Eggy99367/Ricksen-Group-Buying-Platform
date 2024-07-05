@@ -23,7 +23,7 @@ export const Home = () => {
         <div className='row_btn_container'>
           <button 
             className='home' 
-            onClick={() => {navigate('/pick_up');}}
+            onClick={() => {navigate('/stocking');}}
           >
             <span className="fulltext">商品入庫</span>
             <span className="shorttext">入庫</span>

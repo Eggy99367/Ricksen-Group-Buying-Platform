@@ -44,7 +44,15 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
                 <h3>{data.showed_attr}</h3>
               </div>
               <div className='input_entry_container'>
-                {data[popOutType].entry_type === "dropdown" ? (
+                {data[popOutType].entry_type === "setdropdown" ? (
+                  <div className='input_entry_container'>
+                    <select name="dropdown" id={data.attr} value={data.data} disabled={data[popOutType].disable} onChange={(e) => handleInputChange(index, e.target.value)}>
+                    {Object.values(data.options).map((opt, index) => (
+                        <option value={opt[0]}>{opt[0]}</option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (data[popOutType].entry_type === "dropdown" ? (
                   <div className='input_entry_container'>
                     <input autoComplete="on" list={data.attr} value={data.data} onChange={(e) => handleInputChange(index, e.target.value)}/> 
                     <datalist id={data.attr}>
@@ -57,14 +65,16 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
                   data[popOutType].entry_type === "time" ? (
                     <input
                       key={index}
+                      value={data.data}
                       type="datetime-local"
                       name="meeting-time"
                       min={getCurrentDateTime()}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
                     />
                   ) : (
                     <input key={index} value={data.data} disabled={data[popOutType].disable} onChange={(e) => handleInputChange(index, e.target.value)}/>             
                   )
-                )}
+                ))}
               </div>
             </div>
           )

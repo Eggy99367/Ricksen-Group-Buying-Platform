@@ -14,7 +14,6 @@ export const Orders = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": true,
@@ -28,30 +27,63 @@ export const Orders = () => {
     },
     {
       "showed_attr": "時間戳記",
-      "attr": "product_id",
+      "attr": "timestamp",
       "required": true,
       "display": true,
       "data": null,
-      "special": "product_name",
       "edit": {
         "visible": true,
-        "disable": false,
-        "entry_type": "dropdown"
+        "disable": true,
+        "entry_type": "entry"
       },
       "create": {
         "visible": true,
-        "disable": false,
-        "entry_type": "dropdown"
+        "disable": true,
+        "entry_type": "entry"
+      },
+    },
+    {
+      "showed_attr": "客戶",
+      "attr": "customer_id",
+      "required": true,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": true,
+        "disable": true,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": true,
+        "entry_type": "entry"
       },
       "options": null
     },
     {
-      "showed_attr": "售價",
-      "attr": "selling_price",
+      "showed_attr": "團購項目",
+      "attr": "group_id",
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
+      "edit": {
+        "visible": true,
+        "disable": true,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": true,
+        "disable": true,
+        "entry_type": "entry"
+      },
+      "options": null
+    },
+    {
+      "showed_attr": "數量",
+      "attr": "qty",
+      "required": true,
+      "display": true,
+      "data": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -66,129 +98,20 @@ export const Orders = () => {
     {
       "showed_attr": "狀態",
       "attr": "status",
-      "required": true,
-      "display": true,
-      "data": null,
-      "special": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "dropdown"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "dropdown"
-      },
-      "options": [["尚未開團", ""], ["團購進行中", ""], ["成團", ""], ["棄團", ""]]
-    },
-    {
-      "showed_attr": "開團時間",
-      "attr": "start_time",
-      "required": true,
-      "display": true,
-      "data": null,
-      "special": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "time"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "time"
-      }
-    },
-    {
-      "showed_attr": "收團時間",
-      "attr": "end_time",
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
-        "entry_type": "time"
+        "entry_type": "setdropdown"
       },
       "create": {
         "visible": true,
         "disable": false,
-        "entry_type": "time"
-      }
-    },
-    {
-      "showed_attr": "最少購買數",
-      "attr": "min_qty",
-      "required": false,
-      "display": true,
-      "data": null,
-      "special": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
+        "entry_type": "setdropdown"
       },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
-      "showed_attr": "最多購買數",
-      "attr": "max_qty",
-      "required": false,
-      "display": true,
-      "data": null,
-      "special": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
-      "showed_attr": "最少單人購買數",
-      "attr": "min_qty_pp",
-      "required": false,
-      "display": true,
-      "data": null,
-      "special": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
-      "showed_attr": "最多單人購買數",
-      "attr": "max_qty_pp",
-      "required": false,
-      "display": true,
-      "data": null,
-      "special": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
+      "options": [["訂單確認", ""], ["等待取貨", ""], ["訂單取消", ""], ["訂單完成", ""]]
     }
   ]
   const [contents, setContents] = useState(initialContents);
@@ -198,7 +121,6 @@ export const Orders = () => {
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
-  const [showCreate, setShowCreate] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(0);
   const [searchCategory, setSearchCategory] = useState("");
@@ -210,13 +132,14 @@ export const Orders = () => {
 
   const checkUpdate = async () => {
     console.log("checking for update...");
-    axios.get(`${API_BASE_URL}/db/last_updated/order`, {
+    axios.get(`${API_BASE_URL}/db/last_updated/order_record`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      if(last_updated === null || response.data.time > last_updated){
-        last_updated = response.data.time;
+      var time = response.data.time.replace(/[^0-9]/g, '')
+      if(last_updated === null || time > last_updated){
+        last_updated = time;
         fetchOrders();
         setError(null);
       }
@@ -231,9 +154,9 @@ export const Orders = () => {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      if(sup_last_updated === null || response.data.time > sup_last_updated){
-        sup_last_updated = response.data.time;
-        fetchProductNames();
+      var time = response.data.time.replace(/[^0-9]/g, '')
+      if(sup_last_updated === null || time > sup_last_updated){
+        sup_last_updated = time;
         setError(null);
       }
       setError(false);
@@ -262,23 +185,7 @@ export const Orders = () => {
     });
   }
 
-  const fetchProductNames = async () => {
-    console.log("Fetching data from API...");
-    axios.get(`${API_BASE_URL}/db/products/names`, {
-      headers: {
-        "ngrok-skip-browser-warning": 1
-      }
-    }).then(response => {
-        console.log("Data fetched successfully:", response);
-        setProductNames(Object.entries(response.data));
-        setLoading(false);
-        setError(null);
-      }).catch(error => {
-        console.error("There was an error fetching the data!", error);
-        setError(error);
-        setLoading(false);
-    });
-  }
+
 
   useEffect(() => {
     if (listContainerRef.current) {
@@ -312,28 +219,28 @@ export const Orders = () => {
     }
   }
 
-  const handleCreateSubmit = async (inputData) => {
-    var create_json = {};
-    for(const content of inputData){
-      if(content.data === ""){
-        create_json[content.attr] = null;
-        }else{
-          create_json[content.attr] = content.data;          
-      }
-    }
-    console.log("handle create:", create_json);
-    try {
-      await axios.post(`${API_BASE_URL}/db/orders`, create_json, {
-        headers: {
-          'Content-Type': 'application/json',
-          "ngrok-skip-browser-warning": 1
-        }});
-      checkUpdate();
-      setShowCreate(false);
-    } catch (error) {
-      console.error('Create failed', error);
-    }
-  }
+  // const handleCreateSubmit = async (inputData) => {
+  //   var create_json = {};
+  //   for(const content of inputData){
+  //     if(content.data === ""){
+  //       create_json[content.attr] = null;
+  //       }else{
+  //         create_json[content.attr] = content.data;          
+  //     }
+  //   }
+  //   console.log("handle create:", create_json);
+  //   try {
+  //     await axios.post(`${API_BASE_URL}/db/orders`, create_json, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         "ngrok-skip-browser-warning": 1
+  //       }});
+  //     checkUpdate();
+  //     setShowCreate(false);
+  //   } catch (error) {
+  //     console.error('Create failed', error);
+  //   }
+  // }
 
   
   const filteredContents = orders.filter((order) => (
@@ -377,16 +284,16 @@ export const Orders = () => {
     setShowEdit(true);
   }
 
-  const clostCreatePopOut = () => {
-    setShowCreate(false);
-  }
+  // const clostCreatePopOut = () => {
+  //   setShowCreate(false);
+  // }
 
-  const handleCreateClick = () => {
-    var updatedContents = contents;
-    updatedContents[1].options = product_names;
-    setContents(updatedContents);
-    setShowCreate(true);
-  }
+  // const handleCreateClick = () => {
+  //   var updatedContents = contents;
+  //   updatedContents[1].options = product_names;
+  //   setContents(updatedContents);
+  //   setShowCreate(true);
+  // }
 
   const handleSearchInputChange = (event) => {
     setSelectedRow(null);
@@ -401,13 +308,15 @@ export const Orders = () => {
       <div className='page_content'>
         <FunctionBar
           searchTerm={searchTerm}
+          pageTitle={"訂單管理"}
           handleSearchInputChange={handleSearchInputChange}
           setSearchTerm={setSearchTerm}
           setSearchCategory={setSearchCategory}
           handleEditClick={handleEditClick}
-          handleCreateClick={handleCreateClick}
+          
           selectedRow={selectedRow}
           contents={contents}
+          noCreate={true}
         />
         <ListContainer
           contents={contents}
@@ -422,7 +331,7 @@ export const Orders = () => {
           listContainerRef={listContainerRef}
         />
         {showEdit && <PopOut popOutType="edit" dataType="訂單" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
-        {showCreate && <PopOut popOutType="create" dataType="訂單" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
+        {/* {showCreate && <PopOut popOutType="create" dataType="訂單" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>} */}
       </div>
     </div>
   );
