@@ -353,8 +353,8 @@ def check_clicker_exist(cust_id, grp_id):
     return view.check_clicker_exist(cust_id, grp_id)
 
 @app.route('/db/views/check_buyer_exist/<string:cust_id>/<string:grp_id>', methods=['GET'])
-def check_clicker_exist(cust_id, grp_id):
-    return view.check_clicker_exist(cust_id, grp_id)
+def check_buyer_exist(cust_id, grp_id):
+    return view.check_buyer_exist(cust_id, grp_id)
 
 @app.route('/db/views/get_group_data_by_type/<string:grp_id>/<string:type>', methods=['GET'])
 def get_group_data_by_type(grp_id, type):
