@@ -98,6 +98,15 @@ def check_clicker_exist(cust_id, grp_id):
         print(f"Error checking viewer existence: {e}")
         return jsonify({"error": str(e)}), 500
     
+def check_buyer_exist(cust_id, grp_id):
+    try:
+        view_records = View_History.query.filter_by(group_id=grp_id, customer_id=cust_id, view_type="buy").all()
+        exists = bool(view_records)
+        return jsonify({"exists": exists}), 200
+    except Exception as e:
+        print(f"Error checking viewer existence: {e}")
+        return jsonify({"error": str(e)}), 500
+    
 def get_group_data_by_type(grp_id, type):
     try:
         view_records = View_History.query.filter_by(group_id=grp_id, view_type=type).order_by(asc(View_History.timestamp)).with_entities(View_History.timestamp).all()
