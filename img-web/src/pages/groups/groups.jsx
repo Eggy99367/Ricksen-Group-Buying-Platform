@@ -14,7 +14,6 @@ export const Groups = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": true,
@@ -30,9 +29,8 @@ export const Groups = () => {
       "showed_attr": "商品",
       "attr": "product_id",
       "required": true,
-      "display": true,
+      "display": false,
       "data": null,
-      "special": "product_name",
       "edit": {
         "visible": true,
         "disable": false,
@@ -46,12 +44,29 @@ export const Groups = () => {
       "options": null
     },
     {
+      "showed_attr": "商品",
+      "attr": "product_name",
+      "required": false,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": false,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "create": {
+        "visible": false,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "options": null
+    },
+    {
       "showed_attr": "售價",
       "attr": "selling_price",
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -69,18 +84,17 @@ export const Groups = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
-        "entry_type": "dropdown"
+        "entry_type": "setdropdown"
       },
       "create": {
         "visible": true,
-        "disable": false,
-        "entry_type": "dropdown"
+        "disable": true,
+        "entry_type": "setdropdown"
       },
-      "options": [["尚未開團", ""], ["團購進行中", ""], ["成團", ""], ["棄團", ""]]
+      "options": [["準備開團", ""], ["團購進行中", ""], ["收團，等待決策", ""], ["成團，等待入庫", ""], ["棄團", ""], ["入庫，等待撿貨", ""], ["開放取貨", ""], ["團購結束", ""]]
     },
     {
       "showed_attr": "開團時間",
@@ -88,7 +102,6 @@ export const Groups = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -106,7 +119,6 @@ export const Groups = () => {
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -124,7 +136,6 @@ export const Groups = () => {
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -142,7 +153,6 @@ export const Groups = () => {
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -160,7 +170,6 @@ export const Groups = () => {
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -178,7 +187,6 @@ export const Groups = () => {
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -210,13 +218,14 @@ export const Groups = () => {
 
   const checkUpdate = async () => {
     console.log("checking for update...");
-    axios.get(`${API_BASE_URL}/db/last_updated/group`, {
+    axios.get(`${API_BASE_URL}/db/last_updated/group_record`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      if(last_updated === null || response.data.time > last_updated){
-        last_updated = response.data.time;
+      var time = response.data.time.replace(/[^0-9]/g, '')
+      if(last_updated === null || time > last_updated){
+        last_updated = time;
         fetchGroups();
         setError(null);
       }
@@ -231,8 +240,9 @@ export const Groups = () => {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      if(sup_last_updated === null || response.data.time > sup_last_updated){
-        sup_last_updated = response.data.time;
+      var time = response.data.time.replace(/[^0-9]/g, '')
+      if(sup_last_updated === null || time > sup_last_updated){
+        sup_last_updated = time;
         fetchProductNames();
         setError(null);
       }
@@ -402,6 +412,7 @@ export const Groups = () => {
       <div className='page_content'>
         <FunctionBar
           searchTerm={searchTerm}
+          pageTitle={"團購管理"}
           handleSearchInputChange={handleSearchInputChange}
           setSearchTerm={setSearchTerm}
           setSearchCategory={setSearchCategory}

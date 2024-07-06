@@ -14,7 +14,6 @@ export const Suppliers = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": true,
@@ -32,7 +31,6 @@ export const Suppliers = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -50,7 +48,6 @@ export const Suppliers = () => {
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -68,7 +65,6 @@ export const Suppliers = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -86,7 +82,6 @@ export const Suppliers = () => {
       "required": true,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -104,7 +99,6 @@ export const Suppliers = () => {
       "required": false,
       "display": true,
       "data": null,
-      "special": null,
       "edit": {
         "visible": true,
         "disable": false,
@@ -139,8 +133,9 @@ export const Suppliers = () => {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      if(last_updated === null || response.data.time > last_updated){
-        last_updated = response.data.time;
+      var time = response.data.time.replace(/[^0-9]/g, '')
+      if(last_updated === null || time > last_updated){
+        last_updated = time;
         fetchSuppliers();
         setError(null);
       }
@@ -286,6 +281,7 @@ export const Suppliers = () => {
       <div className='page_content'>
         <FunctionBar
           searchTerm={searchTerm}
+          pageTitle={"供應商管理"}
           handleSearchInputChange={handleSearchInputChange}
           setSearchTerm={setSearchTerm}
           setSearchCategory={setSearchCategory}

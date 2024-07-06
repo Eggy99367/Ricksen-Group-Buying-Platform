@@ -79,6 +79,7 @@ class Group_Record(db.Model):
     status = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.String(20), nullable=False)
     end_time = db.Column(db.String(20))
+    stocking_time = db.Column(db.String(20))
     min_qty = db.Column(db.Integer)
     max_qty = db.Column(db.Integer)
     min_qty_pp = db.Column(db.Integer)
@@ -92,6 +93,7 @@ class Group_Record(db.Model):
             "status": self.status,
             "start_time": self.start_time,
             "end_time": self.end_time,
+            "stocking_time": self.stocking_time,
             "min_qty": self.min_qty,
             "max_qty": self.max_qty,
             "min_qty_pp": self.min_qty_pp,
@@ -175,3 +177,4 @@ class User(db.Model):
             "email": self.email,
             "password_hash": self.password_hash
         }
+

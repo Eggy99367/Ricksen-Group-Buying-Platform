@@ -2,6 +2,7 @@ flask
 requests
 pymysql
 sqlalchemy
+APScheduler
 flask_sqlalchemy
 flask_jwt_extended
 flask_cors

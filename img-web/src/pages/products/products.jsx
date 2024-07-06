@@ -154,8 +154,9 @@ export const Products = () => {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      if(last_updated === null || response.data.time > last_updated){
-        last_updated = response.data.time;
+      var time = response.data.time.replace(/[^0-9]/g, '')
+      if(last_updated === null || time > last_updated){
+        last_updated = time;
         fetchProducts();
         setError(null);
       }
@@ -170,8 +171,9 @@ export const Products = () => {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      if(sup_last_updated === null || response.data.time > sup_last_updated){
-        sup_last_updated = response.data.time;
+      var time = response.data.time.replace(/[^0-9]/g, '')
+      if(sup_last_updated === null || time > sup_last_updated){
+        sup_last_updated = time;
         fetchSupplierNames();
         setError(null);
       }
@@ -339,6 +341,7 @@ export const Products = () => {
       <div className='page_content'>
         <FunctionBar
           searchTerm={searchTerm}
+          pageTitle={"商品管理"}
           handleSearchInputChange={handleSearchInputChange}
           setSearchTerm={setSearchTerm}
           setSearchCategory={setSearchCategory}

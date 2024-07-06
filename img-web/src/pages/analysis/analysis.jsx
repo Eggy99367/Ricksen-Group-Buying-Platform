@@ -73,8 +73,9 @@ export const Analysis = () => {
             "ngrok-skip-browser-warning": 1
           }
         }).then(response => {
-          if(grp_last_updated === null || response.data.time > grp_last_updated){
-            grp_last_updated = response.data.time;
+          var time = response.data.time.replace(/[^0-9]/g, '')
+          if(grp_last_updated === null || time > grp_last_updated){
+            grp_last_updated = time;
             fetchAllGroupIds();
             const ids = response.data.map(group => group.id);
             setGroupIds(ids);

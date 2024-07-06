@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from .models import db, Group_Record, Product
+from .config import *
 
 def get_groups():
     try:
@@ -58,6 +59,18 @@ def update_group(id):
             if data[content] == "":
                 data[content] = None
             setattr(group, content, data[content])
+        db.session.commit()
+        return jsonify(group.get_info())
+    except Exception as e:
+            return jsonify({'error': str(e)}), 400
+    
+def stock_group(id):
+    try:
+        group = Group_Record.query.get_or_404(id)
+        if group.status != GroupStockedAwaitingPicking:
+            setattr(group, "status", GroupStockedAwaitingPicking)
+        else:
+            return jsonify({'error': str(e)}), 400
         db.session.commit()
         return jsonify(group.get_info())
     except Exception as e:
