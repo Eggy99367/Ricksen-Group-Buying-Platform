@@ -1,10 +1,13 @@
 from datetime import datetime
 import pytz
 
-def get_cur_time():
+def get_cur_time(no_sec = False):
     taiwan_tz = pytz.timezone('Asia/Taipei')
     current_datetime = datetime.now(taiwan_tz)
-    cur_time_pure_number = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+    if no_sec:
+        cur_time_pure_number = current_datetime.strftime("%Y-%m-%dT%H:%M")
+    else:
+        cur_time_pure_number = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
     return cur_time_pure_number
 
 def pure_number_to_formatted(pure_number):

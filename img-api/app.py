@@ -122,11 +122,14 @@ def check_and_update_status():
                 item_sells = get_item_sells(item.id)
                 item_end_time = formatted_to_date(item.end_time)
                 if item_end_time <= now:
-                    if item.min_qty and item_sells >= item.min_qty:
+                    if item.min_qty is not None and item_sells >= item.min_qty:
                         print(f"團購項目{item.id}已至收團時間，該項目已販售出{item_sells}個，已達成團最低門檻{item.min_qty}個")
                         update_group_status(item.id, GroupFormedAwaitingStocking)
                     else:
-                        print(f"團購項目{item.id}已至收團時間，該項目已販售出{item_sells}個，未設定或未達到成團最低門檻")
+                        if item.min_qty is not None:
+                            print(f"團購項目{item.id}已至收團時間，該項目已販售出{item_sells}個，未達到成團最低門檻{item.min_qty}個")
+                        else:
+                            print(f"團購項目{item.id}已至收團時間，該項目已販售出{item_sells}個，未設定成團最低門檻")
                         update_group_status(item.id, GroupEndedAwaitingDecision)
 
 scheduler = BackgroundScheduler()

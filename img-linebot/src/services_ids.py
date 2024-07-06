@@ -10,7 +10,7 @@ CHANNEL_ACCESS_TOKEN = 'AY4Ib+xWajIopdJjkX+GbTV8F2ckANFIb62dAMEvonf1vlI5j+zUrbSH
 # ------------------------------------API Link------------------------------------
 
 # API_URL = "http://192.168.100.27"
-API_URL = "http://192.168.50.12"
+API_URL = "http://172.20.10.3"
 
 # ------------------------------------General Functions------------------------------------
 

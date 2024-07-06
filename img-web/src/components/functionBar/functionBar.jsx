@@ -13,7 +13,8 @@ export const FunctionBar = ({ searchTerm,
                               contents,
                               noEdit=false,
                               noCreate=false,
-                              stocking=false }) => {
+                              stocking=false,
+                              stocking_disable=false }) => {
 
   return (
     <div className='function_bar_container'>
@@ -39,7 +40,7 @@ export const FunctionBar = ({ searchTerm,
       <div className='button_container'>
         {!noEdit && <button disabled={selectedRow === null} onClick={handleEditClick}>編輯</button>}
         {!noCreate && <button onClick={handleCreateClick}>新增</button>}
-        {stocking && <button onClick={handleStockingClick}>入庫</button>}
+        {stocking && <button disabled={stocking_disable} onClick={handleStockingClick}>入庫</button>}
       </div>
     </div>
   );

@@ -95,6 +95,23 @@ export const Stocking = () => {
         "disable": false,
         "entry_type": "time"
       }
+    },
+    {
+      "showed_attr": "入庫時間",
+      "attr": "stocking_time",
+      "required": false,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      },
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "time"
+      }
     }
   ]
   const [groups, setGroups] = useState([]);
@@ -255,6 +272,7 @@ export const Stocking = () => {
           noEdit={true}
           noCreate={true}
           stocking={true}
+          stocking_disable={selectedRow === null || !(filteredContents[selectedRow].status === "成團，等待入庫")}
         />
         <ListContainer
           contents={initialContents}
