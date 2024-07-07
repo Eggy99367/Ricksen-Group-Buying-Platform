@@ -4,13 +4,13 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const ClickPieChart = ({ totalClicks, totalFollowers }) => {
+const ConversionPieChart = ({ totalBuys, totalViewers }) => {
   const data = {
-    labels: ['Clicked Users', 'Unclicked Users'],
+    labels: ['Conversed Users', 'Unconversed Users'],
     datasets: [
       {
         label: '# of People',
-        data: [totalClicks, totalFollowers - totalClicks],
+        data: [totalBuys, totalViewers - totalBuys],
         backgroundColor: [
           'rgba(54, 162, 235, 0.6)',
           'rgba(255, 99, 132, 0.6)',
@@ -51,4 +51,4 @@ const ClickPieChart = ({ totalClicks, totalFollowers }) => {
   );
 };
 
-export default ClickPieChart;
+export default ConversionPieChart;

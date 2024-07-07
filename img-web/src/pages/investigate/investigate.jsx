@@ -7,12 +7,13 @@ import ExposurePieChart from './Exposure Charts/exposurePieChart.jsx'
 import ExposureLineChart from './Exposure Charts/exposureLineChart.jsx'
 import ClickPieChart from './Click Charts/clickPieChart.jsx'
 import ClickLineChart from './Click Charts/clickLineChart.jsx'
+import ConversionLineChart from './Conversion Charts/conversionLineChart.jsx'
+import ConversionPieChart from './Conversion Charts/conversionPieChart.jsx'
+
 import './investigate.css'
 
 export const Investigate = () => {
-    const CHANNEL_ACCESS_TOKEN = 'AY4Ib+xWajIopdJjkX+GbTV8F2ckANFIb62dAMEvonf1vlI5j+zUrbSHZsO/EdaK/aW17FwuaFL0LeD15n+pukPgETG+I4Nwq5+oyRRtSx2/n/DfRZDXb6DurL59LyBx7IjpQ+Vv4TSYK+q3Y5opjgdB04t89/1O/w1cDnyilFU='
-
-
+  
     const location = useLocation();
     const group = location.state?.group;
 
@@ -22,6 +23,8 @@ export const Investigate = () => {
     const [followers, setFollowers] = useState(1);
     const [viewTime, setViewTime] = useState([]);
     const [clickTime, setClickTime] = useState([]);
+    const [buyTime, setBuyTime] = useState([]);
+    const [totalViewers, setTotalViewers] = useState(1);
 
 
     useEffect(() => {
@@ -32,6 +35,7 @@ export const Investigate = () => {
             fetchTotalFollowers();
             fetchViewData();
             fetchClickData();
+            fetchBuyData();
         }
     }, [group]);
 
@@ -100,6 +104,7 @@ export const Investigate = () => {
           }
         }).then(response => {
             console.log("Data fetched successfully:", response.data);
+            setTotalViewers(response.data.length);
             setViewTime(response.data);
             console.log(viewTime);
           }).catch(error => {
@@ -116,6 +121,21 @@ export const Investigate = () => {
         }).then(response => {
             console.log("Data fetched successfully:", response.data);
             setClickTime(response.data);
+            console.log(viewTime);
+          }).catch(error => {
+            console.error("There was an error fetching the data!", error);
+        });
+    }
+
+    const fetchBuyData = async () => {
+      console.log("Fetching data from API...");
+        axios.get(`${API_BASE_URL}/db/views/get_group_data_by_type/${group.id}/buy`, {
+          headers: {
+            "ngrok-skip-browser-warning": 1
+          }
+        }).then(response => {
+            console.log("Data fetched successfully:", response.data);
+            setBuyTime(response.data);
             console.log(viewTime);
           }).catch(error => {
             console.error("There was an error fetching the data!", error);
@@ -168,8 +188,12 @@ export const Investigate = () => {
                           <ExposureLineChart timestamps = {viewTime} totalFollowers = {followers}/>
                         </div>
                         <div className="click_charts_container">
-                          <ClickPieChart totalViews = {clickTime.length} totalFollowers = {followers}/>
+                          <ClickPieChart totalClicks = {clickTime.length} totalFollowers = {followers}/>
                           <ClickLineChart timestamps = {clickTime} totalFollowers = {followers}/>
+                        </div>
+                        <div className="conversion_charts_container">
+                          <ConversionPieChart totalBuys = {buyTime.length} totalViewers = {totalViewers}/>
+                          <ConversionLineChart timestamps = {buyTime} totalViewers = {totalViewers}/>
                         </div>
                     </div>
                     

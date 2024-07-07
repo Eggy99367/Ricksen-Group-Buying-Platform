@@ -92,6 +92,15 @@ h1 {
     margin-left: 50px;
 }
 
+.conversion_charts_container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+    margin-left: 50px;
+}
+
 .chart {
     flex: 1;
     margin: 0 50px;
