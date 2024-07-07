@@ -103,6 +103,20 @@ class Group_Record(db.Model):
     def __repr__(self):
         return f'<Group_Record {self.id}>'
     
+
+class Picking_List(db.Model):
+    __tablename__ = "picking_list"
+    id = db.Column(db.String(10), primary_key=True, nullable=False, unique=True)
+    date = db.Column(db.String(20), nullable=False)
+    customer_id = db.Column(db.String(40), db.ForeignKey('customer.id'), nullable=False)
+    
+    def get_info(self):
+        return {
+            "id": self.id,
+            "date": self.date,
+            "customer_id": self.customer_id
+        }
+
 class Order_Record(db.Model):
     __tablename__ = 'order_record'
     id = db.Column(db.String(10), primary_key=True, nullable=False, unique=True)
@@ -111,6 +125,7 @@ class Order_Record(db.Model):
     group_id = db.Column(db.String(10), db.ForeignKey('group_record.id'), nullable=False)
     qty = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(10), nullable=False)
+    picking_list_id = db.Column(db.String(10), db.ForeignKey('picking_list.id'))
 
     def get_info(self):
         return {
@@ -119,7 +134,8 @@ class Order_Record(db.Model):
             "customer_id": self.customer_id,
             "group_id": self.group_id,
             "qty": self.qty,
-            "status": self.status
+            "status": self.status,
+            "picking_list_id": self.picking_list_id
         }
 
     def __repr__(self):
@@ -177,4 +193,3 @@ class User(db.Model):
             "email": self.email,
             "password_hash": self.password_hash
         }
-

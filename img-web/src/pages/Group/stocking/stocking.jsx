@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import { useNavigate } from 'react-router-dom';
-import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
+import { Header, FunctionBar, ListContainer } from "../../../components"
 import axios from 'axios';
-import API_BASE_URL from '../../config';
+import API_BASE_URL from '../../../config';
 
-export const Groups = () => {
+export const Stocking = () => {
   // const navigate = useNavigate();
 
   const initialContents = [
@@ -62,23 +62,6 @@ export const Groups = () => {
       "options": null
     },
     {
-      "showed_attr": "售價",
-      "attr": "selling_price",
-      "required": true,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
       "showed_attr": "狀態",
       "attr": "status",
       "required": true,
@@ -95,23 +78,6 @@ export const Groups = () => {
         "entry_type": "setdropdown"
       },
       "options": [["準備開團", ""], ["團購進行中", ""], ["收團，等待決策", ""], ["成團，等待入庫", ""], ["棄團", ""], ["入庫，等待撿貨", ""], ["開放取貨", ""], ["團購結束", ""]]
-    },
-    {
-      "showed_attr": "開團時間",
-      "attr": "start_time",
-      "required": true,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "time"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "time"
-      }
     },
     {
       "showed_attr": "收團時間",
@@ -131,82 +97,27 @@ export const Groups = () => {
       }
     },
     {
-      "showed_attr": "最少購買數",
-      "attr": "min_qty",
+      "showed_attr": "入庫時間",
+      "attr": "stocking_time",
       "required": false,
       "display": true,
       "data": null,
       "edit": {
         "visible": true,
         "disable": false,
-        "entry_type": "entry"
+        "entry_type": "time"
       },
       "create": {
         "visible": true,
         "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
-      "showed_attr": "最多購買數",
-      "attr": "max_qty",
-      "required": false,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
-      "showed_attr": "最少單人購買數",
-      "attr": "min_qty_pp",
-      "required": false,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      }
-    },
-    {
-      "showed_attr": "最多單人購買數",
-      "attr": "max_qty_pp",
-      "required": false,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "entry"
+        "entry_type": "time"
       }
     }
   ]
-  const [contents, setContents] = useState(initialContents);
   const [groups, setGroups] = useState([]);
-  const [product_names, setProductNames] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [showEdit, setShowEdit] = useState(false);
-  const [showCreate, setShowCreate] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(0);
   const [searchCategory, setSearchCategory] = useState("");
@@ -281,7 +192,6 @@ export const Groups = () => {
       }
     }).then(response => {
         console.log("Data fetched successfully:", response);
-        setProductNames(Object.entries(response.data));
         setLoading(false);
         setError(null);
       }).catch(error => {
@@ -299,59 +209,12 @@ export const Groups = () => {
       setResultLimit(rowsPerPage);
     }
   }, [listContainerRef, groups, searchTerm]);
-
-  const handleEditSubmit = async (inputData) => {
-    var update_json = {};
-    for(const content of inputData){
-      if(content.data === ""){
-        update_json[content.attr] = null;
-        }else{
-        update_json[content.attr] = content.data;          
-      }
-    }
-    console.log("handle edit:", update_json);
-    try {
-      await axios.put(`${API_BASE_URL}/db/groups/${update_json.id}`, update_json, {
-        headers: {
-          'Content-Type': 'application/json',
-          "ngrok-skip-browser-warning": 1
-        }});
-      checkUpdate();
-      setShowEdit(false);
-    } catch (error) {
-      console.error('Update failed', error);
-    }
-  }
-
-  const handleCreateSubmit = async (inputData) => {
-    var create_json = {};
-    for(const content of inputData){
-      if(content.data === ""){
-        create_json[content.attr] = null;
-        }else{
-          create_json[content.attr] = content.data;          
-      }
-    }
-    console.log("handle create:", create_json);
-    try {
-      await axios.post(`${API_BASE_URL}/db/groups`, create_json, {
-        headers: {
-          'Content-Type': 'application/json',
-          "ngrok-skip-browser-warning": 1
-        }});
-      checkUpdate();
-      setShowCreate(false);
-    } catch (error) {
-      console.error('Create failed', error);
-    }
-  }
-
   
   const filteredContents = groups.filter((group) => (
     searchTerm === "" ? (true) : (
       searchCategory === "" ? (
         Object.entries(group).some(([key, value]) =>
-          contents.some(content => content.display && content.attr === key) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          initialContents.some(content => content.display && content.attr === key) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
         group[searchCategory] && group[searchCategory].toString().toLowerCase().includes(searchTerm)
@@ -359,6 +222,18 @@ export const Groups = () => {
     )
   );
 
+  const handleStockingClick = async () => {
+    try {
+      await axios.put(`${API_BASE_URL}/db/stock/${filteredContents[selectedRow].id}`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          "ngrok-skip-browser-warning": 1
+        }});
+      checkUpdate();
+    } catch (error) {
+      console.error('Update failed', error);
+    }
+  }
 
   //-----------------------------------------------------------------------------------
 
@@ -374,31 +249,6 @@ export const Groups = () => {
     setSelectedRow(index);
   }
 
-  const clostEditPopOut = () => {
-    setShowEdit(false);
-  }
-
-  const handleEditClick = () => {
-    var updatedContents = contents.map((content, idx) => ({
-      ...content,
-      data: filteredContents[selectedRow][content.attr],
-    }));
-    updatedContents[1].options = product_names;
-    setContents(updatedContents);
-    setShowEdit(true);
-  }
-
-  const clostCreatePopOut = () => {
-    setShowCreate(false);
-  }
-
-  const handleCreateClick = () => {
-    var updatedContents = contents;
-    updatedContents[1].options = product_names;
-    setContents(updatedContents);
-    setShowCreate(true);
-  }
-
   const handleSearchInputChange = (event) => {
     setSelectedRow(null);
     setPage(0);
@@ -412,17 +262,20 @@ export const Groups = () => {
       <div className='page_content'>
         <FunctionBar
           searchTerm={searchTerm}
-          pageTitle={"團購管理"}
+          pageTitle={"商品入庫"}
           handleSearchInputChange={handleSearchInputChange}
           setSearchTerm={setSearchTerm}
           setSearchCategory={setSearchCategory}
-          handleEditClick={handleEditClick}
-          handleCreateClick={handleCreateClick}
+          handleStockingClick={handleStockingClick}
           selectedRow={selectedRow}
-          contents={contents}
+          contents={initialContents}
+          noEdit={true}
+          noCreate={true}
+          stocking={true}
+          stocking_disable={selectedRow === null || !(filteredContents[selectedRow].status === "成團，等待入庫")}
         />
         <ListContainer
-          contents={contents}
+          contents={initialContents}
           filteredContents={filteredContents}
           handleRowClick={handleRowClick}
           selectedRow={selectedRow}
@@ -433,11 +286,9 @@ export const Groups = () => {
           loading={loading}
           listContainerRef={listContainerRef}
         />
-        {showEdit && <PopOut popOutType="edit" dataType="團購項目" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
-        {showCreate && <PopOut popOutType="create" dataType="團購項目" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
-      </div>
+        </div>
     </div>
   );
 }
 
-export default Groups;
+export default Stocking;

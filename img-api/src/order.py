@@ -2,6 +2,7 @@ from flask import request, jsonify
 from .models import db, Order_Record
 from .basics import *
 from sqlalchemy import func
+from .picking_list import get_picking_list_id
 
 def get_orders():
     try:
@@ -98,3 +99,10 @@ def delete_order(id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
+def update_order_picking_list_id(id, date):
+    order = Order_Record.query.get_or_404(id)
+    picking_list_id = get_picking_list_id(order.customer_id, date)
+    print(f"將訂單{order.id}的撿貨單編號更新成{picking_list_id}")
+    order = Order_Record.query.get_or_404(id)
+    setattr(order, "picking_list_id", picking_list_id)
+    db.session.commit()

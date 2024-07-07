@@ -1,7 +1,9 @@
 from flask import request, jsonify
-from .models import db, Group_Record, Product
+from .models import db, Group_Record, Order_Record, Product, Picking_List
 from .config import *
 from .basics import *
+from .picking_list import *
+from .order import update_order_picking_list_id
 
 def get_groups():
     try:
@@ -68,13 +70,23 @@ def update_group(id):
 def stock_group(id):
     try:
         group = Group_Record.query.get_or_404(id)
+        time = str(get_cur_time())
         if group.status != GroupStockedAwaitingPicking:
             setattr(group, "status", GroupStockedAwaitingPicking)
-            setattr(group, "stocking_time", str(get_cur_time()))
+            setattr(group, "stocking_time", time)
+            db.session.commit()
         else:
             return jsonify({'error': str(e)}), 400
-        db.session.commit()
-        return jsonify(group.get_info())
+        
+        picking_date = get_picking_date(time)
+        print("撿貨日期：", picking_date)
+        # 找所有該團購的訂單
+        orders = Order_Record.query.with_entities(Order_Record.id).filter(Order_Record.group_id == id).all()
+        orders = [order[0] for order in orders]
+        print("該團購項目所有訂單編號：", orders)
+        for order in orders:
+            update_order_picking_list_id(order, picking_date)
+        return jsonify({})
     except Exception as e:
             return jsonify({'error': str(e)}), 400
     

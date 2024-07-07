@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
-from src.models import db, Customer, Supplier, Product, Group_Record, Order_Record, LastUpdated, User
-from src import customer, supplier, product, group, order, view
+from src.models import db, Customer, Supplier, Product, Group_Record, Order_Record, LastUpdated, User, Picking_List
+from src import customer, supplier, product, group, order, view, picking_list
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from sqlalchemy import event
@@ -38,7 +38,7 @@ def update_last_updated(table_name, connection):
         )
         connection.execute(stmt)
 
-tables = [Customer, Supplier, Product, Group_Record, Order_Record, User]
+tables = [Customer, Supplier, Product, Group_Record, Order_Record, User, Picking_List]
 for table in tables:
     table_name = table.__tablename__
 
@@ -358,6 +358,21 @@ def check_clicker_exist(cust_id, grp_id):
 @app.route('/db/views/get_group_data_by_type/<string:grp_id>/<string:type>', methods=['GET'])
 def get_group_data_by_type(grp_id, type):
     return view.get_group_data_by_type(grp_id, type)
+
+# ----------------------------------------------------------------------------------------
+
+
+@app.route('/db/picking_lists', methods=['GET'])
+def get_picking_lists():
+    return picking_list.get_picking_list()
+
+@app.route('/db/picking_lists/dates', methods=['GET'])
+def get_picking_lists_dates():
+    return picking_list.get_picking_list_dates()
+
+@app.route('/db/picking_lists/<string:date>', methods=['GET'])
+def get_picking_list_by_date(date):
+    return picking_list.get_picking_list_by_date(date)
 
 # ----------------------------------------------------------------------------------------
 

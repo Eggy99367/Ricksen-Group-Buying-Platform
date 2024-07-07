@@ -45,7 +45,6 @@ def add_customer():
 
 def update_customer(id):
     try:
-        print(1)
         contents = ["name", "phone", "email", "state"]
         data = request.json
         customer = Customer.query.get_or_404(id)
