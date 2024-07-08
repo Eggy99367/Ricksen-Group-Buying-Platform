@@ -1,0 +1,45 @@
+.pl_page_main_box {
+  margin: 0 auto;
+  padding: 20px 0;
+  width: 80vw;
+  /* height: 100%; */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pl_container {
+  width: 100%;
+  padding: 30px;
+  border-radius: 30px;
+  overflow: auto;
+  position: relative;
+  
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.pl_container table {
+  width: 100%;
+}
+
+.pl_container th {
+  text-align: center;
+  height:30px;
+}
+
+.pl_container td {
+  text-align: center;
+  height:30px;
+}
+
+.pl_container thead {
+  background-color: rgb(179, 179, 179);
+}
+
+.pl_container tbody tr:nth-child(odd) {
+  background-color: rgb(240, 240, 240);
+}
+
+.pl_container tbody tr:nth-child(even) {
+  background-color: rgb(226, 226, 226);
+}

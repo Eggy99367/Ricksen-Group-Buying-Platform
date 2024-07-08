@@ -1,0 +1,14 @@
+export { Login } from './login/login';
+export { Register } from './register/register';
+export { Home } from './home/home';
+export { Suppliers } from './suppliers/suppliers';
+export { Customers } from './customers/customers';
+export { Products } from './products/products';
+export { Groups } from './Group/groups/groups';
+export { Orders } from './orders/orders';
+export { NotFound } from './notFound/notFound';
+export { Analysis } from './analysis/analysis';
+export { Stocking } from './Group/stocking/stocking';
+export { Investigate } from './investigate/investigate';
+export { PickingList } from './Picking_List/picking_list/picking_list';
+export { PickingMain } from './Picking_List/picking_main/picking_main';
