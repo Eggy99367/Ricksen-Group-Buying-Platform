@@ -9,8 +9,8 @@ export const Barcode = ({ value }) => {
       JsBarcode(barcodeRef.current, value, {
         format: "CODE128",
         lineColor: "#000",
-        width: 4,
-        height: 40,
+        width: 2,
+        height: 30,
         displayValue: true,
       });
     }

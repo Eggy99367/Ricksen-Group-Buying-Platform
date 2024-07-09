@@ -78,6 +78,8 @@ def get_picking_list_by_date(date):
                     integrated_odrs[odr["group_id"]]["qty"] += odr["qty"]
             integrated_odrs = [odr for _, odr in integrated_odrs.items()]
             pl_info["orders"] = integrated_odrs
+            pl_info["total_qty"] = sum([odr["qty"] for odr in integrated_odrs])
+            pl_info["total_price"] = sum([odr["price"] * odr["qty"] for odr in integrated_odrs])
             result.append(pl_info)
 
         return jsonify(result)
