@@ -1,0 +1,94 @@
+.pl_page_main_box {
+  margin: 0 auto;
+  padding: 20px 0;
+  width: 80vw;
+  /* height: 100%; */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pl_title {
+  text-align: center;
+  font-size: xx-large;
+  font-weight: bolder;
+}
+
+.picking_list_box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pl_container {
+  width: 100%;
+  padding: 10px 30px;
+  border-radius: 30px;
+  overflow: auto;
+  position: relative;
+  
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.pl_container p{
+  margin: 5px 0;
+}
+
+.barcode_container {
+  position: absolute;
+  /* top: 40px; */
+  right: 40px;
+}
+
+.page-break {
+  page-break-after: always;
+}
+
+.pdf-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.pdf-table th{
+  border-bottom: 2px solid black;
+  padding: 8px 0;
+}
+
+.pdf-table td {
+  border-bottom: 1px solid black;
+  padding: 8px 0;
+}
+
+.summary_row td {
+  border-bottom: 0;
+}
+
+.g_id_col {
+  width: 150px;
+  text-align: left;
+}
+
+.p_name_col {
+  /* width: 500px; */
+  text-align: left;
+}
+
+.qty_col {
+  width: 100px;
+  text-align: right;
+}
+
+.unit_price_col {
+  width: 100px;
+  text-align: right;
+}
+
+.price_col {
+  width: 100px;
+  text-align: right;
+}
+
+.download_pdf_btn {
+  height: 50px;
+  font-size: x-large;
+}

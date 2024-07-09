@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-// import { useNavigate } from 'react-router-dom';
 import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
@@ -91,6 +90,23 @@ export const Orders = () => {
       },
       "create": {
         "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    },
+    {
+      "showed_attr": "撿貨單編號",
+      "attr": "picking_list_id",
+      "required": false,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": false,
+        "disable": false,
+        "entry_type": "entry"
+      },
+      "create": {
+        "visible": false,
         "disable": false,
         "entry_type": "entry"
       }
