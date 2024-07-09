@@ -5,15 +5,17 @@ import 'chartjs-adapter-date-fns';
 
 ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const convertToDate = (timestamp) => {
-  const year = parseInt(timestamp.slice(0, 4), 10);
-  const month = parseInt(timestamp.slice(4, 6), 10) - 1; // Months are zero-indexed
-  const day = parseInt(timestamp.slice(6, 8), 10);
-  const hour = parseInt(timestamp.slice(8, 10), 10);
-  const minute = parseInt(timestamp.slice(10, 12), 10);
-  const second = parseInt(timestamp.slice(12, 14), 10);
+const convertToDate = (datetimeStr) => {
+  const date = new Date(datetimeStr);
+  
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
-  return new Date(Date.UTC(year, month, day, hour, minute, second));
+  return `${year}${month}${day}${hours}${minutes}${seconds}`;
 };
 
 const ExposureLineChart = ({ timestamps, totalFollowers }) => {
