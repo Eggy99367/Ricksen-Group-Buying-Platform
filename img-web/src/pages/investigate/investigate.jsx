@@ -3,31 +3,39 @@ import { Header, ListContainer, listContainer } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
 import { useLocation } from 'react-router-dom';
+import ExposurePieChart from './Exposure Charts/exposurePieChart.jsx'
+import ExposureLineChart from './Exposure Charts/exposureLineChart.jsx'
+import ClickPieChart from './Click Charts/clickPieChart.jsx'
+import ClickLineChart from './Click Charts/clickLineChart.jsx'
+import ConversionLineChart from './Conversion Charts/conversionLineChart.jsx'
+import ConversionPieChart from './Conversion Charts/conversionPieChart.jsx'
+
 import './investigate.css'
 
 export const Investigate = () => {
-    const CHANNEL_ACCESS_TOKEN = 'AY4Ib+xWajIopdJjkX+GbTV8F2ckANFIb62dAMEvonf1vlI5j+zUrbSHZsO/EdaK/aW17FwuaFL0LeD15n+pukPgETG+I4Nwq5+oyRRtSx2/n/DfRZDXb6DurL59LyBx7IjpQ+Vv4TSYK+q3Y5opjgdB04t89/1O/w1cDnyilFU='
-
-
+  
     const location = useLocation();
     const group = location.state?.group;
 
     const [cost, setCost] = useState(0);
     const [price, setPrice] = useState(0);
     const [totalSold, setTotalSold] = useState(0);
-    const [revenue, setRevenue] = useState(0);
-    const [profit, setProfit] = useState(0);
     const [followers, setFollowers] = useState(1);
+    const [viewTime, setViewTime] = useState([]);
+    const [clickTime, setClickTime] = useState([]);
+    const [buyTime, setBuyTime] = useState([]);
+    const [totalViewers, setTotalViewers] = useState(1);
 
 
     useEffect(() => {
         if (group) {
             fetchCost(group.product_id);
-            fetchPrice(group.id);
             fetchTotalSold(group.id);
+            fetchPrice(group.id);
             fetchTotalFollowers();
-            calculateRev();
-            calculateProfit();
+            fetchViewData();
+            fetchClickData();
+            fetchBuyData();
         }
     }, [group]);
 
@@ -87,15 +95,51 @@ export const Investigate = () => {
             console.error("There was an error fetching the data!", error);
         });
     };
-  
-  
 
-    const calculateRev = () => {
-        setRevenue(totalSold * price);
+    const fetchViewData = async () => {
+      console.log("Fetching data from API...");
+        axios.get(`${API_BASE_URL}/db/views/get_group_data_by_type/${group.id}/view`, {
+          headers: {
+            "ngrok-skip-browser-warning": 1
+          }
+        }).then(response => {
+            console.log("Data fetched successfully:", response.data);
+            setTotalViewers(response.data.length);
+            setViewTime(response.data);
+            console.log(viewTime);
+          }).catch(error => {
+            console.error("There was an error fetching the data!", error);
+        });
     }
 
-    const calculateProfit = () => {
-        setProfit(revenue - cost * totalSold);
+    const fetchClickData = async () => {
+      console.log("Fetching data from API...");
+        axios.get(`${API_BASE_URL}/db/views/get_group_data_by_type/${group.id}/click`, {
+          headers: {
+            "ngrok-skip-browser-warning": 1
+          }
+        }).then(response => {
+            console.log("Data fetched successfully:", response.data);
+            setClickTime(response.data);
+            console.log(viewTime);
+          }).catch(error => {
+            console.error("There was an error fetching the data!", error);
+        });
+    }
+
+    const fetchBuyData = async () => {
+      console.log("Fetching data from API...");
+        axios.get(`${API_BASE_URL}/db/views/get_group_data_by_type/${group.id}/buy`, {
+          headers: {
+            "ngrok-skip-browser-warning": 1
+          }
+        }).then(response => {
+            console.log("Data fetched successfully:", response.data);
+            setBuyTime(response.data);
+            console.log(viewTime);
+          }).catch(error => {
+            console.error("There was an error fetching the data!", error);
+        });
     }
 
     return (
@@ -133,14 +177,26 @@ export const Investigate = () => {
                         </div>
                         <div className="metric">
                             <span className="label">收入:</span>
-                            <span>${revenue}</span>
+                            <span>${totalSold * price}</span>
                         </div>
                         <div className="metric">
                             <span className="label">盈利:</span>
-                            <span>${profit}</span>
+                            <span>${totalSold * price - totalSold * cost}</span>
+                        </div>
+                        <div className="exposure_charts_container">
+                          <ExposurePieChart totalViews = {viewTime.length} totalFollowers = {followers}/>
+                          <ExposureLineChart timestamps = {viewTime} totalFollowers = {followers}/>
+                        </div>
+                        <div className="click_charts_container">
+                          <ClickPieChart totalClicks = {clickTime.length} totalFollowers = {followers}/>
+                          <ClickLineChart timestamps = {clickTime} totalFollowers = {followers}/>
+                        </div>
+                        <div className="conversion_charts_container">
+                          <ConversionPieChart totalBuys = {buyTime.length} totalViewers = {totalViewers}/>
+                          <ConversionLineChart timestamps = {buyTime} totalViewers = {totalViewers}/>
                         </div>
                     </div>
-
+                    
                     
                 </div>
             ) : (

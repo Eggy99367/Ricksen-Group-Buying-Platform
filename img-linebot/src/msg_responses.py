@@ -56,7 +56,7 @@ def groupBuyingInfo(event): #團購資訊
             actions = [
                 MessageAction(
                     label = "立刻下單",
-                    text = f"我要下單 [{group["id"]}]!"
+                    text = f"我要下單 [{prod["name"]}]!"
                 )
             ]
         )
@@ -69,7 +69,7 @@ def groupBuyingInfo(event): #團購資訊
     )
     reply_msg(event, carousel_template_message)
 
-def prodSelectConfirm(event): # 我要下單 [group_id]!
+def prodSelectConfirm(event): # 我要下單 [product name]!
     user_id = event.source.user_id
 
 
@@ -86,7 +86,7 @@ def prodSelectConfirm(event): # 我要下單 [group_id]!
                 requests.post(f"{API_URL}/db/views", json={"customer_id": user_id, "group_id": group["id"], "view_type": "click"})
 
         except Exception as e:
-            reply_msg(event, f"抱歉，商品[{group_id}]不存在或不開放下單！")
+            reply_msg(event, f"抱歉，商品[{prod["name"]}]不存在或不開放下單！")
             return
 
         msg = TemplateSendMessage(

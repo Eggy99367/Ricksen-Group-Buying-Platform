@@ -170,8 +170,12 @@ def placeOrder(event):
 
 def orderConfirmed(event):
     user_id = event.source.user_id
+    user_state = get_user_states(user_id)
     update_user_states(user_id, state="order_confirmed")
     if placeOrder(event):
+        exist = requests.get(f"{API_URL}/db/views/check_buyer_exist/{user_id}/{user_state["state"]["grp"]}").json()
+        if not exist["exists"]:
+            requests.post(f"{API_URL}/db/views", json={"customer_id": user_id, "group_id": user_state["state"]["grp"], "view_type": "buy"})
         reply_msg(event, "訂單已確認！ 感謝您！")
     else:
         reply_msg(event, "非常抱歉，訂單送出失敗！")
