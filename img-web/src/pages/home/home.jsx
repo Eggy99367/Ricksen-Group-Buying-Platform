@@ -29,6 +29,15 @@ export const Home = () => {
             <span className="shorttext">入庫</span>
           </button>
         </div>
+        <div className='row_btn_container'>
+          <button 
+            className='home' 
+            onClick={() => {navigate('/picking_lists');}}
+          >
+            <span className="fulltext">撿貨單下載</span>
+            <span className="shorttext">撿貨單</span>
+          </button>
+        </div>
         <div className="row_btn_container">
           <button 
             className='home' 
