@@ -8,14 +8,15 @@ export const FunctionBar = ({ searchTerm,
                               setSearchCategory,
                               handleEditClick=null,
                               handleCreateClick=null,
-                              handleStockingClick=null,
+                              handleSpecialClick=null,
                               selectedRow,
                               contents,
                               noEdit=false,
                               noCreate=false,
-                              stocking=false,
-                              stocking_disable=false }) => {
-
+                              special=false,
+                              special_disable=false,
+                              special_text="" }) => {
+  
   return (
     <div className='function_bar_container'>
       <div className='empty_bar_container'>
@@ -24,6 +25,7 @@ export const FunctionBar = ({ searchTerm,
       <div className='search_bar_container'>
         <input
           className='search_bar'
+          value={searchTerm}
           placeholder="搜尋"
           onChange={handleSearchInputChange}
         />
@@ -40,7 +42,7 @@ export const FunctionBar = ({ searchTerm,
       <div className='button_container'>
         {!noEdit && <button disabled={selectedRow === null} onClick={handleEditClick}>編輯</button>}
         {!noCreate && <button onClick={handleCreateClick}>新增</button>}
-        {stocking && <button disabled={stocking_disable} onClick={handleStockingClick}>入庫</button>}
+        {special && <button disabled={special_disable} onClick={handleSpecialClick}>{special_text}</button>}
       </div>
     </div>
   );

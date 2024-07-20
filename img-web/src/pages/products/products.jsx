@@ -287,7 +287,7 @@ export const Products = () => {
           contents.some(content => content.attr === key && content.display) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        product[searchCategory] && product[searchCategory].toString().toLowerCase().includes(searchTerm)
+        product[searchCategory] && product[searchCategory].toString().toLowerCase().includes(searchTerm.toLowerCase())
       ))
     )
   );

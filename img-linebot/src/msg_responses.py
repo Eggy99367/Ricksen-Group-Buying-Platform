@@ -56,7 +56,7 @@ def groupBuyingInfo(event): #團購資訊
             actions = [
                 MessageAction(
                     label = "立刻下單",
-                    text = f"我要下單 [{prod["name"]}]!"
+                    text = f"我要下單 {prod["name"]} [{group['id']}]!"
                 )
             ]
         )

@@ -4,157 +4,82 @@ import { Header, FunctionBar, ListContainer, MsgBox } from "../../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../../config';
 
-export const Stocking = () => {
+export const PickUp = () => {
   // const navigate = useNavigate();
 
   const initialContents = [
     {
       "showed_attr": "編號",
       "attr": "id",
-      "required": true,
       "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": true,
-        "entry_type": "entry"
-      },
-      "create": {
-        "visible": false,
-        "disable": false,
-        "entry_type": "entry"
-      }
+      "data": null
+    },
+    {
+      "showed_attr": "客戶姓名",
+      "attr": "customer_name",
+      "display": true,
+      "data": null
+    },
+    {
+      "showed_attr": "客戶電話",
+      "attr": "customer_phone",
+      "display": true,
+      "data": null
+    },
+    {
+      "showed_attr": "客戶Email",
+      "attr": "customer_email",
+      "display": true,
+      "data": null
+    },
+    {
+      "showed_attr": "撿貨日期",
+      "attr": "date",
+      "display": true,
+      "data": null
+    },
+    {
+      "showed_attr": "訂單",
+      "attr": "odr_ids",
+      "display": true,
+      "data": null
     },
     {
       "showed_attr": "商品",
-      "attr": "product_id",
-      "required": true,
-      "display": false,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "dropdown"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "dropdown"
-      },
-      "options": null
-    },
-    {
-      "showed_attr": "商品",
-      "attr": "product_name",
-      "required": false,
+      "attr": "products",
       "display": true,
-      "data": null,
-      "edit": {
-        "visible": false,
-        "disable": false,
-        "entry_type": "dropdown"
-      },
-      "create": {
-        "visible": false,
-        "disable": false,
-        "entry_type": "dropdown"
-      },
-      "options": null
+      "data": null
     },
     {
       "showed_attr": "狀態",
       "attr": "status",
-      "required": true,
       "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "setdropdown"
-      },
-      "create": {
-        "visible": true,
-        "disable": true,
-        "entry_type": "setdropdown"
-      },
-      "options": [["準備開團", ""], ["團購進行中", ""], ["收團，等待決策", ""], ["成團，等待入庫", ""], ["棄團", ""], ["入庫，等待撿貨", ""], ["開放取貨", ""], ["團購結束", ""]]
-    },
-    {
-      "showed_attr": "收團時間",
-      "attr": "end_time",
-      "required": false,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "time"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "time"
-      }
-    },
-    {
-      "showed_attr": "入庫時間",
-      "attr": "stocking_time",
-      "required": false,
-      "display": true,
-      "data": null,
-      "edit": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "time"
-      },
-      "create": {
-        "visible": true,
-        "disable": false,
-        "entry_type": "time"
-      }
+      "data": null
     }
   ]
-  const [groups, setGroups] = useState([]);
+  const [pklists, setPklists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [searchCategory, setSearchCategory] = useState("");
   var last_updated = null;
-  var sup_last_updated = null;
   
   const [resultLimit, setResultLimit] = useState(25);
   const listContainerRef = useRef(null);
 
   const checkUpdate = async () => {
     console.log("checking for update...");
-    axios.get(`${API_BASE_URL}/db/last_updated/group_record`, {
+    axios.get(`${API_BASE_URL}/db/last_updated/all`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
-      var time = response.data.time.replace(/[^0-9]/g, '')
+      var time = response.data.replace(/[^0-9]/g, '')
       if(last_updated === null || time > last_updated){
         last_updated = time;
-        fetchGroups();
-        setError(null);
-      }
-      setError(false);
-      setLoading(false);
-    }).catch(error => {
-      console.error("There was an error fetching the data!", error);
-      setError(error);
-    });
-    axios.get(`${API_BASE_URL}/db/last_updated/product`, {
-      headers: {
-        "ngrok-skip-browser-warning": 1
-      }
-    }).then(response => {
-      var time = response.data.time.replace(/[^0-9]/g, '')
-      if(sup_last_updated === null || time > sup_last_updated){
-        sup_last_updated = time;
-        fetchProductNames();
+        fetchPklists();
         setError(null);
       }
       setError(false);
@@ -165,33 +90,16 @@ export const Stocking = () => {
     });
   }
 
-  const fetchGroups = async () => {
+  const fetchPklists = async () => {
     console.log("Fetching data from API...");
-    axios.get(`${API_BASE_URL}/db/groups`, {
+    axios.get(`${API_BASE_URL}/db/picking_lists`, {
       headers: {
         "ngrok-skip-browser-warning": 1
       }
     }).then(response => {
         console.log("Data fetched successfully:", response);
-        setGroups(Object.values(response.data));
-        console.log(groups);
-        setLoading(false);
-        setError(null);
-      }).catch(error => {
-        console.error("There was an error fetching the data!", error);
-        setError(error);
-        setLoading(false);
-    });
-  }
-
-  const fetchProductNames = async () => {
-    console.log("Fetching data from API...");
-    axios.get(`${API_BASE_URL}/db/products/names`, {
-      headers: {
-        "ngrok-skip-browser-warning": 1
-      }
-    }).then(response => {
-        console.log("Data fetched successfully:", response);
+        setPklists(Object.values(response.data));
+        console.log(pklists);
         setLoading(false);
         setError(null);
       }).catch(error => {
@@ -208,32 +116,32 @@ export const Stocking = () => {
       const rowsPerPage = Math.floor(containerHeight / rowHeight);
       setResultLimit(rowsPerPage);
     }
-  }, [listContainerRef, groups, searchTerm]);
+  }, [listContainerRef, pklists, searchTerm]);
   
-  const filteredContents = groups.filter((group) => (
+  const filteredContents = pklists.filter((pklist) => (
     searchTerm === "" ? (true) : (
       searchCategory === "" ? (
-        Object.entries(group).some(([key, value]) =>
+        Object.entries(pklist).some(([key, value]) =>
           initialContents.some(content => content.display && content.attr === key) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        group[searchCategory] && group[searchCategory].toString().toLowerCase().includes(searchTerm.toLowerCase())
+        pklist[searchCategory] && pklist[searchCategory].toString().toLowerCase().includes(searchTerm.toLowerCase())
       ))
     )
   );
 
-  const handleStockingClick = async () => {
+  const handlePickUpClick = async () => {
     try {
-      await axios.put(`${API_BASE_URL}/db/stock/${filteredContents[selectedRow].id}`, {}, {
+      await axios.put(`${API_BASE_URL}/db/pick_up/${filteredContents[selectedRow].id}`, {}, {
         headers: {
           'Content-Type': 'application/json',
           "ngrok-skip-browser-warning": 1
         }});
       checkUpdate();
-      handleShowMessageBox(`${filteredContents[selectedRow].id}入庫成功！`, "#A3E4D7");
+      handleShowMessageBox(`${filteredContents[selectedRow].id}領貨成功！`, "#A3E4D7");
     } catch (error) {
       console.error('Update failed', error);
-      handleShowMessageBox(`${filteredContents[selectedRow].id}入庫失敗！`, "#F5B7B1");
+      handleShowMessageBox(`${filteredContents[selectedRow].id}領貨失敗！`, "#F5B7B1");
     }
   }
 
@@ -277,18 +185,18 @@ export const Stocking = () => {
       <div className='page_content'>
         <FunctionBar
           searchTerm={searchTerm}
-          pageTitle={"商品入庫"}
+          pageTitle={"客戶領貨"}
           handleSearchInputChange={handleSearchInputChange}
           setSearchTerm={setSearchTerm}
           setSearchCategory={setSearchCategory}
-          handleSpecialClick={handleStockingClick}
+          handleSpecialClick={handlePickUpClick}
           selectedRow={selectedRow}
           contents={initialContents}
           noEdit={true}
           noCreate={true}
           special={true}
-          special_disable={selectedRow === null || !(filteredContents[selectedRow].status === "成團，等待入庫")}
-          special_text = {"入庫"}
+          special_disable={selectedRow === null || !(filteredContents[selectedRow].status === "等待取貨")}
+          special_text={"領貨"}
         />
         <ListContainer
           contents={initialContents}
@@ -313,4 +221,4 @@ export const Stocking = () => {
   );
 }
 
-export default Stocking;
+export default PickUp;

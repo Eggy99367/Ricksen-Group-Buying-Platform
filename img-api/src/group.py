@@ -34,13 +34,14 @@ def get_available_groups():
 def add_group():
     try:
         data = request.json
-        contents = ["product_id","selling_price","status","start_time","end_time","min_qty","max_qty","min_qty_pp","max_qty_pp"]
+        contents = ["product_id","selling_price","start_time","end_time","min_qty","max_qty","min_qty_pp","max_qty_pp"]
         new_group = Group_Record()
 
         all_ids = db.session.query(Group_Record.id).all()
         numeric_ids = [int(id[1:]) for id, in all_ids if id.startswith('G')]
         new_id = f"G{max(numeric_ids) + 1:04}" if len(numeric_ids) else "G0001"
         setattr(new_group, "id", new_id)
+        setattr(new_group, "status", "準備開團")
 
         for content in contents:
             if content in data:

@@ -12,6 +12,7 @@ def add_picking_list(date, customer_id):
     setattr(new_picking_list, "id", new_id)
 
     setattr(new_picking_list, "date", date)
+    setattr(new_picking_list, "status", "撿貨單產生")
     setattr(new_picking_list, "customer_id", customer_id)
     db.session.add(new_picking_list)
     db.session.commit()
@@ -26,10 +27,33 @@ def get_picking_list_id(customer_id, date):
         return picking_list_id[0].id
     return add_picking_list(date, customer_id)
 
+# def get_picking_list():
+#     try:
+#         picking_lists = Picking_List.query.all()
+#         picking_lists = [picking_list.get_info() for picking_list in picking_lists]
+#         return jsonify(picking_lists)
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 400
+
 def get_picking_list():
     try:
         picking_lists = Picking_List.query.all()
         picking_lists = [picking_list.get_info() for picking_list in picking_lists]
+        for idx in range(len(picking_lists)):
+            customer = Customer.query.get_or_404(picking_lists[idx]["customer_id"]).get_info()
+            picking_lists[idx]["customer_name"] = customer["name"]
+            picking_lists[idx]["customer_phone"] = customer["phone"]
+            picking_lists[idx]["customer_email"] = customer["email"]
+
+            odrs = Order_Record.query.filter(Order_Record.picking_list_id == picking_lists[idx]["id"], Order_Record.status != "訂單取消").all()
+            odrs = [odr.get_info() for odr in odrs]
+            picking_lists[idx]["odr_ids"] = ', '.join([odr["id"] for odr in odrs])
+            products = []
+            for odr in odrs:
+                group = Group_Record.query.get_or_404(odr["group_id"]).get_info()
+                product = Product.query.get_or_404(group["product_id"]).get_info()
+                products.append(product["name"])
+            picking_lists[idx]["products"] = ', '.join(list(set(products)))
         return jsonify(picking_lists)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -59,7 +83,7 @@ def get_picking_list_by_date(date):
             pl_info["customer_phone"] = customer["phone"]
             pl_info["customer_email"] = customer["email"]
 
-            odrs = Order_Record.query.filter(Order_Record.picking_list_id == pick_lst["id"]).all()
+            odrs = Order_Record.query.filter(Order_Record.picking_list_id == pick_lst["id"], Order_Record.status != "訂單取消").all()
             odrs = [odr.get_info() for odr in odrs]
             pl_info["odr_ids"] = [odr["id"] for odr in odrs]
             
@@ -83,5 +107,49 @@ def get_picking_list_by_date(date):
             result.append(pl_info)
 
         return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
+def pkl_picked_by_date(date):
+    try:
+        pick_lsts = Picking_List.query.filter(Picking_List.date == date).all()
+        pklist_ids = [lst.get_info()['id'] for lst in pick_lsts]
+        groups = []
+        for pklist_id in pklist_ids:
+            odrs = Order_Record.query.filter(Order_Record.picking_list_id == pklist_id, Order_Record.status == "訂單確認").all()
+            odr_ids = [odr.get_info()["id"] for odr in odrs]
+            groups += [odr.get_info()["group_id"] for odr in odrs]
+            for odr_id in odr_ids:
+                odr = Order_Record.query.get_or_404(odr_id)
+                setattr(odr, "status", "等待取貨")
+                db.session.commit()
+
+            pkl = Picking_List.query.get_or_404(pklist_id)
+            setattr(pkl, "status", "等待取貨")
+            db.session.commit()
+
+
+        groups = list(set(groups))
+        for grp in groups:
+            group = Group_Record.query.get_or_404(grp)
+            setattr(group, "status", "開放取貨")
+            db.session.commit()
+
+        return jsonify([])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
+def pick_up_by_pkl_id(pkl_id):
+    try:
+        odr_ids = Order_Record.query.filter(Order_Record.picking_list_id == pkl_id, Order_Record.status == "等待取貨").all()
+        odr_ids = [odr.get_info()["id"] for odr in odr_ids]
+        for odr_id in odr_ids:
+            odr = Order_Record.query.get_or_404(odr_id)
+            setattr(odr, "status", "訂單完成")
+            db.session.commit()
+        pkl = Picking_List.query.get_or_404(pkl_id)
+        setattr(pkl, "status", "已取貨")
+        db.session.commit()
+        return jsonify([])
     except Exception as e:
         return jsonify({'error': str(e)}), 400

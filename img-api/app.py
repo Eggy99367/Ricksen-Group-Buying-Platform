@@ -83,6 +83,16 @@ def get_last_updated(table_name):
             "time": "0"
         })
 
+@app.route('/db/last_updated/all', methods=['GET'])
+def get_db_last_updateds():
+    try:
+        last_updateds = LastUpdated.query.all()
+        last_updateds = [last_updated.get_info()["time"] for last_updated in last_updateds] + ["0"]
+        last = max(last_updateds)
+        return jsonify(last)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
 # ----------------------------------------------------------------------------------------
 
 def update_group_status(item_id, new_status):
@@ -378,91 +388,15 @@ def get_picking_lists_dates():
 def get_picking_list_by_date(date):
     return picking_list.get_picking_list_by_date(date)
 
+@app.route('/db/picked/<string:date>', methods=['PUT'])
+def pkl_picked_by_date(date):
+    return picking_list.pkl_picked_by_date(date)
+
+@app.route('/db/pick_up/<string:pkl_id>', methods=['PUT'])
+def pick_up_by_pkl_id(pkl_id):
+    return picking_list.pick_up_by_pkl_id(pkl_id)
+
 # ----------------------------------------------------------------------------------------
-
-# @app.route('/db/...', methods=['GET'])
-# def get_view_rate():
-#     total_views = view.get_all_views()
-#     total_customers = None
-
-#     try:
-#         rate = total_views / total_customers
-#         return jsonify({"view rate": rate}), 200
-#     except ZeroDivisionError:
-#         return jsonify({"error": "cannot make division by zero"}), 400
-
-# @app.route('/db/...', methods=['GET'])
-# def get_click_rate():
-#     total_views = view.get_all_views()
-#     total_clicks = view.get_all_clicks()
-
-#     try: 
-#         rate = total_clicks / total_views
-#         return jsonify({"clcik rate": rate}), 200
-#     except ZeroDivisionError:
-#         return jsonify({"error": "cannot make division by zero"}), 400
-
-
-
-# @app.route('/db/analysis/customers', methods=['GET'])
-# def get_total_customers():
-#     totalcustomers = customer.get_customers_count()
-
-#     try:
-#         return jsonify({'Number of customers': totalcustomers}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
-    
-
-# @app.route('/db/analysis/item/totalviews', methods=['GET'])
-# def get_all_views():
-#     totalviews = view.get_all_views_count()
-
-#     try:
-#         return jsonify({'Total Counts': totalviews}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
-
-# @app.route('/db/analysis/item/customerviews', methods=['GET'])
-# def get_customers_views():
-#     totalviews = view.get_customers_views()
-
-#     try:
-#         return jsonify({'Total Clicks': totalviews}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
-
-# @app.route('/db/analysis/item/customerclicks', methods=['GET'])
-# def get_all_clicks():
-#     totalclicks = view.get_all_clicks_count()
-
-#     try:
-#         return jsonify({'Total Clicks': totalclicks}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
-
-# @app.route('/db/analysis/item/customerclicks', methods=['GET'])
-# def get_customers_clicks():
-#     totalclicks = view.get_customers_clicks()
-
-#     try:
-#         return jsonify({'Total Clicks': totalclicks}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
-
-# @app.route('/db/analysis/item/ordercounts', methods=['GET'])
-# def get_all_orders():
-#     order_counts = order.get_orders_count()
-
-#     try:
-#         return jsonify({'Order counts': order_counts}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
     app.run()
-
-
-
-## customers clicks
-## customers view

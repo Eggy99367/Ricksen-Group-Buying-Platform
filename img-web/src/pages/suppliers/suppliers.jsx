@@ -232,7 +232,7 @@ export const Suppliers = () => {
           contents.some(content => content.attr === key && content.display) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        supplier[searchCategory] && supplier[searchCategory].toString().toLowerCase().includes(searchTerm)
+        supplier[searchCategory] && supplier[searchCategory].toString().toLowerCase().includes(searchTerm.toLowerCase())
       ))
     )
   );

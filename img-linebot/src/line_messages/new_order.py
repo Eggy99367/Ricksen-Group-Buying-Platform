@@ -165,7 +165,7 @@ def placeOrder(event):
     response = requests.post(f"{API_URL}/db/orders", json=order_info)
     total_order = int(requests.get(f'{API_URL}/db/orders/{group["id"]}/total').json()["total_qty"])
     if total_order == group["max_qty"]:
-        requests.put(f"{API_URL}/db/groups/{group["id"]}", json={"status": "收團"})
+        requests.put(f"{API_URL}/db/groups/{group["id"]}", json={"status": "成團，等待入庫"})
     return response.status_code == 201
 
 def orderConfirmed(event):

@@ -12,3 +12,4 @@ export { Stocking } from './Group/stocking/stocking';
 export { Investigate } from './investigate/investigate';
 export { PickingList } from './Picking_List/picking_list/picking_list';
 export { PickingMain } from './Picking_List/picking_main/picking_main';
+export { PickUp } from './Order/pick_up/pick_up';

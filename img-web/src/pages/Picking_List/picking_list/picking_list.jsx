@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { NotFound } from '../../notFound/notFound'
-import { Header, Barcode } from "../../../components"
+import { Header, Barcode, MsgBox } from "../../../components"
 import API_BASE_URL from '../../../config';
 import axios from 'axios';
 import './picking_list.css'
@@ -28,6 +28,20 @@ export const PickingList = () => {
     html2pdf().from(element).set(opt).save();
   };
 
+  const handlePicked = async () => {
+    try {
+      await axios.put(`${API_BASE_URL}/db/picked/${date}`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          "ngrok-skip-browser-warning": 1
+        }});
+      handleShowMessageBox(`撿貨完成設定成功！`, "#A3E4D7");
+    } catch (error) {
+      console.error('Update failed', error);
+      handleShowMessageBox(`撿貨完成設定失敗！`, "#F5B7B1");
+    }
+  }
+
   const fetchPickLst = async () => {
     console.log("Fetching data from API...");
     axios.get(`${API_BASE_URL}/db/picking_lists/${date}`, {
@@ -52,6 +66,20 @@ export const PickingList = () => {
     fetchPickLst();
   }, [date]);
 
+
+  const [showMessageBox, setShowMessageBox] = useState(false);
+  const [msgBoxMsg, setmsgBoxMsg] = useState("");
+  const [msgBoxColor, setmsgBoxColor] = useState("lightgray");
+
+  const handleShowMessageBox = (msg, color) => {
+      setShowMessageBox(true);
+      setmsgBoxMsg(msg);
+      setmsgBoxColor(color);
+      setTimeout(() => {
+          setShowMessageBox(false);
+      }, 3000);  // This should match the duration in the MessageBox
+  };
+
   return (
     <div>
       {error ? (
@@ -61,6 +89,7 @@ export const PickingList = () => {
           <Header />
           <h1>[{date}] 撿貨單</h1>
           <button onClick={handleGeneratePDF} className='download_pdf_btn'>下載撿貨單</button>
+          <button onClick={handlePicked} className='download_pdf_btn'>撿貨完成</button>
           <div className="picking_list_box" ref={pdfRef} style={{ fontFamily: 'Noto Sans TC, sans-serif' }}>
             {pl_data.map((pick_lst, pl_index) => (
               <div key={pl_index} className='pl_container'>
@@ -110,6 +139,12 @@ export const PickingList = () => {
         </div>
   
       )}
+      <MsgBox
+          message={msgBoxMsg}
+          bgColor={msgBoxColor}
+          duration={2000}
+          visible={showMessageBox}
+        />
     </div>
   );
 };

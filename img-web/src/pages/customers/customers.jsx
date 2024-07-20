@@ -197,7 +197,7 @@ export const Customers = () => {
           contents.some(content => content.attr === key && content.display) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        customer[searchCategory] && customer[searchCategory].toString().toLowerCase().includes(searchTerm)
+        customer[searchCategory] && customer[searchCategory].toString().toLowerCase().includes(searchTerm.toLowerCase())
       ))
     )
   );

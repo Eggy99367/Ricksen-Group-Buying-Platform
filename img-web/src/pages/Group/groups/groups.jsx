@@ -131,6 +131,23 @@ export const Groups = () => {
       }
     },
     {
+      "showed_attr": "入庫時間",
+      "attr": "stocking_time",
+      "required": false,
+      "display": true,
+      "data": null,
+      "edit": {
+        "visible": false,
+        "disable": true,
+        "entry_type": "time"
+      },
+      "create": {
+        "visible": false,
+        "disable": false,
+        "entry_type": "time"
+      }
+    },
+    {
       "showed_attr": "最少購買數",
       "attr": "min_qty",
       "required": false,
@@ -358,7 +375,7 @@ export const Groups = () => {
           contents.some(content => content.display && content.attr === key) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        group[searchCategory] && group[searchCategory].toString().toLowerCase().includes(searchTerm)
+        group[searchCategory] && group[searchCategory].toString().toLowerCase().includes(searchTerm.toLowerCase())
       ))
     )
   );
