@@ -6,7 +6,6 @@ import 'chartjs-adapter-date-fns';
 ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const convertToDate = (datetimeStr) => {
-  console.log("ok");
   const [datePart, timePart] = datetimeStr.split('T');
   const [year, month, day] = datePart.split('-');
   const [hours, minutes, seconds] = timePart.split(':');
@@ -20,7 +19,6 @@ const ExposureLineChart = ({ timestamps, totalFollowers }) => {
   });
 
   const formattedTimestamps = timestamps.map(convertToDate);
-  console.log(formattedTimestamps);
 
   const data = {
     labels: formattedTimestamps,

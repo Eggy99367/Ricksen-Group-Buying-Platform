@@ -20,6 +20,7 @@ const ConversionLineChart = ({ timestamps, totalViewers }) => {
   });
 
   const formattedTimestamps = timestamps.map(convertToDate);
+  console.log(formattedTimestamps);
 
   const data = {
     labels: formattedTimestamps,
