@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
+import { Header, PopOut, FunctionBar, ListContainer, MsgBox } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
 
@@ -230,8 +230,10 @@ export const Orders = () => {
         }});
       checkUpdate();
       setShowEdit(false);
+      handleShowMessageBox("編輯訂單成功！", "#A3E4D7");
     } catch (error) {
       console.error('Update failed', error);
+      handleShowMessageBox("編輯訂單失敗！", "#F5B7B1");
     }
   }
 
@@ -266,7 +268,7 @@ export const Orders = () => {
           contents.some(content => content.display && content.attr === key) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        order[searchCategory] && order[searchCategory].toString().toLowerCase().includes(searchTerm)
+        order[searchCategory] && order[searchCategory].toString().toLowerCase().includes(searchTerm.toLowerCase())
       ))
     )
   );
@@ -318,6 +320,19 @@ export const Orders = () => {
   }
   //-----------------------------------------------------------------------------------
 
+  const [showMessageBox, setShowMessageBox] = useState(false);
+  const [msgBoxMsg, setmsgBoxMsg] = useState("");
+  const [msgBoxColor, setmsgBoxColor] = useState("lightgray");
+
+  const handleShowMessageBox = (msg, color) => {
+      setShowMessageBox(true);
+      setmsgBoxMsg(msg);
+      setmsgBoxColor(color);
+      setTimeout(() => {
+          setShowMessageBox(false);
+      }, 3000);  // This should match the duration in the MessageBox
+  };
+
   return (
     <div className='page_main_box'>
       <Header />
@@ -349,6 +364,12 @@ export const Orders = () => {
         {showEdit && <PopOut popOutType="edit" dataType="訂單" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
         {/* {showCreate && <PopOut popOutType="create" dataType="訂單" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>} */}
       </div>
+      <MsgBox
+        message={msgBoxMsg}
+        bgColor={msgBoxColor}
+        duration={2000}
+        visible={showMessageBox}
+      />
     </div>
   );
 }

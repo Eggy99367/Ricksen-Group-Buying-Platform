@@ -72,7 +72,7 @@ export const PickingMain = () => {
   
   const filteredContents = orders.filter((order) => (
     searchTerm === "" ? (true) : (
-        order.toString().toLowerCase().includes(searchTerm)
+        order.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     )
   );

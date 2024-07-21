@@ -108,13 +108,17 @@ class Picking_List(db.Model):
     __tablename__ = "picking_list"
     id = db.Column(db.String(10), primary_key=True, nullable=False, unique=True)
     date = db.Column(db.String(20), nullable=False)
+    status = db.Column(db.String(10), nullable=False)
     customer_id = db.Column(db.String(40), db.ForeignKey('customer.id'), nullable=False)
+    pickup_time = db.Column(db.String(20))
     
     def get_info(self):
         return {
             "id": self.id,
             "date": self.date,
-            "customer_id": self.customer_id
+            "status": self.status,
+            "customer_id": self.customer_id,
+            "pickup_time": self.pickup_time
         }
 
 class Order_Record(db.Model):

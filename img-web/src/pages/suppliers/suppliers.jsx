@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import { useNavigate } from 'react-router-dom';
-import { Header, PopOut, FunctionBar, ListContainer } from "../../components"
+import { Header, PopOut, FunctionBar, ListContainer, MsgBox } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
 
@@ -192,8 +192,11 @@ export const Suppliers = () => {
         }});
       checkUpdate();
       setShowEdit(false);
+      handleShowMessageBox("編輯供應商成功！", "#A3E4D7");
+
     } catch (error) {
       console.error('Update failed', error);
+      handleShowMessageBox("編輯供應商失敗！", "#F5B7B1");
     }
   }
 
@@ -215,8 +218,10 @@ export const Suppliers = () => {
         }});
       checkUpdate();
       setShowCreate(false);
+      handleShowMessageBox("新增供應商成功！", "#A3E4D7");
     } catch (error) {
       console.error('Create failed', error);
+      handleShowMessageBox("新增供應商失敗！", "#F5B7B1");
     }
   }
 
@@ -227,7 +232,7 @@ export const Suppliers = () => {
           contents.some(content => content.attr === key && content.display) && value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       ) : (
-        supplier[searchCategory] && supplier[searchCategory].toString().toLowerCase().includes(searchTerm)
+        supplier[searchCategory] && supplier[searchCategory].toString().toLowerCase().includes(searchTerm.toLowerCase())
       ))
     )
   );
@@ -275,6 +280,19 @@ export const Suppliers = () => {
   }
   //-----------------------------------------------------------------------------------
 
+  const [showMessageBox, setShowMessageBox] = useState(false);
+  const [msgBoxMsg, setmsgBoxMsg] = useState("");
+  const [msgBoxColor, setmsgBoxColor] = useState("lightgray");
+
+  const handleShowMessageBox = (msg, color) => {
+      setShowMessageBox(true);
+      setmsgBoxMsg(msg);
+      setmsgBoxColor(color);
+      setTimeout(() => {
+          setShowMessageBox(false);
+      }, 3000);  // This should match the duration in the MessageBox
+  };
+
   return (
     <div className='page_main_box'>
       <Header />
@@ -305,6 +323,12 @@ export const Suppliers = () => {
         {showEdit && <PopOut popOutType="edit" dataType="供應商" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
         {showCreate && <PopOut popOutType="create" dataType="供應商" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
       </div>
+      <MsgBox
+        message={msgBoxMsg}
+        bgColor={msgBoxColor}
+        duration={2000}
+        visible={showMessageBox}
+      />
     </div>
   );
 }
