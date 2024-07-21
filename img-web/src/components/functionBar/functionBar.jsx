@@ -6,11 +6,13 @@ export const FunctionBar = ({ searchTerm,
                               handleSearchInputChange,
                               setSearchTerm,
                               setSearchCategory,
+                              handleImageClick=null,
                               handleEditClick=null,
                               handleCreateClick=null,
                               handleSpecialClick=null,
                               selectedRow,
                               contents,
+                              noImage=true,
                               noEdit=false,
                               noCreate=false,
                               special=false,
@@ -40,6 +42,7 @@ export const FunctionBar = ({ searchTerm,
         </select>
       </div>
       <div className='button_container'>
+        {!noImage && <button disabled={selectedRow === null} onClick={handleImageClick}>預覽圖片</button>}
         {!noEdit && <button disabled={selectedRow === null} onClick={handleEditClick}>編輯</button>}
         {!noCreate && <button onClick={handleCreateClick}>新增</button>}
         {special && <button disabled={special_disable} onClick={handleSpecialClick}>{special_text}</button>}

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Header, PopOut, FunctionBar, ListContainer, MsgBox } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
+import ImagePreview from './imagePreview';
 
 export const Products = () => {
   // const navigate = useNavigate();
@@ -141,6 +142,8 @@ export const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(0);
   const [searchCategory, setSearchCategory] = useState("");
+  const [showImagePreview, setShowImagePreview] = useState(false);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('');
   var last_updated = null;
   var sup_last_updated = null;
   
@@ -337,6 +340,14 @@ export const Products = () => {
     setPage(0);
     setSearchTerm(event.target.value);
   }
+
+  const handleImageClick = () => {
+    if (selectedRow !== null && filteredContents[selectedRow]) {
+      const imageUrl = filteredContents[selectedRow].img;
+      setImagePreviewUrl(imageUrl);
+      setShowImagePreview(true);
+    }
+  };
   //-----------------------------------------------------------------------------------
 
   const [showMessageBox, setShowMessageBox] = useState(false);
@@ -364,6 +375,8 @@ export const Products = () => {
           setSearchCategory={setSearchCategory}
           handleEditClick={handleEditClick}
           handleCreateClick={handleCreateClick}
+          handleImageClick={handleImageClick}
+          noImage = {false}
           selectedRow={selectedRow}
           contents={contents}
         />
@@ -381,6 +394,7 @@ export const Products = () => {
         />
         {showEdit && <PopOut popOutType="edit" dataType="商品" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
         {showCreate && <PopOut popOutType="create" dataType="商品" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
+        {showImagePreview && <ImagePreview imageUrl={imagePreviewUrl} close={() => setShowImagePreview(false)} />}
       </div>
       <MsgBox
         message={msgBoxMsg}
