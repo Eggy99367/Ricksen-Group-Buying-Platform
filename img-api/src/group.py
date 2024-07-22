@@ -24,6 +24,14 @@ def get_group(id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
+def get_group_names():
+    try:
+        groups = db.session.query(Group_Record.id, Group_Record.product_id).all()
+        names = {data.id: Product.query.get_or_404(data.product_id).name for data in groups}
+        return jsonify(names)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
 def get_available_groups():
     try:
         groups = Group_Record.query.filter_by(status="團購進行中").all()

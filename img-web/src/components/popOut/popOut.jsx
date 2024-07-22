@@ -23,7 +23,7 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
   }
 
   useEffect(() => {
-    if(popOutType !== "edit"){
+    if(popOutType !== "edit" && dataType !== "訂單"){
       const updatedData = inputData.map((data, i) => ({
         ...data,
         data: ""

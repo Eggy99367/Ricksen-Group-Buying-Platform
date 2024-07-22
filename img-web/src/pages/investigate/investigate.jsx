@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Header, ListContainer, listContainer } from "../../components"
+import React, { useState, useEffect } from 'react';
+import { Header } from "../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../config';
 import { useLocation } from 'react-router-dom';

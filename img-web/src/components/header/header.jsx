@@ -30,13 +30,13 @@ export const Header = () => {
         <Link to="/picking_lists">撿貨</Link>
         
         <div class="dropdown">
-          <Link>管理</Link>
+          <Link to="/management">管理▼</Link>
           <div class="dropdown-content">
-          <Link to="/products">商品管理</Link>
-          <Link to="/groups">團購管理</Link>
-          <Link to="/suppliers">供應商管理</Link>
-          <Link to="/customers">客戶管理</Link>
-          <Link to="/orders">訂單管理</Link>
+            <Link to="/products">商品管理</Link>
+            <Link to="/groups">團購管理</Link>
+            <Link to="/suppliers">供應商管理</Link>
+            <Link to="/customers">客戶管理</Link>
+            <Link to="/orders">訂單管理</Link>
           </div>
         </div>
         <Link to ="/analysis">數據分析</Link>

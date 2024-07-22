@@ -273,6 +273,10 @@ def delete_product(id):
 def get_groups():
     return group.get_groups()
 
+@app.route('/db/groups/names', methods=['GET'])
+def get_group_names():
+    return group.get_group_names()
+
 @app.route('/db/groups/<string:id>', methods=['GET'])
 def get_group(id):
     return group.get_group(id)

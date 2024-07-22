@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header, PopOut, FunctionBar, ListContainer } from "../../../components"
+import { Header, FunctionBar } from "../../../components"
 import axios from 'axios';
 import API_BASE_URL from '../../../config';
 import './picking_main.css'
@@ -17,7 +17,6 @@ export const PickingMain = () => {
   const [page, setPage] = useState(0);
   const [searchCategory, setSearchCategory] = useState("");
   var last_updated = null;
-  var sup_last_updated = null;
   
   const [resultLimit, setResultLimit] = useState(25);
   const listContainerRef = useRef(null);

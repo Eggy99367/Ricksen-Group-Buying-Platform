@@ -27,7 +27,7 @@ export const ListContainer = ({ contents, filteredContents, handleRowClick, sele
                   className={selectedRow === index ? 'selected' : ''}
                 >
                   {contents.map((content, index) => (
-                    content.display && <td key={index}>{data[content.attr]}</td>
+                    content.display && (("omit" in content && data[content.attr]) ? (<td key={index}>{content.omit}</td>) : (<td key={index}>{data[content.attr]}</td>))
                   ))}
                 </tr>
               )
