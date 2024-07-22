@@ -16,6 +16,8 @@
     text-decoration: none;
     color: #87519b;
     font-size: 25px;
+    border-radius: 30px;
+    text-align: center;
 }
 
 #nav_links_container a:hover{
@@ -43,7 +45,7 @@
     height: 40px;
 }
 
-button#logout_button:hover {
+button#logout_button:hover{
     background-color: #823a5f;
 }
 
@@ -57,48 +59,89 @@ button#logout_button:active {
     /* cursor: pointer; */
 }
 
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  border-radius: 30px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
 @media (max-width: 1024px) {
-    #nav_links_container a {
-        font-size: 18px;
-    }
+  #nav_links_container a {
+    font-size: 18px;
+  }
+
+  .dropdown button {
+    font-size: 18px;
+  }
+
+  .dropdown-content a {
+    font-size: 18px;
+  }
 }
 
 @media (max-width: 768px) {
-    #header_main_box.open{
-        height: 400px;
-        background-color: #C3ACD0;
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        
-    }
+  #header_main_box.open{
+      height: 400px;
+      background-color: #C3ACD0;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      
+  }
 
-    #nav_links_container{
-        display: none;
-        flex-direction: column;
-        /* position: absolute;
-        top: 70px;
-        right: 0;
-        background-color: #C3ACD0;
-        width: 100%;
-        text-align: center;
-        z-index: 100; */
-    }
+  #nav_links_container{
+      display: none;
+      flex-direction: column;
+      /* position: absolute;
+      top: 70px;
+      right: 0;
+      background-color: #C3ACD0;
+      width: 100%;
+      text-align: center;
+      z-index: 100; */
+  }
 
-    #nav_links_container button{
-        display: none;
-    }
+  #nav_links_container button{
+      display: none;
+  }
 
-    #nav_links_container.open {
-        display: flex;
-    }
+  #nav_links_container.open {
+      display: flex;
+  }
 
-    #nav_links_container a {
-        margin: 10px 0;
-        font-size: 18px;
-    }
+  #nav_links_container a {
+      font-size: 18px;
+  }
 
-    #menu_icon_container {
-        display: block;
-    }
+  #menu_icon_container {
+      display: block;
+  }
+
 }

@@ -174,6 +174,36 @@ export const Suppliers = () => {
     }
   }, [listContainerRef, suppliers, searchTerm]);
 
+  const verifySupplier = (data) => {
+    console.log("");
+    if(!("name" in data) || data.name === null){
+      handleShowMessageBox("請輸入供應商姓名", "#F5B7B1");
+      return false;
+    }else if(data.name.length > 50){
+      handleShowMessageBox("供應商姓名過長（最多50字）", "#F5B7B1");
+      return false;
+    }else if("tax_id" in data && data.tax_id != null && data.tax_id.length != 8){
+      handleShowMessageBox("統一編號無效（統一編號為8碼數字，請勿輸入符號）", "#F5B7B1");
+      return false;
+    }else if(!("contact_person" in data) || data.contact_person === null){
+      handleShowMessageBox("請輸入聯絡人姓名", "#F5B7B1");
+      return false;
+    }else if(data.contact_person.length > 50){
+      handleShowMessageBox("聯絡人姓名過長（最多50字）", "#F5B7B1");
+      return false;
+    }else if(!("phone" in data) || data.phone === null){
+      handleShowMessageBox("請輸入聯絡人電話", "#F5B7B1");
+      return false;
+    }else if(data.phone.length != 10){
+      handleShowMessageBox("聯絡人電話無效（電話為10碼數字，請勿輸入符號）", "#F5B7B1");
+      return false;
+    }else if("email" in data && data.email != null && data.email.length > 80){
+      handleShowMessageBox("Email過長（最多80字）", "#F5B7B1");
+      return false;
+    }
+    return true
+  }
+
   const handleEditSubmit = async (inputData) => {
     var update_json = {};
     for(const content of inputData){
@@ -183,6 +213,7 @@ export const Suppliers = () => {
         update_json[content.attr] = content.data;          
       }
     }
+    if(!verifySupplier(update_json)){return};
     console.log("handle edit:", update_json);
     try {
       await axios.put(`${API_BASE_URL}/db/suppliers/${update_json.id}`, update_json, {
@@ -209,6 +240,7 @@ export const Suppliers = () => {
           create_json[content.attr] = content.data;          
       }
     }
+    if(!verifySupplier(create_json)){return};
     console.log("handle create:", create_json);
     try {
       await axios.post(`${API_BASE_URL}/db/suppliers`, create_json, {

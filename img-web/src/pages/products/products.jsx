@@ -233,6 +233,30 @@ export const Products = () => {
     }
   }, [listContainerRef, products, searchTerm]);
 
+  const verifyProduct = (data) => {
+    console.log("");
+    if(!("name" in data) || data.name === null){
+      handleShowMessageBox("請輸入商品名稱", "#F5B7B1");
+      return false;
+    }else if(data.name.length > 40){
+      handleShowMessageBox("商品名稱過長（最多40字）", "#F5B7B1");
+      return false;
+    }else if(!("cost" in data) || data.cost === null){
+      handleShowMessageBox("請輸入商品成本", "#F5B7B1");
+      return false;
+    }else if(!("supplier_id" in data) || data.supplier_id === null){
+      handleShowMessageBox("請選擇供應商", "#F5B7B1");
+      return false;
+    }else if("description" in data && data.description != null && data.description.length > 60){
+      handleShowMessageBox("商品敘述過長（最多60字）", "#F5B7B1");
+      return false;
+    }else if("img" in data && data.img != null && data.img.length > 2000){
+      handleShowMessageBox("圖片網址過長（最多2000字）", "#F5B7B1");
+      return false;
+    }
+    return true
+  }
+
   const handleEditSubmit = async (inputData) => {
     var update_json = {};
     for(const content of inputData){
@@ -242,6 +266,7 @@ export const Products = () => {
         update_json[content.attr] = content.data;          
       }
     }
+    if(!verifyProduct(update_json)){return};
     console.log("handle edit:", update_json);
     try {
       await axios.put(`${API_BASE_URL}/db/products/${update_json.id}`, update_json, {
@@ -267,6 +292,7 @@ export const Products = () => {
           create_json[content.attr] = content.data;          
       }
     }
+    if(!verifyProduct(create_json)){return};
     console.log("handle create:", create_json);
     try {
       await axios.post(`${API_BASE_URL}/db/products`, create_json, {
