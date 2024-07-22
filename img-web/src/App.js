@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom'
-import { Login, Register, Home, Suppliers, Customers, Products, Groups, Stocking, Orders, NotFound, Analysis, Investigate, PickingMain, PickingList, PickUp, Manage } from './pages';
+import { Login, Register, Home, Suppliers, Customers, Products, Groups, Stocking, Orders, NotFound, Analysis, Investigate, PickingMain, PickingList, PickUp, Manage, Decision } from './pages';
 import PrivateRoute from './utils/PrivateRoute';
 import BeforeLogIn from './utils/BeforeLogIn';
 import './App.css';
@@ -17,6 +17,7 @@ function App() {
       <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
       <Route path="/groups" element={<PrivateRoute><Groups /></PrivateRoute>} />
       <Route path="/stocking" element={<PrivateRoute><Stocking /></PrivateRoute>} />
+      <Route path="/decision" element={<PrivateRoute><Decision /></PrivateRoute>} />
       <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
       <Route path="/pick_up" element={<PrivateRoute><PickUp /></PrivateRoute>} />
       <Route path="/analysis" element={<PrivateRoute><Analysis /></PrivateRoute>} />

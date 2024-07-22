@@ -10,6 +10,7 @@ export { Orders } from './orders/orders';
 export { NotFound } from './notFound/notFound';
 export { Analysis } from './analysis/analysis';
 export { Stocking } from './Group/stocking/stocking';
+export { Decision } from './Group/decision/decision';
 export { Investigate } from './investigate/investigate';
 export { PickingList } from './Picking_List/picking_list/picking_list';
 export { PickingMain } from './Picking_List/picking_main/picking_main';

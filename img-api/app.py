@@ -301,6 +301,14 @@ def stock_group(id):
 def delete_group(id):
     return group.delete_group(id)
 
+@app.route('/db/form/<string:id>', methods=['PUT'])
+def form_group(id):
+    return group.form_group(id)
+
+@app.route('/db/abandon/<string:id>', methods=['PUT'])
+def abandon_group(id):
+    return group.abandon_group(id)
+
 # ----------------------------------------------------------------------------------------
 
 @app.route('/db/orders', methods=['GET'])
