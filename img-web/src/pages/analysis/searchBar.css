@@ -1,4 +1,4 @@
-/* .function_bar_container {
+.function_bar_container {
     height: 40px;
     width: 80%;
     display: flex;
@@ -7,11 +7,11 @@
     gap: 20px;
   } */
   
-/* .empty_bar_container {
+.empty_bar_container {
   flex: 0;
-} */
+}
 
-/* .input_entry_container {
+.input_entry_container { 
   flex: 3;
   height: 100%;
   display: flex;
@@ -22,4 +22,4 @@
 .input_entry_container input {
     width: 100%;
     padding-right: 40px;
-} */
+}

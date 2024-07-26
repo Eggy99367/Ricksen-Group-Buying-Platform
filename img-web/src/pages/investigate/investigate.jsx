@@ -176,6 +176,10 @@ export const Investigate = () => {
                             <span>{totalSold}</span>
                         </div>
                         <div className="metric">
+                            <span className="label">成本:</span>
+                            <span>${totalSold * cost}</span>
+                        </div>
+                        <div className="metric">
                             <span className="label">收入:</span>
                             <span>${totalSold * price}</span>
                         </div>

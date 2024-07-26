@@ -30,13 +30,13 @@ export const Analysis = () => {
             "options": {}
         },
         {
-            "showed_attr": "商品",
-            "attr": "product_id",
-            "required": true,
-            "display": true,
-            "data": null,
-            "special": "product_name",
-            "options": {}
+          "showed_attr": "商品",
+          "attr": "product_name",
+          "required": true,
+          "display": true,
+          "data": null,
+          "special": "product_name",
+          "options": {}
         },
         {
             "showed_attr": "狀態",
