@@ -36,7 +36,7 @@ export const Orders = () => {
         "entry_type": "entry"
       },
       "create": {
-        "visible": true,
+        "visible": false,
         "disable": true,
         "entry_type": "entry"
       },
@@ -132,7 +132,6 @@ export const Orders = () => {
   ]
   const [contents, setContents] = useState(initialContents);
   const [orders, setOrders] = useState([]);
-  const [product_names, setProductNames] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -212,6 +211,17 @@ export const Orders = () => {
     }
   }, [listContainerRef, orders, searchTerm]);
 
+  const verifyOrder = (data) => {
+    if(!("qty" in data) || data.qty === null){
+      handleShowMessageBox("請輸入購買數量", "#F5B7B1");
+      return false;
+    }else if("qty" in data && data.qty !== null && isNaN(data.qty)){
+      handleShowMessageBox("購買數量需為數字", "#F5B7B1");
+      return false;
+    }
+    return true
+  }
+
   const handleEditSubmit = async (inputData) => {
     var update_json = {};
     for(const content of inputData){
@@ -221,6 +231,7 @@ export const Orders = () => {
         update_json[content.attr] = content.data;          
       }
     }
+    if(!verifyOrder(update_json)){return};
     console.log("handle edit:", update_json);
     try {
       await axios.put(`${API_BASE_URL}/db/orders/${update_json.id}`, update_json, {
@@ -236,30 +247,6 @@ export const Orders = () => {
       handleShowMessageBox("編輯訂單失敗！", "#F5B7B1");
     }
   }
-
-  // const handleCreateSubmit = async (inputData) => {
-  //   var create_json = {};
-  //   for(const content of inputData){
-  //     if(content.data === ""){
-  //       create_json[content.attr] = null;
-  //       }else{
-  //         create_json[content.attr] = content.data;          
-  //     }
-  //   }
-  //   console.log("handle create:", create_json);
-  //   try {
-  //     await axios.post(`${API_BASE_URL}/db/orders`, create_json, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         "ngrok-skip-browser-warning": 1
-  //       }});
-  //     checkUpdate();
-  //     setShowCreate(false);
-  //   } catch (error) {
-  //     console.error('Create failed', error);
-  //   }
-  // }
-
   
   const filteredContents = orders.filter((order) => (
     searchTerm === "" ? (true) : (
@@ -297,21 +284,9 @@ export const Orders = () => {
       ...content,
       data: filteredContents[selectedRow][content.attr],
     }));
-    updatedContents[1].options = product_names;
     setContents(updatedContents);
     setShowEdit(true);
   }
-
-  // const clostCreatePopOut = () => {
-  //   setShowCreate(false);
-  // }
-
-  // const handleCreateClick = () => {
-  //   var updatedContents = contents;
-  //   updatedContents[1].options = product_names;
-  //   setContents(updatedContents);
-  //   setShowCreate(true);
-  // }
 
   const handleSearchInputChange = (event) => {
     setSelectedRow(null);
@@ -344,7 +319,6 @@ export const Orders = () => {
           setSearchTerm={setSearchTerm}
           setSearchCategory={setSearchCategory}
           handleEditClick={handleEditClick}
-          
           selectedRow={selectedRow}
           contents={contents}
           noCreate={true}
@@ -362,7 +336,6 @@ export const Orders = () => {
           listContainerRef={listContainerRef}
         />
         {showEdit && <PopOut popOutType="edit" dataType="訂單" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
-        {/* {showCreate && <PopOut popOutType="create" dataType="訂單" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>} */}
       </div>
       <MsgBox
         message={msgBoxMsg}

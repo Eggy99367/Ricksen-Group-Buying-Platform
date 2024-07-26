@@ -1,7 +1,8 @@
 .image_container {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    /* justify-content: center; */
+    /* align-items: center; */
     width: 100%;
     height: 100%;
   }
@@ -12,3 +13,10 @@
     border-radius: 10px;
   }
   
+  .image_container h2{
+    margin: 10px 0;
+  }
+
+  .image_container p{
+    color: rgb(111, 111, 111);
+  }

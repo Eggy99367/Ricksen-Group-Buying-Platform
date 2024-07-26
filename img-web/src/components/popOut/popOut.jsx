@@ -23,7 +23,7 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
   }
 
   useEffect(() => {
-    if(popOutType !== "edit"){
+    if(popOutType !== "edit" && dataType !== "訂單"){
       const updatedData = inputData.map((data, i) => ({
         ...data,
         data: ""
@@ -41,7 +41,7 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
           data[popOutType].visible && (
             <div className='input_row_container' key={index}>
               <div className='input_title_container'>
-                <h3>{data.showed_attr}</h3>
+                <h3>{data.showed_attr}{data.required && " *"}</h3>
               </div>
               <div className='input_entry_container'>
                 {data[popOutType].entry_type === "setdropdown" ? (

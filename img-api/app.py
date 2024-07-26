@@ -273,6 +273,10 @@ def delete_product(id):
 def get_groups():
     return group.get_groups()
 
+@app.route('/db/groups/names', methods=['GET'])
+def get_group_names():
+    return group.get_group_names()
+
 @app.route('/db/groups/<string:id>', methods=['GET'])
 def get_group(id):
     return group.get_group(id)
@@ -296,6 +300,14 @@ def stock_group(id):
 @app.route('/db/groups/<string:id>', methods=['DELETE'])
 def delete_group(id):
     return group.delete_group(id)
+
+@app.route('/db/form/<string:id>', methods=['PUT'])
+def form_group(id):
+    return group.form_group(id)
+
+@app.route('/db/abandon/<string:id>', methods=['PUT'])
+def abandon_group(id):
+    return group.abandon_group(id)
 
 # ----------------------------------------------------------------------------------------
 

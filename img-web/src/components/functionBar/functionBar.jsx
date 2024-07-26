@@ -42,10 +42,10 @@ export const FunctionBar = ({ searchTerm,
         </select>
       </div>
       <div className='button_container'>
-        {!noImage && <button disabled={selectedRow === null} onClick={handleImageClick}>預覽圖片</button>}
+        {special && <button disabled={special_disable} onClick={handleSpecialClick}>{special_text}</button>}
+        {!noImage && <button disabled={selectedRow === null} onClick={handleImageClick}>預覽</button>}
         {!noEdit && <button disabled={selectedRow === null} onClick={handleEditClick}>編輯</button>}
         {!noCreate && <button onClick={handleCreateClick}>新增</button>}
-        {special && <button disabled={special_disable} onClick={handleSpecialClick}>{special_text}</button>}
       </div>
     </div>
   );

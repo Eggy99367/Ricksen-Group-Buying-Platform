@@ -317,6 +317,38 @@ export const Groups = () => {
     }
   }, [listContainerRef, groups, searchTerm]);
 
+  const verifyGroup = (data) => {
+    if(!("product_id" in data) || data.product_id === null){
+      handleShowMessageBox("請選擇商品", "#F5B7B1");
+      return false;
+    }else if(!("selling_price" in data) || data.selling_price === null){
+      handleShowMessageBox("請輸入商品售價", "#F5B7B1");
+      return false;
+    }else if("selling_price" in data && data.selling_price !== null && isNaN(data.selling_price)){
+      handleShowMessageBox("商品售價需為數字", "#F5B7B1");
+      return false;
+    }else if(!("start_time" in data) || data.start_time === null){
+      handleShowMessageBox("請輸入開團時間", "#F5B7B1");
+      return false;
+    }else if("end_time" in data && data.end_time !== null && data.end_time <= data.start_time){
+      handleShowMessageBox("收團時間不能早於或等於開團時間", "#F5B7B1");
+      return false;
+    }else if("min_qty" in data && data.min_qty !== null && isNaN(data.min_qty)){
+      handleShowMessageBox("最少購買數需為數字", "#F5B7B1");
+      return false;
+    }else if("max_qty" in data && data.max_qty !== null && isNaN(data.max_qty)){
+      handleShowMessageBox("最多購買數需為數字", "#F5B7B1");
+      return false;
+    }else if("min_qty_pp" in data && data.min_qty_pp !== null && isNaN(data.min_qty_pp)){
+      handleShowMessageBox("最少單人購買數需為數字", "#F5B7B1");
+      return false;
+    }else if("max_qty_pp" in data && data.max_qty_pp !== null && isNaN(data.max_qty_pp)){
+      handleShowMessageBox("最多單人購買數需為數字", "#F5B7B1");
+      return false;
+    }
+    return true
+  }
+
   const handleEditSubmit = async (inputData) => {
     var update_json = {};
     for(const content of inputData){
@@ -326,6 +358,7 @@ export const Groups = () => {
         update_json[content.attr] = content.data;          
       }
     }
+    if(!verifyGroup(update_json)){return};
     console.log("handle edit:", update_json);
     try {
       await axios.put(`${API_BASE_URL}/db/groups/${update_json.id}`, update_json, {
@@ -351,6 +384,7 @@ export const Groups = () => {
           create_json[content.attr] = content.data;          
       }
     }
+    if(!verifyGroup(create_json)){return};
     console.log("handle create:", create_json);
     try {
       await axios.post(`${API_BASE_URL}/db/groups`, create_json, {

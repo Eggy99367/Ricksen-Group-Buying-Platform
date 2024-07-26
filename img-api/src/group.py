@@ -11,6 +11,9 @@ def get_groups():
         groups = [group.get_info() for group in groups]
         for index, product in enumerate(groups):
             groups[index]["product_name"] = f"{product["product_id"]}:{Product.query.get_or_404(product["product_id"]).get_info()["name"]}"
+            groups[index]["cost"] = Product.query.get_or_404(product["product_id"]).cost
+            orders = Order_Record.query.filter(Order_Record.group_id == product["id"]).all()
+            groups[index]["sells"] = sum([order.qty for order in orders])
         # print(groups)
         return jsonify(groups)
     except Exception as e:
@@ -21,6 +24,14 @@ def get_group(id):
         group = Group_Record.query.get_or_404(id).get_info()
         group["product_name"] = f"{group["product_id"]}:{Product.query.get_or_404(group["product_id"]).get_info()["name"]}"
         return jsonify(group)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
+def get_group_names():
+    try:
+        groups = db.session.query(Group_Record.id, Group_Record.product_id).all()
+        names = {data.id: Product.query.get_or_404(data.product_id).name for data in groups}
+        return jsonify(names)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
@@ -98,4 +109,36 @@ def delete_group(id):
         db.session.commit()
         return jsonify({'message': "success"}), 204
     except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+def form_group(id):
+    try:
+        group = Group_Record.query.get_or_404(id)
+        time = str(get_cur_time())
+        setattr(group, "status", "成團，等待入庫")
+        setattr(group, "end_time", time)
+        db.session.commit()
+        return jsonify({})
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
+def abandon_group(id):
+    try:
+        group = Group_Record.query.get_or_404(id)
+        time = str(get_cur_time())
+        setattr(group, "status", "棄團")
+        setattr(group, "end_time", time)
+        db.session.commit()
+
+        orders = Order_Record.query.filter(Order_Record.group_id == id).all()
+        order_ids = [order.id for order in orders]
+        for order_id in order_ids:
+            order = Order_Record.query.get_or_404(order_id)
+            setattr(order, "status", "取消訂單")
+            db.session.commit()
+
+        return jsonify({})
+    except Exception as e:
+        print(e)
         return jsonify({'error': str(e)}), 400

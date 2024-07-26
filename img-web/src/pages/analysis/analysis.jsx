@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Header, ListContainer, listContainer } from "../../components"
+import { Header, ListContainer } from "../../components"
 import { SearchBar } from "./searchBar"
 import axios from 'axios';
 import API_BASE_URL from '../../config';

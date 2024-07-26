@@ -1,6 +1,7 @@
 export { Login } from './login/login';
 export { Register } from './register/register';
 export { Home } from './home/home';
+export { Manage } from './home/manage';
 export { Suppliers } from './suppliers/suppliers';
 export { Customers } from './customers/customers';
 export { Products } from './products/products';
@@ -9,6 +10,7 @@ export { Orders } from './orders/orders';
 export { NotFound } from './notFound/notFound';
 export { Analysis } from './analysis/analysis';
 export { Stocking } from './Group/stocking/stocking';
+export { Decision } from './Group/decision/decision';
 export { Investigate } from './investigate/investigate';
 export { PickingList } from './Picking_List/picking_list/picking_list';
 export { PickingMain } from './Picking_List/picking_main/picking_main';

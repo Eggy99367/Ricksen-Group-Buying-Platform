@@ -77,13 +77,55 @@ export const Customers = () => {
       }
     }
   ]
+  const initialOrderContents = [
+    {
+      "showed_attr": "客戶",
+      "attr": "customer_id",
+      "required": true,
+      "display": true,
+      "data": null,
+      "create": {
+        "visible": true,
+        "disable": true,
+        "entry_type": "entry"
+      },
+      "options": null
+    },
+    {
+      "showed_attr": "團購項目",
+      "attr": "group_id",
+      "required": true,
+      "display": true,
+      "data": null,
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "dropdown"
+      },
+      "options": []
+    },
+    {
+      "showed_attr": "數量",
+      "attr": "qty",
+      "required": true,
+      "display": true,
+      "data": null,
+      "create": {
+        "visible": true,
+        "disable": false,
+        "entry_type": "entry"
+      }
+    }
+  ]
   const [contents, setContents] = useState(initialContents);
+  const [orderContents, setOrderContents] = useState(initialOrderContents);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
+  const [showOrder, setShowOrder] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(0);
   const [searchCategory, setSearchCategory] = useState("");
@@ -140,6 +182,49 @@ export const Customers = () => {
     }
   }, [listContainerRef, customers, searchTerm]);
 
+  const verifyCustomer = (data) => {
+    if(!("id" in data) || data.id === null){
+      handleShowMessageBox("請輸入客戶Line ID", "#F5B7B1");
+      return false;
+    }else if(data.id.length > 40){
+      handleShowMessageBox("客戶Line ID過長（最多40字）", "#F5B7B1");
+      return false;
+    }else if(!("name" in data) || data.name === null){
+      handleShowMessageBox("請輸入客戶姓名", "#F5B7B1");
+      return false;
+    }else if(data.name.length > 50){
+      handleShowMessageBox("客戶姓名過長（最多50字）", "#F5B7B1");
+      return false;
+    }else if(!("phone" in data) || data.phone === null){
+      handleShowMessageBox("請輸入客戶電話", "#F5B7B1");
+      return false;
+    }else if(data.phone.length !== 10){
+      handleShowMessageBox("客戶電話無效（電話為10碼數字，請勿輸入符號）", "#F5B7B1");
+      return false;
+    }else if(!("email" in data) || data.email === null){
+      handleShowMessageBox("請輸入客戶Email", "#F5B7B1");
+      return false;
+    }else if(data.email.length > 80){
+      handleShowMessageBox("客戶Email過長（最多80字）", "#F5B7B1");
+      return false;
+    }
+    return true
+  }
+
+  const verifyOrder = (data) => {
+    if(!("group_id" in data) || data.group_id === null){
+      handleShowMessageBox("請選擇團購商品", "#F5B7B1");
+      return false;
+    }else if(!("qty" in data) || data.qty === null){
+      handleShowMessageBox("請輸入購買數量", "#F5B7B1");
+      return false;
+    }else if("qty" in data && data.qty !== null && isNaN(data.qty)){
+      handleShowMessageBox("購買數量需為數字", "#F5B7B1");
+      return false;
+    }
+    return true
+  }
+
   const handleEditSubmit = async (inputData) => {
     var update_json = {};
     for(const content of inputData){
@@ -149,6 +234,7 @@ export const Customers = () => {
         update_json[content.attr] = content.data;          
       }
     }
+    if(!verifyCustomer(update_json)){return};
     console.log("handle edit:", update_json);
     try {
       await axios.put(`${API_BASE_URL}/db/customers/${update_json.id}`, update_json, {
@@ -174,6 +260,7 @@ export const Customers = () => {
           create_json[content.attr] = content.data;          
       }
     }
+    if(!verifyCustomer(create_json)){return};
     console.log("handle create:", create_json);
     try {
       await axios.post(`${API_BASE_URL}/db/customers`, create_json, {
@@ -187,6 +274,33 @@ export const Customers = () => {
     } catch (error) {
       console.error('Create failed', error);
       handleShowMessageBox("新增客戶失敗！", "#F5B7B1");
+    }
+  }
+
+  const handleOrderSubmit = async (inputData) => {
+    var create_json = {};
+    for(const content of inputData){
+      if(content.data === ""){
+        create_json[content.attr] = null;
+        }else{
+          create_json[content.attr] = content.data;          
+      }
+    }
+    if(!verifyOrder(create_json)){return};
+    console.log("handle create:", create_json);
+    create_json["status"] = "訂單確認";
+    try {
+      await axios.post(`${API_BASE_URL}/db/orders`, create_json, {
+        headers: {
+          'Content-Type': 'application/json',
+          "ngrok-skip-browser-warning": 1
+        }});
+      checkUpdate();
+      setShowOrder(false);
+      handleShowMessageBox("新增訂單成功！", "#A3E4D7");
+    } catch (error) {
+      console.error('Create failed', error);
+      handleShowMessageBox("新增訂單失敗！", "#F5B7B1");
     }
   }
 
@@ -207,6 +321,22 @@ export const Customers = () => {
 
   useEffect(() => {
     checkUpdate();
+    var data = orderContents;
+    axios.get(`${API_BASE_URL}/db/groups/names`, {
+      headers: {
+        "ngrok-skip-browser-warning": 1
+      }
+    }).then(response => {
+        console.log("Data fetched successfully:", response);
+        data[1].options = Object.entries(response.data);
+        setLoading(false);
+        setError(null);
+      }).catch(error => {
+        console.error("There was an error fetching the data!", error);
+        setError(error);
+        setLoading(false);
+    });
+    setOrderContents(data);
     const interval = setInterval(() => {
       checkUpdate();
     }, 3000);
@@ -221,6 +351,10 @@ export const Customers = () => {
     setShowEdit(false);
   }
 
+  const clostOrderPopOut = () => {
+    setShowOrder(false);
+  }
+
   const handleEditClick = () => {
     const updatedContents = contents.map((content, idx) => ({
       ...content,
@@ -228,6 +362,27 @@ export const Customers = () => {
     }));
     setContents(updatedContents);
     setShowEdit(true);
+  }
+
+  const handleOrderClick = () => {
+    var data = orderContents;
+    data[0].data = filteredContents[selectedRow]["id"];
+    axios.get(`${API_BASE_URL}/db/groups/names`, {
+      headers: {
+        "ngrok-skip-browser-warning": 1
+      }
+    }).then(response => {
+        console.log("Data fetched successfully:", response);
+        data[1].options = Object.entries(response.data);
+        setLoading(false);
+        setError(null);
+      }).catch(error => {
+        console.error("There was an error fetching the data!", error);
+        setError(error);
+        setLoading(false);
+    });
+    setOrderContents(data);
+    setShowOrder(true);
   }
 
   const clostCreatePopOut = () => {
@@ -272,6 +427,10 @@ export const Customers = () => {
           handleCreateClick={handleCreateClick}
           selectedRow={selectedRow}
           contents={contents}
+          special={true}
+          special_disable={selectedRow === null}
+          special_text = {"下單"}
+          handleSpecialClick={handleOrderClick}
         />
         <ListContainer
           contents={contents}
@@ -287,6 +446,7 @@ export const Customers = () => {
         />
         {showEdit && <PopOut popOutType="edit" dataType="客戶" contents={contents} close={clostEditPopOut} submit_func={handleEditSubmit}/>}
         {showCreate && <PopOut popOutType="create" dataType="客戶" contents={contents} close={clostCreatePopOut} submit_func={handleCreateSubmit}/>}
+        {showOrder && <PopOut popOutType="create" dataType="訂單" contents={orderContents} close={clostOrderPopOut} submit_func={handleOrderSubmit}/>}
       </div>
       <MsgBox
         message={msgBoxMsg}
