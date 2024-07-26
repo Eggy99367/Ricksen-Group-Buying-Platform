@@ -14,21 +14,8 @@ tz_utc_9 = pytz.timezone('Asia/Tokyo')
 
     
 
-def getFollower(date):
-    headers = {
-        'Authorization': f'Bearer {CHANNEL_ACCESS_TOKEN}'
-    }
-    url = f'https://api.line.me/v2/bot/insight/followers?date={date}'
-    
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        if data['status'] == 'ready':
-            return data['followers']  
-        else:
-            return "Data calculation is still in progress, try again later."
-    else:
-        return f"Failed to retrieve data: {response.status_code} - {response.text}"
+def customerService(event):
+    reply_msg(event, "請聯絡example@gmail.com\n或撥打091234567!")
 
 def groupBuyingInfo(event): #團購資訊
     print("here's ok")
@@ -42,7 +29,10 @@ def groupBuyingInfo(event): #團購資訊
         return
 
     prod_carousel = []
-    for group in groups:
+    for i, group in enumerate(groups):
+        if i >= 10:
+            break
+
         exist = requests.get(f"{API_URL}/db/views/check_viewer_exist/{user_id}/{group['id']}").json()
         if not exist["exists"]:
             requests.post(f"{API_URL}/db/views", json={"customer_id": user_id, "group_id": group["id"], "view_type": "view"})

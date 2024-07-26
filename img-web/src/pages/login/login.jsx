@@ -30,7 +30,7 @@ export const Login = () => {
         <form className="login_form" onSubmit={handleSubmit}>
           <h2>用戶登入</h2>
           <div className='form_group'>
-            <label>Email</label>
+            <label>帳號</label>
             <input type="email" className='login' value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <div className='form_group'>
@@ -38,7 +38,7 @@ export const Login = () => {
             <input type="password" className='login' value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           <button type="submit" className="login login_button">登入</button>
-          <button type="button" className="login go_register_button" onClick={() => {navigate('/register');}}>註冊</button>
+          {/* <button type="button" className="login go_register_button" onClick={() => {navigate('/register');}}>註冊</button> */}
         </form>
       </div>
     </div>

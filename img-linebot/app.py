@@ -19,7 +19,8 @@ CMD_DICT = {
     "否，重新輸入用戶資訊": msg_responses.askName,
     "確認資訊無誤，確認訂單": msg_responses.orderConfirmed,
     "取消訂單": msg_responses.orderCanceled,
-    "查看訂單": msg_responses.checkOrder
+    "查看訂單": msg_responses.checkOrder,
+    "聯絡客服": msg_responses.customerService
 }
 
 # @app.route('/linebot/', methods=['POST'])
