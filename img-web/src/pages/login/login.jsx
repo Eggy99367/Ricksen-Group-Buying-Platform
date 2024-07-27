@@ -10,6 +10,7 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    console.log("handle log in...");
     e.preventDefault();
     try {
       const response = await axios.post(`${API_BASE_URL}/db/login`, { email, password }, {
@@ -31,7 +32,7 @@ export const Login = () => {
           <h2>用戶登入</h2>
           <div className='form_group'>
             <label>帳號</label>
-            <input type="email" className='login' value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input className='login' value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <div className='form_group'>
             <label>密碼</label>

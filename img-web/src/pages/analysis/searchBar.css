@@ -1,4 +1,4 @@
-.function_bar_container {
+/* .search_function_bar_container {
     height: 40px;
     width: 80%;
     display: flex;
@@ -7,11 +7,11 @@
     gap: 20px;
   } */
   
-.empty_bar_container {
+.search_empty_bar_container {
   flex: 0;
 }
 
-.input_entry_container { 
+.search_input_entry_container { 
   flex: 3;
   height: 100%;
   display: flex;
@@ -19,7 +19,7 @@
   position: relative;
 }
 
-.input_entry_container input {
+.search_input_entry_container input {
     width: 100%;
     padding-right: 40px;
 }
