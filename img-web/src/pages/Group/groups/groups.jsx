@@ -153,6 +153,7 @@ export const Groups = () => {
       "attr": "min_qty",
       "required": false,
       "display": true,
+      "placeholder": "不限制",
       "data": null,
       "edit": {
         "visible": true,
@@ -171,6 +172,7 @@ export const Groups = () => {
       "required": false,
       "display": true,
       "data": null,
+      "placeholder": "不限制",
       "edit": {
         "visible": true,
         "disable": false,
@@ -188,15 +190,16 @@ export const Groups = () => {
       "required": false,
       "display": true,
       "data": null,
+      "placeholder": "不限制",
       "edit": {
         "visible": true,
         "disable": false,
-        "entry_type": "entry"
+        "entry_type": "entry",
       },
       "create": {
         "visible": true,
         "disable": false,
-        "entry_type": "entry"
+        "entry_type": "entry",
       }
     },
     {
@@ -204,6 +207,7 @@ export const Groups = () => {
       "attr": "max_qty_pp",
       "required": false,
       "display": true,
+      "placeholder": "不限制",
       "data": null,
       "edit": {
         "visible": true,

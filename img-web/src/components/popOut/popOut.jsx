@@ -29,8 +29,12 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
         data: ""
       }));
       setInputData(updatedData);
+      console.log(updatedData);
     }
   }, []);
+
+  console.log('Input Data:', contents); // Check if inputData has placeholders
+
 
   return (
     <div className='pop_out_bg'>
@@ -48,7 +52,7 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
                   <div className='input_entry_container'>
                     <select name="dropdown" id={data.attr} value={data.data} disabled={data[popOutType].disable} onChange={(e) => handleInputChange(index, e.target.value)}>
                     {Object.values(data.options).map((opt, index) => (
-                        <option value={opt[0]}>{opt[0]}</option>
+                        <option key={index} value={opt[0]}>{opt[0]}</option>
                       ))}
                     </select>
                   </div>
@@ -57,7 +61,7 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
                     <input autoComplete="on" list={data.attr} value={data.data} onChange={(e) => handleInputChange(index, e.target.value)}/> 
                     <datalist id={data.attr}>
                       {Object.values(data.options).map((opt, index) => (
-                        <option value={opt[0]}>{opt[1]}</option>
+                        <option key={index} value={opt[0]}>{opt[1]}</option>
                       ))}
                     </datalist>
                   </div>
@@ -69,10 +73,17 @@ export const PopOut = ({popOutType, dataType="", contents, close, submit_func}) 
                       type="datetime-local"
                       name="meeting-time"
                       min={getCurrentDateTime()}
+                      placeholder={data.placeholder || ""}
                       onChange={(e) => handleInputChange(index, e.target.value)}
                     />
                   ) : (
-                    <input key={index} value={data.data} disabled={data[popOutType].disable} onChange={(e) => handleInputChange(index, e.target.value)}/>             
+                    <input
+                      key={index}
+                      value={data.data}
+                      placeholder={data.placeholder}
+                      disabled={data[popOutType].disable}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
+                    />
                   )
                 ))}
               </div>
