@@ -8,3 +8,9 @@ GroupAbandoned = "棄團"
 GroupStockedAwaitingPicking = "入庫，等待撿貨"
 GroupOpenForPickup = "開放取貨"
 GroupBuyingEnded = "團購結束"
+
+PICKING_TIME = {
+    'hour': 18,
+    'minute': 0,
+    'second': 0,
+}

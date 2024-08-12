@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 import pytz
+from src.config import PICKING_TIME
+
 
 def get_cur_time(no_sec = False):
     taiwan_tz = pytz.timezone('Asia/Taipei')
@@ -21,10 +23,15 @@ def formatted_to_date(formatted_time):
 def get_picking_date(date_str):
     dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
     # 定义下午四点
-    four_pm = dt.replace(hour=16, minute=0, second=0, microsecond=0)
+    set_time = dt.replace(
+        hour=PICKING_TIME['hour'],
+        minute=PICKING_TIME['minute'],
+        second=PICKING_TIME['second'],
+        microsecond=0
+    )
 
     # 比较输入的datetime对象的时间部分
-    if dt > four_pm:
+    if dt > set_time:
         # 超过下午四点，返回隔天日期
         next_day = dt + timedelta(days=1)
         return next_day.date()
