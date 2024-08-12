@@ -24,7 +24,7 @@ const ExposureLineChart = ({ timestamps, totalFollowers }) => {
     labels: formattedTimestamps,
     datasets: [
       {
-        label: 'Exposure Rate',
+        label: '曝光率',
         data: exposureRates,
         fill: false,
         backgroundColor: 'rgba(75,192,192,0.4)',
@@ -48,7 +48,7 @@ const ExposureLineChart = ({ timestamps, totalFollowers }) => {
         },
         title: {
           display: true,
-          text: 'Timestamp',
+          text: '時間',
         },
         distribution: 'linear',
         ticks: {
@@ -62,7 +62,7 @@ const ExposureLineChart = ({ timestamps, totalFollowers }) => {
         max: 1,
         title: {
           display: true,
-          text: 'Exposure Rate',
+          text: '曝光率',
         },
       },
     },

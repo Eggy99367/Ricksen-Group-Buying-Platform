@@ -15,6 +15,11 @@ export const PickingList = () => {
   const [error, setError] = useState(false);
   const pdfRef = useRef();
 
+  const formatNumber = (num) => {
+    if (num == null) return '';
+    return num.toLocaleString();
+  }
+
   const handleGeneratePDF = () => {
     const element = pdfRef.current;
     const opt = {
@@ -119,8 +124,8 @@ export const PickingList = () => {
                         <td key="group_id" className='g_id_col'>{odr.group_id}</td>
                         <td key="name" className='p_name_col'>{odr.name}</td>
                         <td key="qty" className='qty_col'>{odr.qty}</td>
-                        <td key="unit_price" className='unit_price_col'>${odr.price}</td>
-                        <td key="price" className='price_col'>${odr.price * odr.qty}</td>
+                        <td key="unit_price" className='unit_price_col'>${formatNumber(odr.price)}</td>
+                        <td key="price" className='price_col'>${formatNumber(odr.price * odr.qty)}</td>
                       </tr>
                     ))}
                     <tr key="sum" className='summary_row'>
@@ -128,7 +133,7 @@ export const PickingList = () => {
                       <td className='p_name_col'></td>
                       <td className='qty_col'></td>
                       <td className='unit_price_col'>總計</td>
-                      <td className='price_col'>${pick_lst.total_price}</td>
+                      <td className='price_col'>${formatNumber(pick_lst.total_price)}</td>
                     </tr>
                   </tbody>
                 </table>

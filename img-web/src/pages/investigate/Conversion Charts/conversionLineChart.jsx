@@ -26,7 +26,7 @@ const ConversionLineChart = ({ timestamps, totalViewers }) => {
     labels: formattedTimestamps,
     datasets: [
       {
-        label: 'Conversion Rate',
+        label: '訂單轉換率',
         data: conversionRates,
         fill: false,
         backgroundColor: 'rgba(75,192,192,0.4)',
@@ -50,7 +50,7 @@ const ConversionLineChart = ({ timestamps, totalViewers }) => {
         },
         title: {
           display: true,
-          text: 'Timestamp',
+          text: '時間',
         },
         distribution: 'linear',
         ticks: {
@@ -64,7 +64,7 @@ const ConversionLineChart = ({ timestamps, totalViewers }) => {
         max: 1,
         title: {
           display: true,
-          text: 'Conversion Rate',
+          text: '訂單轉換率',
         },
       },
     },

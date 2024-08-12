@@ -1,5 +1,16 @@
 import React from 'react';
-import './listContainer.css'
+import './listContainer.css';
+
+// Function to format numbers with commas
+const formatCash = (num) => {
+  if (num == null) return '';
+  if (typeof num !== 'number') {
+    const parsedNum = parseFloat(num);
+    if (isNaN(parsedNum)) return num;
+    return parsedNum.toLocaleString();
+  }
+  return num.toLocaleString();
+};
 
 export const ListContainer = ({ contents, filteredContents, handleRowClick, selectedRow, page, setPage, result_limit, error, loading, listContainerRef }) => {
   return (
@@ -19,15 +30,25 @@ export const ListContainer = ({ contents, filteredContents, handleRowClick, sele
             </tr>
           </thead>
           <tbody>
-            {filteredContents.map((data, index) => (
-              (page * result_limit <= index && index < (page + 1) * result_limit) && (
+            {filteredContents.map((data, rowIndex) => (
+              (page * result_limit <= rowIndex && rowIndex < (page + 1) * result_limit) && (
                 <tr
-                  key={index}
-                  onClick={() => handleRowClick(index)}
-                  className={selectedRow === index ? 'selected' : ''}
+                  key={rowIndex}
+                  onClick={() => handleRowClick(rowIndex)}
+                  className={selectedRow === rowIndex ? 'selected' : ''}
                 >
-                  {contents.map((content, index) => (
-                    content.display && (("omit" in content && data[content.attr]) ? (<td key={index}>{content.omit}</td>) : (<td key={index}>{data[content.attr]}</td>))
+                  {contents.map((content, colIndex) => (
+                    content.display && (
+                      ("omit" in content && data[content.attr]) ? (
+                        <td key={colIndex}>{content.omit}</td>
+                      ) : (
+                        <td key={colIndex}>
+                          {content.is_cost
+                            ? formatCash(data[content.attr])
+                            : data[content.attr]}
+                        </td>
+                      )
+                    )
                   ))}
                 </tr>
               )

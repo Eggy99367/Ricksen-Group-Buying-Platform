@@ -12,6 +12,12 @@ import ConversionPieChart from './Conversion Charts/conversionPieChart.jsx'
 
 import './investigate.css'
 
+// Helper function to format numbers with commas every 3 digits
+const formatNumber = (num) => {
+  if (num == null) return '';
+  return num.toLocaleString();
+}
+
 export const Investigate = () => {
   
     const location = useLocation();
@@ -165,27 +171,27 @@ export const Investigate = () => {
                     <div className="metrics-container">
                         <div className="metric">
                             <span className="label">成本:</span>
-                            <span>${cost}</span>
+                            <span>${formatNumber(cost)}</span>
                         </div>
                         <div className="metric">
                             <span className="label">售價:</span>
-                            <span>${price}</span>
+                            <span>${formatNumber(price)}</span>
                         </div>
                         <div className="metric">
                             <span className="label">售出總數:</span>
-                            <span>{totalSold}</span>
+                            <span>{formatNumber(totalSold)}</span>
                         </div>
                         <div className="metric">
-                            <span className="label">成本:</span>
-                            <span>${totalSold * cost}</span>
+                            <span className="label">總成本:</span>
+                            <span>${formatNumber(totalSold * cost)}</span>
                         </div>
                         <div className="metric">
                             <span className="label">收入:</span>
-                            <span>${totalSold * price}</span>
+                            <span>${formatNumber(totalSold * price)}</span>
                         </div>
                         <div className="metric">
                             <span className="label">盈利:</span>
-                            <span>${totalSold * price - totalSold * cost}</span>
+                            <span>${formatNumber(totalSold * price - totalSold * cost)}</span>
                         </div>
                         <div className="exposure_charts_container">
                           <ExposurePieChart totalViews = {viewTime.length} totalFollowers = {followers}/>

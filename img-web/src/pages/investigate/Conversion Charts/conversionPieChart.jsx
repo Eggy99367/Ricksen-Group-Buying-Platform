@@ -6,7 +6,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ConversionPieChart = ({ totalBuys, totalViewers }) => {
   const data = {
-    labels: ['Conversed Users', 'Unconversed Users'],
+    labels: ['下訂用戶', '未下訂用戶'],
     datasets: [
       {
         label: '# of People',

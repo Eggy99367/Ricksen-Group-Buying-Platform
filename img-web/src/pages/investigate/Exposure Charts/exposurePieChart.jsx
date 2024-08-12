@@ -6,7 +6,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ExposurePieChart = ({ totalViews, totalFollowers }) => {
   const data = {
-    labels: ['Exposed Users', 'Unexposed Users'],
+    labels: ['曝光用戶', '未曝光用戶'],
     datasets: [
       {
         label: '# of People',

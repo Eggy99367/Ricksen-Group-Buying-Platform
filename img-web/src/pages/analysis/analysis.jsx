@@ -112,10 +112,6 @@ export const Analysis = () => {
         console.log(searchTerm);
     }
 
-    const handleInvestigateClick = (index) => {
-        navigate('/investigate', { state: { group: groups[index] } });
-    }
-
     const fetchAllGroupIds = async () => {
         console.log("Fetching data from API...");
         axios.get(`${API_BASE_URL}/db/groups`, {
@@ -155,6 +151,11 @@ export const Analysis = () => {
     const handleRowClick = (index) => {
         setSelectedRow(index);
     }
+
+    const handleInvestigateClick = (index) => {
+      navigate('/investigate', { state: { group: filteredContents[index] } });
+    }
+
     useEffect(() => {
         if (listContainerRef.current) {
           const containerHeight = listContainerRef.current.clientHeight - 90;

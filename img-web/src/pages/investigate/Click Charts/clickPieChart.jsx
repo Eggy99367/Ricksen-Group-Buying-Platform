@@ -6,7 +6,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ClickPieChart = ({ totalClicks, totalFollowers }) => {
   const data = {
-    labels: ['Clicked Users', 'Unclicked Users'],
+    labels: ['點擊用戶', '未點擊用戶'],
     datasets: [
       {
         label: '# of People',

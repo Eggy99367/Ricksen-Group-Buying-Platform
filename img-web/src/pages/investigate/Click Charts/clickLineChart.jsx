@@ -24,7 +24,7 @@ const ClickLineChart = ({ timestamps, totalFollowers }) => {
     labels: formattedTimestamps,
     datasets: [
       {
-        label: 'Click Rate',
+        label: '點擊率',
         data: clickRates,
         fill: false,
         backgroundColor: 'rgba(75,192,192,0.4)',
@@ -48,7 +48,7 @@ const ClickLineChart = ({ timestamps, totalFollowers }) => {
         },
         title: {
           display: true,
-          text: 'Timestamp',
+          text: '時間',
         },
         distribution: 'linear',
         ticks: {
@@ -62,7 +62,7 @@ const ClickLineChart = ({ timestamps, totalFollowers }) => {
         max: 1,
         title: {
           display: true,
-          text: 'Click Rate',
+          text: '點擊率',
         },
       },
     },

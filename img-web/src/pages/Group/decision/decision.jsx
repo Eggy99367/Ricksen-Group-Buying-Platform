@@ -32,11 +32,13 @@ export const Decision = () => {
     {
       "showed_attr": "成本",
       "attr": "cost",
+      "is_cost": true,
       "display": true
     },
     {
       "showed_attr": "售價",
       "attr": "selling_price",
+      "is_cost": true,
       "display": true
     },
     {

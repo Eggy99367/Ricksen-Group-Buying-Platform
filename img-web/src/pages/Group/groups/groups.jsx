@@ -67,6 +67,7 @@ export const Groups = () => {
       "required": true,
       "display": true,
       "data": null,
+      "is_cost": true,
       "edit": {
         "visible": true,
         "disable": false,
